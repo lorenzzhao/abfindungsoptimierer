@@ -38,7 +38,7 @@ OPTION_LABELS = {
     "church": "Kirchensteuer", "bundesland": "Bundesland", "kv_zusatz": "KV-Zusatzbeitrag",
     "kv_satz_allgemein": "KV allgemeiner Satz", "kv_abfindung_mode": "KV: Abfindung (1/2/3)",
     "kv_nachgehend_vorrang": "Nachgehender Anspruch vorrangig", "tarif_index": "Tarif-Fortschreibung p. a.",
-    "vorsorge_factor": "Vorsorge-Korrekturfaktor", "ein_jahres_regel": "Ein-Jahres-Regel",
+    "ein_jahres_regel": "Ein-Jahres-Regel",
     "ein_jahres_ereignis": "Ereignis Ein-Jahres-Regel", "guenstiger_mode": "Günstigerprüfung",
     "bescheid_monat": "Bescheidmonat", 
     "sozialabgaben_anteil": "Sozialabgaben-Anteil", "rv_satz_annahme": "RV-Satz (Annahme)",

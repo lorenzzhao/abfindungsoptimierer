@@ -252,7 +252,7 @@ abfindung/
     health.py       KV/PV monatlich nach Status, freiwillige Beiträge, drei Optionen zur Abfindung
     income_tax.py   Jahressteuer je Veranlagung, Vermietung/Immobilienkauf, Vorsorge, Günstigerprüfung, Soli, KiSt
     liquidity.py    Lohnsteuerabzug auf die Abfindung, LSt-Freibetrag, monatliche Liquidität
-    pension.py, calibration.py, marginal.py, optimizer.py, scenario.py, settings.py, trace.py
+    pension.py, marginal.py, optimizer.py, scenario.py, settings.py, trace.py
   gui/       Qt-Oberfläche (PySide6)
   report/    PDF-Export (reportlab)
   charts.py  Diagramme (GUI und PDF)

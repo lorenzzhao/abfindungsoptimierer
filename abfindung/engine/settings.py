@@ -257,7 +257,6 @@ class Options:
     kv_abfindung_mode: int = 1   # 1 nicht verbeitragt, 2 Fristzeitraum, 3 verteilt
     kv_nachgehend_vorrang: bool = True
     tarif_index: float = 0.0
-    vorsorge_factor: float = 1.0
     ein_jahres_regel: bool = True
     ein_jahres_ereignis: str = "vertragsende"  # or "freistellung"
     guenstiger_mode: str = "voll"  # voll | tarif
@@ -293,7 +292,7 @@ ORIGINS_PERSON = {
 }
 ORIGINS_OPTIONS = {
     **dict.fromkeys(("church", "tarif_index", "sozialabgaben_anteil", "rv_satz_annahme", "gegenwert_arbeitszeit"), FAKT),
-    **dict.fromkeys(("bundesland", "kv_zusatz", "vorsorge_factor"), ABLEITBAR),
+    **dict.fromkeys(("bundesland", "kv_zusatz"), ABLEITBAR),
 }
 
 # Tool settings that are genuine assumptions (default origin "annahme" when the XML has none).
@@ -673,7 +672,7 @@ OPTION_NATIVE = {"church", "bundesland"}
 REMOVED_PERSON_UI = ["freistellung", "freistellung_ab", "sperrzeit_ab_freistellung", "urlaub_tage", "bonus", "bonus_year",
                      "split_share", "split_idx", "bav_amount", "bav_dienstjahre", "bav_vorjahre",
                      "kfrist_aus_tabelle", "alg_mode"]
-REMOVED_OPTIONS = {"ein_jahres_ereignis", "kv_mode", "gebunden_gewicht", "include_salary"}  # gebunden_gewicht → Gegenwert je Gestaltung
+REMOVED_OPTIONS = {"ein_jahres_ereignis", "kv_mode", "gebunden_gewicht", "include_salary", "vorsorge_factor"}  # gebunden_gewicht → Gegenwert je Gestaltung
 
 
 def _enc(v) -> str:
@@ -720,7 +719,7 @@ def effective(s: Settings, legal) -> Settings:
     """Copy of the settings in which disabled areas are replaced by neutral values.
 
     (not married: the second person is left out; single assessment)
-    haushalt     no children, no childcare costs, no church tax, no tariff indexation, factor 1,
+    haushalt     no children, no childcare costs, no church tax, no tariff indexation,
                  social-contribution share = alg_sv_pauschale, no RV rate assumption
     kv           no KV/PV contributions (handled in the scenario run)
     gestaltungen no Gestaltungen
@@ -752,7 +751,6 @@ def effective(s: Settings, legal) -> Settings:
         o = t.options
         o.church = False
         o.tarif_index = 0.0
-        o.vorsorge_factor = 1.0
         o.guenstiger_mode = d_opt.guenstiger_mode
         o.sozialabgaben_anteil = float(legal.value("alg_sv_pauschale"))
         o.rv_satz_annahme = 0.0

@@ -12,7 +12,7 @@ from .engine.trace import Traced, fmt_value
 from .io.personal_model import HERKUNFT_LABEL
 from .meaning import meaning
 
-GROUP_ORDER = ["Übersicht", "Saldo", "Steuer", "Abfindung", "ALG", "KV", "Liquidität", "Rente", "Kalibrierung",
+GROUP_ORDER = ["Übersicht", "Saldo", "Steuer", "Abfindung", "ALG", "KV", "Liquidität", "Rente",
                "Hinweise und Warnungen"]
 
 

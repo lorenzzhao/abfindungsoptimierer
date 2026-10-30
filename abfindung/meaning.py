@@ -164,10 +164,6 @@ MEANINGS: list[tuple[str, str]] = [
     (r"^rv_",
      "Ein Überblick über die Beiträge zur gesetzlichen Rentenversicherung dieser Person (Beschäftigung, ALG). Nur "
      "zur Information: Er zeigt, wie sich Austritt und ALG auf die spätere Rente auswirken."),
-    (r"^kalibrierung$",
-     "Ein Abgleich mit dem letzten Steuerbescheid: Das Programm rechnet das Vorjahr nach und vergleicht mit der "
-     "festgesetzten Steuer. Eine große Abweichung deutet auf fehlende oder falsche Eingaben hin; daraus ergibt sich "
-     "ein Vorschlag für den Vorsorge-Korrekturfaktor."),
     (r"^warn_\d+$",
      "Ein Hinweis aus der Berechnung, der für diese Planung wichtig sein kann – etwa ein Risiko, eine nicht "
      "erfüllte Voraussetzung oder eine Vereinfachung des Modells. Die genannten Regeln erklären den Hintergrund."),

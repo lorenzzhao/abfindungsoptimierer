@@ -126,12 +126,6 @@ def test_property_purchase(s, legal):
     assert run(s, legal).cost_by_year[2027] != 0
 
 
-def test_calibration(s, legal):
-    r = run(s, legal)
-    assert "kalibrierung" in r.rs
-    assert r.extra.get("vorsorge_faktor_vorschlag", 0) > 0
-
-
 def test_total_tax_in_overview(s, legal):
     r = run(s, legal, extras=False)
     t = r.rs["steuer_gesamt"]

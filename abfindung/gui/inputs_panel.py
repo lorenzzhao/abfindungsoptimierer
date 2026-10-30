@@ -98,7 +98,6 @@ def _red_dot_icon() -> QIcon:
 
 class InputsPanel(QWidget):
     settingsChanged = Signal()
-    calibrationRequested = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -597,15 +596,6 @@ class InputsPanel(QWidget):
         g = self._group(lay, "Steuer")
         self._add(g, NumberEdit("options.tarif_index", "Fortschreibung des Tarifs für Jahre ohne eigenen Tarif (p. a.)",
                                 0, 0.05, 0.0025, 2, " %", 100, tooltip=self._tt([], [], "0 % = Tarif unverändert fortgeschrieben.")))
-        self._add(g, NumberEdit("options.vorsorge_factor", "Vorsorge-Korrekturfaktor (KV/PV, Kalibrierung)", 0.5, 3.0, 0.01,
-                                3, "", 1, tooltip=self._tt([], [], "Faktor auf die KV/PV-Vorsorgeaufwendungen.")))
-        btn = QPushButton("Kalibrierungsvorschlag übernehmen")
-        btn.setToolTip("Übernimmt den Korrekturfaktor, der sich aus dem Abgleich mit dem Steuerbescheid ergibt.")
-        btn.clicked.connect(self.calibrationRequested.emit)
-        g.addWidget(btn)
-        self.calib_label = QLabel("")
-        self.calib_label.setWordWrap(True)
-        g.addWidget(self.calib_label)
         self._add(g, ChoiceEdit("options.guenstiger_mode", "Günstigerprüfung Kinder",
                                 [("voll", "mit § 34 und § 32b (vollständige Berechnung)"), ("tarif", "nur auf Tarifbasis")],
                                 tooltip=self._tt(["R_Guenstigerpruefung"])))
@@ -844,9 +834,6 @@ class InputsPanel(QWidget):
             pv = sum(u.pv for (k, yy), u in res.units.items() if yy == y) if res else 0
             info.setText(f"<small>Nullgrenze {y} (zusätzlicher Abzug bis übriges zvE{' + ALG' if pv > 0 else ''} = 0): "
                          f"<b>{fmt_eur(ng)}</b></small>")
-        f = res.extra.get("vorsorge_faktor_vorschlag") if res else None
-        if hasattr(self, "calib_label"):
-            self.calib_label.setText(f"Vorschlag aus der Kalibrierung: {f:.3f}" if f else "Kein Vorschlag (kein Steuerbescheid).")
 
     def _show_derived(self, res) -> None:
         """Values with origin "abgeleitet" that the program determines: show the result, lock the inputs."""

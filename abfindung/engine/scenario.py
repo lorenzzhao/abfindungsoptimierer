@@ -241,11 +241,9 @@ def run(s, legal, explain: bool = True, extras: bool = True) -> Result:
     if extras:
         from .liquidity import build_liquidity
         from .pension import pension_traces
-        from .calibration import calibrate
 
         build_liquidity(res, s, tracer, rs, ctx)
         pension_traces(res, s, tracer, rs, ctx)
-        calibrate(res, s, tracer, rs)
 
     tb = tracer.new("saldo", "Netto-Saldo über den Horizont", "EUR", "Übersicht")
     tb.child(*[f"saldo_{y}" for y in years], "gebunden")

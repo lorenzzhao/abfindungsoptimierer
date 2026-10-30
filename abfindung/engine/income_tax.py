@@ -311,13 +311,9 @@ def compute_unit_year(key: str, members: list, year: int, s, tracer, rs, ctx, jo
     tb = tracer.new(f"vorsorge_{suf}", f"Vorsorgeaufwendungen {year}", "EUR", grp)
     tb.rule("R_Basisrente")
     kv = sum(ctx.kv[ps.id].own_year(year) + ctx.kv[ps.id].an_year(year) for _, ps in members)
-    fac = s.options.vorsorge_factor
-    kv_ded = kv * fac
+    kv_ded = kv
     tb.child(*[f"kv_{ps.id}_{year}" for _, ps in members])
-    tb.step(f"KV/PV-Basisabsicherung (eigene Beiträge + Arbeitnehmeranteile): {fmt_eur(kv)}"
-            + (f" × Korrekturfaktor {fac:.3f} = {fmt_eur(kv_ded)}" if fac != 1 else ""))
-    if fac != 1:
-        tb.s("options.vorsorge_factor", "Vorsorge-Korrekturfaktor (Kalibrierung)")
+    tb.step(f"KV/PV-Basisabsicherung (eigene Beiträge + Arbeitnehmeranteile): {fmt_eur(kv)}")
     rv_id = tracer.legal.pick(*RV_RATE_IDS)
     if rv_id:
         rv_satz = tb.p(rv_id, year)

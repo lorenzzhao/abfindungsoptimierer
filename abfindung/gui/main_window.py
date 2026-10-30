@@ -91,7 +91,6 @@ class MainWindow(QMainWindow):
         self.group_timer.timeout.connect(self._end_group)
 
         self.inputs.settingsChanged.connect(self._changed)
-        self.inputs.calibrationRequested.connect(self._apply_calibration)
         self.results.focusChanged.connect(self._focus_changed)
         self.explain.focusRequested.connect(self.results.set_focus)
         self.charts.focusRequested.connect(self.results.set_focus)
@@ -364,16 +363,6 @@ class MainWindow(QMainWindow):
     def _focus_changed(self, fid: str) -> None:
         self.explain.show_result(self.res, fid, self.theme.html)
         self.charts.set_focus(fid)
-
-    def _apply_calibration(self) -> None:
-        f = self.res.extra.get("vorsorge_faktor_vorschlag") if self.res else None
-        if not f:
-            QMessageBox.information(self, "Kalibrierung", "Kein Vorschlag verfügbar (kein Steuerbescheid in den Daten).")
-            return
-        self.s.set("options.vorsorge_factor", round(f, 3))
-        self.inputs.refresh()
-        self._changed()
-        self.results.set_focus("kalibrierung")
 
     # -- optimisation ------------------------------------------------------------------
     def legal_prompt(self) -> None:
