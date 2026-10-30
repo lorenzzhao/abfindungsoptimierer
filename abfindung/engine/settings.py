@@ -367,7 +367,6 @@ class Settings:
     stand: date = field(default_factory=date.today)
     objekte_angeschafft_3j: bool = False
     erhaltung_max: float = 0.0
-    bescheid: dict = field(default_factory=dict)  # {"jahr": int, "posten": {id: value}}
     # Optional input areas; a disabled area is read/written but ignored by the calculation (see effective()).
     sections: dict = field(default_factory=lambda: {k: True for k in SECTIONS})
     familienstand: str = "verheiratet"  # verheiratet | ledig | geschieden | verwitwet (spouse only if verheiratet)
@@ -468,10 +467,6 @@ def from_personal(pd: PersonalData, legal) -> Settings:
         s.objekte_angeschafft_3j = bool(pd.vermietung.angeschafft3j.value)
         s.origin["objekte_angeschafft_3j"] = pd.vermietung.angeschafft3j.herkunft
         s.xml_paths["objekte_angeschafft_3j"] = "Vermietung/ObjekteAngeschafftInLetzten3Jahren"
-    b = pd.bescheid_latest()
-    if b:
-        s.bescheid = {"jahr": b.jahr, "posten": {po.id: po.value for po in b.posten}}
-
     wk = pd.annahme("werbungskosten_je_person")
 
     for i, p in enumerate(pd.persons):

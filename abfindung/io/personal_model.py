@@ -106,27 +106,6 @@ class Household:
 
 
 @dataclass
-class Posten:
-    id: str
-    bezeichnung: str
-    value: float
-    person: str | None = None
-    faellig: date | None = None
-
-
-@dataclass
-class Bescheid:
-    jahr: int
-    posten: list[Posten]
-
-    def get(self, pid: str) -> float | None:
-        for p in self.posten:
-            if p.id == pid:
-                return p.value
-        return None
-
-
-@dataclass
 class PersonVal:
     person: str
     val: Val
@@ -183,7 +162,6 @@ class PersonalData:
     meta_hinweise: list[str] = field(default_factory=list)
     household: Household | None = None
     persons: list[Person] = field(default_factory=list)
-    bescheide: list[Bescheid] = field(default_factory=list)
     vermietung: Vermietung | None = None
     kapital: list[PersonVal] = field(default_factory=list)
     massnahmen: list[Massnahme] = field(default_factory=list)
@@ -230,9 +208,6 @@ class PersonalData:
             if m.art == art:
                 return m
         return None
-
-    def bescheid_latest(self) -> Bescheid | None:
-        return max(self.bescheide, key=lambda b: b.jahr) if self.bescheide else None
 
     def clone(self) -> "PersonalData":
         return copy.deepcopy(self)
@@ -326,14 +301,6 @@ def parse_personal(root: etree._Element) -> PersonalData:
             sperrzeit_erwartet=_val(_f(alg, "SperrzeitErwartet"), "bool"),
             auszahlungsfenster=_fenster(_f(pe, "Auszahlungsfenster")),
         ))
-
-    for sb in root.findall("p:Steuerbescheid", NS):
-        posten = []
-        for po in sb.findall("p:Posten", NS):
-            fa = po.get("faelligAm")
-            posten.append(Posten(po.get("id"), po.get("bezeichnung"), _num(po.text), po.get("person"),
-                                 date.fromisoformat(fa) if fa else None))
-        d.bescheide.append(Bescheid(int(sb.get("jahr")[:4]), posten))
 
     v = _f(root, "Vermietung")
     d.vermietung = Vermietung(
@@ -458,12 +425,6 @@ def to_xml(d: PersonalData) -> etree._ElementTree:
             f = p.auszahlungsfenster
             _sub(pe, "Auszahlungsfenster", fruehestens=f"{f.fruehestens[0]:04d}-{f.fruehestens[1]:02d}",
                  spaetestensMonateNachAustritt=str(f.spaetestens_monate), herkunft=f.herkunft)
-
-    for sb in d.bescheide:
-        se = _sub(root, "Steuerbescheid", jahr=str(sb.jahr))
-        for po in sb.posten:
-            _sub(se, "Posten", po.value, id=po.id, bezeichnung=po.bezeichnung, person=po.person,
-                 faelligAm=po.faellig.isoformat() if po.faellig else None)
 
     v = d.vermietung
     ve = _sub(root, "Vermietung")

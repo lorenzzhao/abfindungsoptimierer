@@ -74,17 +74,6 @@
     </Person>
   </Personen>
 
-  <Steuerbescheid jahr="2025">
-    <Posten id="brutto_max" bezeichnung="Bruttoarbeitslohn" person="P_Max">78000</Posten>
-    <Posten id="brutto_erika" bezeichnung="Bruttoarbeitslohn" person="P_Erika">68000</Posten>
-    <Posten id="gde_gesamt" bezeichnung="Gesamtbetrag der Einkünfte, gemeinsam">145000</Posten>
-    <Posten id="sonderausgaben" bezeichnung="Vorsorgeaufwendungen und Kinderbetreuung (Sonderausgaben)">30000</Posten>
-    <Posten id="kinderfreibetraege" bezeichnung="Kinderfreibeträge (2 Kinder)">19200</Posten>
-    <Posten id="zve" bezeichnung="Zu versteuerndes Einkommen">95800</Posten>
-    <Posten id="est_tariflich" bezeichnung="Einkommensteuer auf das zvE">20000</Posten>
-    <Posten id="festgesetzt" bezeichnung="Festgesetzte Steuer gesamt">26000</Posten>
-  </Steuerbescheid>
-
   <Vermietung>
     <AnzahlObjekte>1</AnzahlObjekte>
     <Einkuenfte herkunft="angabe" jahr="2025" person="P_Max">2000</Einkuenfte>

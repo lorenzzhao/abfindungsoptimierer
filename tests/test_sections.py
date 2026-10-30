@@ -43,7 +43,6 @@ def test_married_again_restores_joint_assessment(s, legal):
 def test_spouse_added_when_file_has_none(personal, legal, tmp_path):
     personal.persons = personal.persons[:1]
     keep = personal.persons[0].id
-    personal.bescheide = []
     personal.vermietung.einkuenfte = [e for e in personal.vermietung.einkuenfte if e.person == keep]
     personal.kapital = [e for e in personal.kapital if e.person == keep]
     personal.household.familienstand = "ledig"

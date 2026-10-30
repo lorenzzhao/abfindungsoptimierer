@@ -102,3 +102,21 @@ def test_source_address_matches_release_scripts():
 
     pins = json.loads((Path(LEGAL).parent.parent / "packaging" / "pins.json").read_text(encoding="utf-8"))
     assert legal.SOURCE_URL == pins["project_url"] and legal.SOURCE_URL in legal.version_text("x")
+
+
+def test_old_file_with_tax_assessment_is_migrated(tmp_path):
+    old = PERSONAL.read_text(encoding="utf-8").replace("  <Vermietung>", """  <Steuerbescheid jahr="2025">
+    <Posten id="zve" bezeichnung="Zu versteuerndes Einkommen">95800</Posten>
+    <Posten id="brutto" bezeichnung="Bruttoarbeitslohn" person="P_Max">78000</Posten>
+  </Steuerbescheid>
+  <Steuerbescheid jahr="2024">
+    <Posten id="zve" bezeichnung="Zu versteuerndes Einkommen">90000</Posten>
+  </Steuerbescheid>
+
+  <Vermietung>""", 1)
+    f = tmp_path / "alt.xml"
+    f.write_text(old, encoding="utf-8")
+    pd = load_personal(f)
+    assert pd.migration_notes == ["Steuerbescheide werden nicht mehr unterstützt und beim Speichern entfernt."]
+    out = save_personal(pd, tmp_path / "neu.xml")
+    assert "Steuerbescheid" not in out.read_text(encoding="utf-8")

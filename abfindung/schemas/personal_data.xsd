@@ -19,7 +19,6 @@
         <xs:element name="Metadaten" type="MetadatenTyp"/>
         <xs:element name="Haushalt" type="HaushaltTyp"/>
         <xs:element name="Personen" type="PersonenTyp"/>
-        <xs:element name="Steuerbescheid" type="SteuerbescheidTyp" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="Vermietung" type="VermietungTyp"/>
         <xs:element name="Kapitalertraege" type="KapitalertraegeTyp"/>
         <xs:element name="Planung" type="PlanungTyp"/>
@@ -30,10 +29,6 @@
       <xs:selector xpath="p:Personen/p:Person"/>
       <xs:field xpath="@id"/>
     </xs:key>
-    <xs:keyref name="BescheidPersonRef" refer="PersonId">
-      <xs:selector xpath="p:Steuerbescheid/p:Posten"/>
-      <xs:field xpath="@person"/>
-    </xs:keyref>
     <xs:keyref name="VermietungPersonRef" refer="PersonId">
       <xs:selector xpath="p:Vermietung/p:Einkuenfte"/>
       <xs:field xpath="@person"/>
@@ -353,25 +348,6 @@
       <xs:element name="Leistungssatz" type="BetragAbleitbarTyp"/>
       <xs:element name="SperrzeitErwartet" type="BoolAbleitbarTyp"/>
     </xs:sequence>
-  </xs:complexType>
-
-  <!-- Steuerbescheid -->
-  <xs:complexType name="SteuerbescheidTyp">
-    <xs:sequence>
-      <xs:element name="Posten" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:simpleContent>
-            <xs:extension base="xs:decimal">
-              <xs:attribute name="id" type="IdTyp" use="required"/>
-              <xs:attribute name="bezeichnung" type="xs:string" use="required"/>
-              <xs:attribute name="person" type="PersonRefTyp" use="optional"/>
-              <xs:attribute name="faelligAm" type="xs:date" use="optional"/>
-            </xs:extension>
-          </xs:simpleContent>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="jahr" type="xs:gYear" use="required"/>
   </xs:complexType>
 
   <!-- Vermietung -->

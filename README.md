@@ -139,7 +139,7 @@ Die echten Dateien gehören nicht ins Repository (`.gitignore`). `examples/` ent
 
 Einstellungen ohne eigenes Schema-Element (Sperrzeit, KV-Option, neue Beschäftigung, Horizont, Rechtsfragen …) werden
 beim Speichern als `Planung/Annahmen/Annahme id="ui_…"` abgelegt, ebenso Zahlungsmonat und Arbeitslosmeldung je Person.
-Abfindungsvarianten, ALG-Szenarien und Referenzergebnisse werden nicht mehr unterstützt; ältere Dateien werden beim
+Steuerbescheide, Abfindungsvarianten, ALG-Szenarien und Referenzergebnisse werden nicht mehr unterstützt; ältere Dateien werden beim
 Laden ohne sie übernommen (Hinweis), beim Speichern entfallen sie.
 
 ### Optionale zusätzliche Parameter

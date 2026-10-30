@@ -53,6 +53,7 @@ def validate_tree(tree: etree._ElementTree, xsd: Path) -> list[str]:
 
 
 REMOVED_ELEMENTS = {  # element (local path) -> description; dropped when reading an older file
+    "Steuerbescheid": "Steuerbescheide",
     "Planung/Abfindungsvarianten": "Abfindungsvarianten",
     "Planung/ALGSzenarien": "ALG-Szenarien",
     "Referenzergebnisse": "Referenzergebnisse",
@@ -61,7 +62,7 @@ REMOVED_ELEMENTS = {  # element (local path) -> description; dropped when readin
 
 def _migrate_personal(tree: etree._ElementTree) -> list[str]:
     """Older files may use herkunft="bescheid" (removed from the schema): it is read as "angabe".
-    Variants, scenarios and reference results are no longer supported: they are dropped."""
+    Tax assessments, variants, scenarios and reference results are no longer supported: they are dropped."""
     notes = []
     n = 0
     for el in tree.getroot().iter():
@@ -73,8 +74,10 @@ def _migrate_personal(tree: etree._ElementTree) -> list[str]:
     root = tree.getroot()
     ns = {"p": root.nsmap.get(None) or "urn:abfindung:persoenlich:v1"}
     for path, label in REMOVED_ELEMENTS.items():
-        for el in root.findall("/".join(f"p:{x}" for x in path.split("/")), ns):
+        found = root.findall("/".join(f"p:{x}" for x in path.split("/")), ns)
+        for el in found:
             el.getparent().remove(el)
+        if found:
             notes.append(f"{label} werden nicht mehr unterstützt und beim Speichern entfernt.")
     # Measures in the old format (candidates / examples without "gegenwert") are not Gestaltungen of the tool.
     old = [m for m in root.findall("p:Planung/p:Massnahmen/p:Massnahme", ns)
