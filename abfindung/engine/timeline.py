@@ -330,7 +330,7 @@ def build_timeline(ps, idx: int, s, tracer, rs, rate_tag: float, sim_end: date) 
     if no_alg_job:
         tl.warnings.append((f"{lab}: Die neue Beschäftigung beginnt am {fmt_date(ps.newjob_start)} vor der geplanten "
                             f"Arbeitslosmeldung ({fmt_date(ps.meldung)}) – aus dieser Meldung entsteht kein ALG "
-                            f"(z. B. Szenario mit Meldung nach mehr als einem Jahr nicht möglich).", ["R_ALG_Dauer"]))
+                            f"(eine Meldung nach mehr als einem Jahr ist dann nicht möglich).", ["R_ALG_Dauer"]))
     if not anw_ok and ps.alg_aktiv:
         tl.warnings.append((f"{lab}: Anwartschaftszeit nicht erfüllt ({anw} von {anw_min} Monaten) – kein ALG.", ["R_ALG_Dauer"]))
     if ruhen158 and ps.alg_aktiv:

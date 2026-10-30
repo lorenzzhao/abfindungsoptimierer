@@ -17,7 +17,7 @@ MEANINGS: list[tuple[str, str]] = [
     (r"^saldo$",
      "Die Zielgröße des Programms: wie viel Geld dem Haushalt im Planungshorizont netto zufließt, gezählt nur über "
      "die Posten, die von der Planung abhängen – ALG, Steuern, eigene Kranken- und Pflegeversicherungsbeiträge, "
-     "Aufwand der Gestaltungen und Nettogehalt. Die Abfindung selbst ist in jeder Variante gleich und deshalb nicht "
+     "Aufwand der Gestaltungen und Nettogehalt. Die Abfindung selbst ist bei jeder Einstellung gleich hoch und deshalb nicht "
      "enthalten; der Wert ist darum oft negativ. Aussagekräftig ist der Vergleich: Je höher der Saldo, desto besser "
      "die Einstellung."),
     (r"^steuer_gesamt$",

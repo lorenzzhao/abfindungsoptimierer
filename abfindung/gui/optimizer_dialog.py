@@ -48,7 +48,7 @@ class OptimizerDialog(QDialog):
         self.top = []
         lay = QVBoxLayout(self)
         lay.addWidget(QLabel(
-            "Durchsucht Zahlungsjahre (je Jahr der KV-günstigste Monat), Austrittsvarianten und Meldedaten vollständig. "
+            "Durchsucht Zahlungsjahre der Abfindung (je Jahr der KV-günstigste Monat) und Meldedaten vollständig. "
             "Die Basisrente wird je Jahr bis zur Nullgrenze vorgeschlagen (gedeckelt durch den Höchstbetrag; ohne Eintrag "
             "im Jahr entsteht beim Übernehmen ein neuer). Erhaltungsaufwand-Einträge mit Herkunft „Planung“ werden per "
             "goldenem Schnitt optimiert. Die Veranlagungsart wählt die Berechnung je Jahr. "

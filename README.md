@@ -37,13 +37,13 @@ Die Oberfläche hat drei Bereiche:
    Kindergeld) werden im Tab „Haushalt“ gepflegt; Geburtsdatum und Steuerklasse je Person im Personen-Tab.
 2. **Ergebnisse** (Mitte): alle berechneten Werte, gruppiert; ein Klick fokussiert genau einen Wert (▶, farbig
    hinterlegt). Darunter drei Diagramme: Steuer & Knick (Gesamtsteuer über das zvE mit Nullgrenze und
-   Grenzwirkung eines Abzugs), Zeitleiste (Gantt), Liquidität. Varianten vergleicht man
+   Grenzwirkung eines Abzugs), Zeitleiste (Gantt), Liquidität. Verschiedene Planungen vergleicht man
    durch Drehen an den Stellschrauben oder mit dem Optimierer. Ein Klick in ein Diagramm fokussiert den passenden Wert.
 3. **Erklärung** (rechts): Rechenweg des fokussierten Werts mit eingesetzten Zahlen, verwendete Eingangsdaten
    (mit Herkunft und Fundstelle in der XML), rechtliche Parameter (Jahr, „fortgeschrieben“, Prüfstatus), Regeln mit
    Pseudoformel, Unsicherheit und Quellen. Links wechseln den Fokus.
 
-Menü *Analyse → Optimieren* durchsucht Zahlungsmonate, Austrittsvarianten und Meldedaten vollständig und optimiert
+Menü *Analyse → Optimieren* durchsucht Zahlungsmonate und Meldedaten vollständig und optimiert
 Basisrente/Erhaltungsaufwand per goldenem Schnitt; die Top 5 werden mit Begründung angezeigt und lassen sich
 übernehmen. *Datei → Speichern / Speichern unter* schreibt die aktuelle Planung als persönliche XML (vorher
 XSD-Validierung, bei *Speichern* zusätzlich `.bak`-Sicherung). *Datei → PDF exportieren* erzeugt einen Bericht mit

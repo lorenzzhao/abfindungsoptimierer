@@ -378,11 +378,6 @@ def explain_candidate(c: Candidate, base: Candidate, s: Settings) -> tuple[str, 
             if v != s.persons[i].meldung:
                 lines.append(f"{s.persons[i].label}: Arbeitslosmeldung am {fmt_date(v)} statt {fmt_date(s.persons[i].meldung)}.")
                 rules.update({"R_ALG_Dauer", "R_Progressionsvorbehalt"})
-        elif path.startswith("exit."):
-            i = int(path.split(".")[1])
-            lines.append(f"{s.persons[i].label}: Austritt nach Variante „{v}“ (z. B. Freistellung bis Fristende vermeidet "
-                         f"das Ruhen nach § 158 und sichert KV über Beschäftigung).")
-            rules.update({"R_Freistellung", "R_Ruhen158"})
         elif path.startswith("basisrente.") and v:
             lines.append(f"Basisrente {fmt_eur(v)} in {path.rsplit('.', 1)[1]}: bis zur Nullgrenze dieses Jahres wirkt der "
                          f"Abzug fast vollständig. Gebunden bis Rentenbeginn, später voll steuerpflichtig.")
