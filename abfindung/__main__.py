@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import signal
 import sys
 
 # Qt's Wayland text input writes "Trying to disable … but 0x0 is focused" on every focus change (a harmless Qt
@@ -28,6 +29,37 @@ def install_german_translation(app) -> bool:
         app.installTranslator(translator)
         return True
     return False
+
+
+def handle_ctrl_c(app, window) -> None:
+    """Ctrl+C in the terminal closes the window like the close button (asks about unsaved changes); a second
+    Ctrl+C quits at once without saving.
+
+    Python only sees the signal while Python code runs; in Qt's event loop it would surface somewhere as a
+    KeyboardInterrupt traceback and be lost. The handler only schedules the action, a timer lets Python run."""
+    from PySide6.QtCore import QTimer
+
+    state = {"pressed": False}
+
+    def close() -> None:
+        window.close()
+        if window.isVisible():  # closing was cancelled in the save question
+            state["pressed"] = False
+
+    def on_sigint(_sig, _frame) -> None:
+        if state["pressed"]:
+            print("\nAbfindungsoptimierer: beendet ohne zu speichern.", file=sys.stderr)
+            app.exit(130)
+            return
+        state["pressed"] = True
+        print("\nAbfindungsoptimierer: wird geschlossen (erneut Strg+C: sofort beenden, ohne zu speichern).",
+              file=sys.stderr)
+        QTimer.singleShot(0, close)
+
+    signal.signal(signal.SIGINT, on_sigint)
+    tick = QTimer(app)
+    tick.timeout.connect(lambda: None)  # gives Python the chance to run the handler
+    tick.start(200)
 
 
 def main(argv=None) -> int:
@@ -57,6 +89,7 @@ def main(argv=None) -> int:
     dark = True if a.dark else False if a.light else None
     w = MainWindow(a.personal, a.legal, dark)
     w.show()
+    handle_ctrl_c(app, w)
     return app.exec()
 
 

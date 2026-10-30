@@ -565,3 +565,40 @@ def test_no_unsaved_marker_after_loading_with_automatic_horizon(app):
     assert w.dirty and w.windowTitle().endswith("*")
     w.dirty = False
     w.close()
+
+
+def test_ctrl_c_closes_the_window_and_a_second_quits(app, monkeypatch):
+    import signal
+
+    from PySide6.QtWidgets import QMessageBox
+
+    from abfindung.__main__ import handle_ctrl_c
+    from abfindung.gui.main_window import MainWindow
+
+    old = signal.getsignal(signal.SIGINT)
+    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w.show()
+    asked = []
+    monkeypatch.setattr(QMessageBox, "question",  # the save question, answered with "Abbrechen"
+                        staticmethod(lambda *a, **k: asked.append(1) or QMessageBox.StandardButton.Cancel))
+    exits = []
+    monkeypatch.setattr(app, "exit", lambda code=0: exits.append(code))
+    try:
+        w.dirty = True
+        handle_ctrl_c(app, w)
+        handler = signal.getsignal(signal.SIGINT)
+        handler(signal.SIGINT, None)
+        app.processEvents()
+        assert asked and w.isVisible() and not exits  # cancelled: the window stays, the next Ctrl+C asks again
+        handler(signal.SIGINT, None)
+        handler(signal.SIGINT, None)  # pressed again before the window is closed: quit at once
+        assert exits == [130]
+        app.processEvents()
+        w.dirty = False  # nothing unsaved: Ctrl+C closes the window
+        handler(signal.SIGINT, None)
+        app.processEvents()
+        assert not w.isVisible() and exits == [130]
+    finally:
+        signal.signal(signal.SIGINT, old)
+        w.dirty = False
+        w.close()
