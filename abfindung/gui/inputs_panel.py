@@ -245,7 +245,10 @@ class InputsPanel(QWidget):
         return out
 
     def _value_changed(self, path: str, v0, v1, origin: str) -> bool:
-        """A value the program derives (origin "abgeleitet") follows the other inputs and is not a change of its own."""
+        """A value the program derives (origin "abgeleitet", or the years of an automatic horizon) follows the other
+        inputs and is not a change of its own."""
+        if path in ("options.horizon_start", "options.horizon_end") and self.s.options.horizon_auto:
+            return False
         return not self._same(v0, v1) and not (origin == "abgeleitet" and is_program_derived(path))
 
     def has_changes(self) -> bool:

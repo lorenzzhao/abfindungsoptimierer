@@ -544,3 +544,24 @@ def test_wayland_textinput_messages_silenced(monkeypatch):
     assert os.environ["QT_LOGGING_RULES"] == QUIET_LOGGING + ";qt.qpa.wayland.textinput=true"  # the user's rule wins
     quiet_qt_logging()
     assert os.environ["QT_LOGGING_RULES"].count(QUIET_LOGGING) == 1
+
+
+def test_no_unsaved_marker_after_loading_with_automatic_horizon(app):
+    """The automatic horizon may move the stored years on the first calculation: not a change of the user."""
+    from pathlib import Path
+
+    from abfindung.gui.main_window import MainWindow
+
+    fixture = Path(__file__).parent / "fixtures" / "fiktiv_paar.xml"
+    w = MainWindow(str(fixture), str(LEGAL), dark=False)
+    for _ in range(3):
+        app.processEvents()
+        w.recalc()
+    assert w.s.options.horizon_auto
+    assert not w.inputs.changes() and not w.dirty and not w.windowTitle().endswith("*")
+    # switching the automatic horizon off is a change
+    w.s.set("options.horizon_auto", False)
+    w._changed()
+    assert w.dirty and w.windowTitle().endswith("*")
+    w.dirty = False
+    w.close()
