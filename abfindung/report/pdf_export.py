@@ -226,7 +226,7 @@ def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top
     # -- 5 results with steps --------------------------------------------------------
     story.append(PageBreak())
     story.append(_h("5 Ergebnisse mit Rechenweg", st["h1"], 0))
-    story.append(_p("Jeder Wert mit Rechenweg (Zahlen eingesetzt), Eingangsdaten mit Herkunft, verwendeten Parametern "
+    story.append(_p("Jeder Wert mit seiner Bedeutung, dem Rechenweg (Zahlen eingesetzt), Eingangsdaten mit Herkunft, verwendeten Parametern "
                     "(Jahr, Prüfstatus) und Regel-IDs. Die Regeln und Quellen stehen in Abschnitt 6.", st["small"]))
     groups: dict[str, list] = {}
     for t in res.rs.values():
@@ -239,6 +239,8 @@ def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top
             block = [Paragraph(f"<b>{escape(e.title)}</b> = <b>{escape(e.value)}</b>"
                                + (f" <font color='#9a4b00' size=7>[{escape(', '.join(e.flags))}]</font>" if e.flags else "")
                                + f" <font size=6 color='#777777'>({escape(e.id)})</font>", st["body"])]
+            if e.meaning:
+                block.append(Paragraph(f"<i>Bedeutung:</i> {escape(e.meaning)}", st["small"]))
             for k, step in enumerate(e.steps, 1):
                 block.append(Paragraph(f"{k}. {escape(step)}", st["small"]))
             if e.note:

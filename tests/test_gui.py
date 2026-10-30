@@ -467,3 +467,24 @@ def test_first_start_uses_the_empty_template(app, tmp_path, monkeypatch):
     assert w._write(str(target), backup=False) and target.exists()
     w.dirty = False
     w.close()
+
+
+def test_recent_personal_files_and_no_toolbar(app, tmp_path):
+    from PySide6.QtWidgets import QToolBar
+
+    from abfindung.gui.main_window import MainWindow
+
+    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w.qs.remove("recent_personal")
+    copy = tmp_path / "kopie.xml"
+    assert w._write(str(copy), backup=False)  # saving remembers the file
+    w._load(str(PERSONAL), None)
+    assert w.recent_files()[:2] == [str(PERSONAL.resolve()), str(copy.resolve())]
+    w._fill_recent_menu()
+    texts = [a.text() for a in w.recent_menu.actions()]
+    assert texts[0] == "&1 beispiel_persoenlich.xml" and "Liste leeren" in texts
+    w.open_recent(str(copy))
+    assert w.personal_path == str(copy) and w.recent_files()[0] == str(copy.resolve())
+    assert not w.findChildren(QToolBar)
+    w.dirty = False
+    w.close()

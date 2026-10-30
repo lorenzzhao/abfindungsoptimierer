@@ -10,6 +10,7 @@ from html import escape
 from .dates import fmt_eur, fmt_num
 from .engine.trace import Traced, fmt_value
 from .io.personal_model import HERKUNFT_LABEL
+from .meaning import meaning
 
 GROUP_ORDER = ["Übersicht", "Saldo", "Steuer", "Abfindung", "ALG", "KV", "Liquidität", "Rente", "Kalibrierung",
                "Hinweise und Warnungen"]
@@ -65,6 +66,7 @@ class Explanation:
     rules: list[RuleInfo]
     children: list[tuple[str, str, str]]              # id, label, value
     note: str = ""
+    meaning: str = ""                                 # what the value means (abfindung.meaning)
 
 
 def _fmt_param_value(v, einheit: str) -> str:
@@ -115,7 +117,8 @@ def build(t: Traced, legal, rs) -> Explanation:
     children = [(c, rs[c].label, rs[c].fmt()) for c in t.children if c in rs]
     inputs = [(i.label, _fmt_input(i.value), HERKUNFT_LABEL.get(i.herkunft, i.herkunft), i.path) for i in t.inputs]
     flags = [FLAG_LABEL.get(f, f) for f in sorted(t.flags)]
-    return Explanation(t.id, t.label, t.fmt(), t.group, flags, list(t.steps), inputs, params, rules, children, t.note)
+    return Explanation(t.id, t.label, t.fmt(), t.group, flags, list(t.steps), inputs, params, rules, children, t.note,
+                       meaning(t.id))
 
 
 def to_html(e: Explanation, colors: dict) -> str:
@@ -124,6 +127,8 @@ def to_html(e: Explanation, colors: dict) -> str:
     h = []
     h.append(f"<h2 style='margin-bottom:2px'>{escape(e.title)}</h2>")
     h.append(f"<div style='font-size:18pt; font-weight:bold; color:{c['accent']}'>{escape(e.value)}</div>")
+    if e.meaning:
+        h.append(f"<h3>Was bedeutet dieser Wert?</h3><p>{escape(e.meaning)}</p>")
     if e.flags:
         h.append("<p>" + " ".join(
             f"<span style='background:{c['warn_bg']}; color:{c['warn_fg']}'>&nbsp;{escape(f)}&nbsp;</span>" for f in e.flags) + "</p>")

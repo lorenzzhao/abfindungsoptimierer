@@ -11,7 +11,8 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, Qt, QTimer
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QLabel, QMainWindow, QMessageBox, QPushButton,
-                             QSplitter, QTableWidget, QTableWidgetItem, QToolBar, QVBoxLayout, QWidget)
+                             QMenu, QSplitter, QTableWidget, QTableWidgetItem, QVBoxLayout,
+                               QWidget)
 
 from .. import DISCLAIMER
 from ..engine.scenario import run
@@ -125,9 +126,16 @@ class MainWindow(QMainWindow):
         self.a_dark.setChecked(self.theme.dark)
         self.a_quit = act("Beenden", self.close, QKeySequence.StandardKey.Quit)
         m = self.menuBar().addMenu("&Datei")
-        for a in (self.a_new, self.a_open_p, self.a_open_l, None, self.a_save, self.a_save_as, self.a_changes, None, self.a_pdf, None,
-                  self.a_quit):
-            m.addSeparator() if a is None else m.addAction(a)
+        self.recent_menu = QMenu("Zuletzt verwendete persönliche Daten", self)
+        self.recent_menu.aboutToShow.connect(self._fill_recent_menu)
+        for a in (self.a_new, self.a_open_p, self.recent_menu, self.a_open_l, None, self.a_save, self.a_save_as,
+                  self.a_changes, None, self.a_pdf, None, self.a_quit):
+            if a is None:
+                m.addSeparator()
+            elif isinstance(a, QMenu):
+                m.addMenu(a)
+            else:
+                m.addAction(a)
         m = self.menuBar().addMenu("&Bearbeiten")
         m.addAction(self.a_undo)
         m.addAction(self.a_redo)
@@ -139,13 +147,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.a_dark)
         m = self.menuBar().addMenu("&Hilfe")
         m.addAction(act("Über …", self.about))
-        tb = QToolBar("Werkzeuge")
-        tb.setMovable(False)
-        for a in (self.a_new, self.a_open_p, self.a_open_l, self.a_save, self.a_save_as, None, self.a_undo, self.a_redo, None,
-                  self.a_pdf, self.a_opt, self.a_dark):
-            tb.addSeparator() if a is None else tb.addAction(a)
         self._update_undo_actions()
-        self.addToolBar(tb)
 
     # -- loading -----------------------------------------------------------------------
     def _load_initial(self, personal_path, legal_path) -> None:
@@ -199,6 +201,8 @@ class MainWindow(QMainWindow):
         if personal_path:
             self.personal_path = personal_path
             self.qs.setValue("personal_path", personal_path)
+            if Path(personal_path).resolve() != TEMPLATE.resolve():
+                self._remember_recent(personal_path)
         self.migrated = bool(pd.migration_notes)  # converted values should be saved
         self.dirty = self.migrated
         self.opt_top = None
@@ -212,6 +216,38 @@ class MainWindow(QMainWindow):
         if pd.migration_notes:
             QMessageBox.information(self, "Ältere Datei übernommen", "\n".join(pd.migration_notes))
         return True
+
+    # -- recently used personal data -----------------------------------------------------
+    RECENT_MAX = 8
+
+    def recent_files(self) -> list[str]:
+        value = self.qs.value("recent_personal") or []
+        return [value] if isinstance(value, str) else [str(v) for v in value]
+
+    def _remember_recent(self, path: str) -> None:
+        path = str(Path(path).resolve())
+        files = [path] + [f for f in self.recent_files() if f != path]
+        self.qs.setValue("recent_personal", files[:self.RECENT_MAX])
+
+    def _fill_recent_menu(self) -> None:
+        self.recent_menu.clear()
+        files = self.recent_files()
+        if not files:
+            self.recent_menu.addAction("(noch keine)").setEnabled(False)
+            return
+        for i, f in enumerate(files, 1):
+            exists = Path(f).exists()
+            a = self.recent_menu.addAction(f"&{i} {Path(f).name}" + ("" if exists else " (nicht gefunden)"))
+            a.setToolTip(f)
+            a.setStatusTip(f)
+            a.setEnabled(exists)
+            a.triggered.connect(lambda _=False, f=f: self.open_recent(f))
+        self.recent_menu.addSeparator()
+        self.recent_menu.addAction("Liste leeren", lambda: self.qs.remove("recent_personal"))
+
+    def open_recent(self, path: str) -> None:
+        if self._maybe_save():
+            self._load(path, None)
 
     def open_personal(self) -> None:
         if not self._maybe_save():
@@ -366,6 +402,7 @@ class MainWindow(QMainWindow):
         self.pd = data
         self.personal_path = path
         self.qs.setValue("personal_path", path)
+        self._remember_recent(path)
         self.migrated = False
         self.inputs.mark_saved()
         self.dirty = False
