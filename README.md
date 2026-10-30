@@ -223,6 +223,11 @@ Dateien werden beim Laden auf die Herkunft „abgeleitet“ umgestellt.
 - **Keine Krankenversicherung** je Person (Haken „Krankenversicherung berücksichtigen“ im Abschnitt
   „Krankenversicherung“): keine eigenen KV/PV-Beiträge, keine Arbeitnehmeranteile, keine KV/PV-Vorsorgeaufwendungen,
   kein KV-Mehrbeitrag durch die Abfindung. Der Bereich „KV“ (Tab) schaltet dasselbe für beide Personen.
+- **KI-Prompt zur Prüfung der rechtlichen Vorgaben** (*Analyse → KI-Prompt …*): erzeugt einen Text für einen KI-Chat
+  mit der geladenen Datei der rechtlichen Vorgaben (vollständig), dem XML-Schema, den Jahren der Planung, den von der
+  Rechnung verwendeten und den ungeprüften Parametern sowie Regeln für eine schemakonforme Antwort (Änderungstabelle,
+  vollständige geänderte XML-Datei). Enthält keine persönlichen Daten. Kopieren oder als Datei speichern; die
+  Antwort als neue Datei speichern und über *Datei → Rechtliche Vorgaben öffnen* laden (XSD-Prüfung beim Laden).
 - **Lohnsteuer-Freibetrag (ELStAM)** im Tab „Optionen“: wirkt nur auf den monatlichen Lohnsteuerabzug (Liquidität),
   nicht auf die Jahressteuer und den Saldo.
 - **Knick-Diagramm** (Tab „Steuer & Knick“, unten): Mehrsteuer je zusätzlichem Euro über dem übrigen zvE mit drei

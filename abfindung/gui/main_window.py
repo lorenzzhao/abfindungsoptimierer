@@ -118,6 +118,7 @@ class MainWindow(QMainWindow):
         self.a_pdf = act("PDF exportieren …", self.export_pdf, "Ctrl+P")
         self.a_changes = act("Änderungen seit dem Speichern …", self.show_changes)
         self.a_opt = act("Optimieren …", self.optimize, "Ctrl+R")
+        self.a_legal_prompt = act("KI-Prompt zur Prüfung der rechtlichen Vorgaben …", self.legal_prompt)
         self.a_undo = act("Rückgängig", self.undo, QKeySequence.StandardKey.Undo)
         self.a_redo = act("Wiederholen", self.redo, QKeySequence.StandardKey.Redo)
         self.a_undo.setToolTip("Letzte Änderung rückgängig machen (Strg+Z)")
@@ -143,6 +144,8 @@ class MainWindow(QMainWindow):
         m.addAction(self.a_changes)
         m = self.menuBar().addMenu("&Analyse")
         m.addAction(self.a_opt)
+        m.addSeparator()
+        m.addAction(self.a_legal_prompt)
         m = self.menuBar().addMenu("&Ansicht")
         m.addAction(self.a_dark)
         m = self.menuBar().addMenu("&Hilfe")
@@ -373,6 +376,17 @@ class MainWindow(QMainWindow):
         self.results.set_focus("kalibrierung")
 
     # -- optimisation ------------------------------------------------------------------
+    def legal_prompt(self) -> None:
+        """Prompt for checking the loaded legal rules in an AI chat (no personal data)."""
+        from ..legal_prompt import build_prompt
+        from .legal_prompt_dialog import LegalPromptDialog
+
+        if self.legal is None:
+            return
+        used = sorted({k.split("@")[0] for k in self.res.tracer.used_params}) if self.res and self.res.tracer else []
+        years = self.res.years if self.res else []
+        LegalPromptDialog(build_prompt(self.legal, years, used), self.legal.path, self).exec()
+
     def optimize(self) -> None:
         if not self.s:
             return

@@ -488,3 +488,14 @@ def test_recent_personal_files_and_no_toolbar(app, tmp_path):
     assert not w.findChildren(QToolBar)
     w.dirty = False
     w.close()
+
+
+def test_german_texts_for_qt_buttons(app):
+    from PySide6.QtWidgets import QDialogButtonBox
+
+    from abfindung.__main__ import install_german_translation
+
+    assert install_german_translation(app)
+    box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close | QDialogButtonBox.StandardButton.Cancel)
+    texts = {b.text().replace("&", "") for b in box.buttons()}
+    assert {"Schließen", "Abbrechen"} <= texts

@@ -71,7 +71,7 @@ import re
 
 PRUNE = re.compile(
     r"""PySide6/(Qt/)?(              # Linux: PySide6/Qt/...  Windows: PySide6/...
-        translations/
+        translations/(?!qtbase_de\.qm)   # only the German texts of Qt's own dialogs are kept
       | plugins/(
             egldeviceintegrations/
           | platforminputcontexts/\w*qtvirtualkeyboard

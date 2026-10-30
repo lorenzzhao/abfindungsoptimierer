@@ -8,6 +8,17 @@ import argparse
 import sys
 
 
+def install_german_translation(app) -> bool:
+    """German texts for Qt's own buttons and dialogs (Speichern, Abbrechen, Schließen, file dialogs)."""
+    from PySide6.QtCore import QLibraryInfo, QTranslator
+
+    translator = QTranslator(app)
+    if translator.load("qtbase_de", QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)):
+        app.installTranslator(translator)
+        return True
+    return False
+
+
 def main(argv=None) -> int:
     from . import legal
 
@@ -29,6 +40,7 @@ def main(argv=None) -> int:
 
     QLocale.setDefault(QLocale(QLocale.Language.German, QLocale.Country.Germany))
     app = QApplication(sys.argv[:1])
+    install_german_translation(app)
     app.setApplicationName("Abfindungsoptimierer")
     dark = True if a.dark else False if a.light else None
     w = MainWindow(a.personal, a.legal, dark)
