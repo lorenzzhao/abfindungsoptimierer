@@ -271,19 +271,11 @@ def run(s, legal, explain: bool = True, extras: bool = True) -> Result:
 
 
 def _without_alg(ps, s, tracer, rs) -> None:
-    """No ALG for the person: the ALG results are replaced by one entry (the end of the notice period stays, it is
-    used for the KV treatment of the severance)."""
+    """No ALG for the person (not claimed or no exit): the result list shows no ALG entries for the person. The
+    timeline is still computed (employment, KV); a hint in the warnings says why there is no ALG."""
     grp = f"ALG – {ps.label}"
-    keep = {f"tl_{ps.id}_fristende", f"alg_{ps.id}_rate"} if ps.austritt else {f"alg_{ps.id}_rate"}
-    for k in [k for k, t in rs.items() if t.group == grp and k not in keep]:
+    for k in [k for k, t in rs.items() if t.group == grp]:
         del rs[k]
-    tb = tracer.new(f"alg_{ps.id}_total", f"ALG im Horizont {ps.label}", "EUR", grp)
-    tb.step("Kein Austritt – die Beschäftigung läuft weiter, es gibt kein ALG." if not ps.austritt else
-            "Kein Arbeitslosengeld beantragt: keine Meldung bei der Agentur für Arbeit, kein ALG, keine Sperrzeit, "
-            "kein Progressionsvorbehalt.")
-    tb.s(f"persons.{s.persons.index(ps)}.{'austritt' if not ps.austritt else 'alg_aktiv'}",
-         "Scheidet aus" if not ps.austritt else "Arbeitslosengeld beantragen")
-    rs.add(tb.done(0.0))
 
 
 def _latest_payment_year(s) -> int:
@@ -299,7 +291,7 @@ def _latest_payment_year(s) -> int:
 def _horizon(s, tracer, rs, ctx) -> None:
     """Ä1: automatic horizon up to the latest possible payment year or the end of ALG, whichever is later."""
     o = s.options
-    tb = tracer.new("horizont", "Planungshorizont", "Text", "Übersicht")
+    tb = tracer.new("horizont", "Planungshorizont" + (" (automatisch)" if o.horizon_auto else ""), "Text", "Übersicht")
     tb.rule("R_Faelligkeit")
     tb.s("options.horizon_auto", "Horizont automatisch")
     if o.horizon_auto:

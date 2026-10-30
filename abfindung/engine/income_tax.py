@@ -412,13 +412,15 @@ def compute_unit_year(key: str, members: list, year: int, s, tracer, rs, ctx, jo
     u.kindergeld = tracer.p("kind_kindergeld_monat", year) * 12 * n_k * (1 if joint else 0.5)
     u.pv = sum(ctx.timelines[ps.id].alg_in_year(year) for _, ps in members)
 
-    tb = tracer.new(f"pv_{suf}", f"Progressionsvorbehalt (ALG) {year}", "EUR", grp)
-    tb.rule("R_ALG_Steuer", "R_Progressionsvorbehalt").child(*[f"alg_{ps.id}_{year}" for _, ps in members])
-    tb.step("Summe ALG des Jahres (steuerfrei, wirkt nur auf den Steuersatz) = " + fmt_eur(u.pv))
-    no_claim = [ps.label for _, ps in members if not (ps.austritt and ps.alg_aktiv)]
-    if no_claim:
-        tb.step("Kein ALG für: " + ", ".join(no_claim) + " (nicht beantragt bzw. kein Austritt).")
-    rs.add(tb.done(u.pv))
+    claims = [ps for _, ps in members if ps.austritt and ps.alg_aktiv]
+    if claims:  # without any ALG claim in the unit there is nothing to show
+        tb = tracer.new(f"pv_{suf}", f"Progressionsvorbehalt (ALG) {year}", "EUR", grp)
+        tb.rule("R_ALG_Steuer", "R_Progressionsvorbehalt").child(*[f"alg_{ps.id}_{year}" for ps in claims])
+        tb.step("Summe ALG des Jahres (steuerfrei, wirkt nur auf den Steuersatz) = " + fmt_eur(u.pv))
+        if len(claims) < len(members):
+            tb.step("Kein ALG für: " + ", ".join(ps.label for _, ps in members if ps not in claims)
+                    + " (nicht beantragt bzw. kein Austritt).")
+        rs.add(tb.done(u.pv))
 
     full = s.options.guenstiger_mode == "voll"
     r1 = est_fuenftel(u.v_ohne_kfb, u.ae, u.pv, u.tariff, joint, u.divisor)

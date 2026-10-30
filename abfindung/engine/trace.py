@@ -35,6 +35,7 @@ class InputRef:
     value: object
     herkunft: str
     path: str = ""
+    setting: str = ""  # settings path of the input field (empty for values not set in the program)
 
 
 @dataclass
@@ -150,15 +151,15 @@ class TB:
                 self.t.children.append(i)
         return self
 
-    def inp(self, label: str, value, herkunft: str = "berechnet", path: str = "") -> "TB":
-        self.t.inputs.append(InputRef(label, value, herkunft, path))
+    def inp(self, label: str, value, herkunft: str = "berechnet", path: str = "", setting: str = "") -> "TB":
+        self.t.inputs.append(InputRef(label, value, herkunft, path, setting))
         return self
 
     def s(self, path: str, label: str):
         """Reference a settings value by its path and return it."""
         st = self.tr.settings
         value = st.get(path)
-        self.inp(label, value, st.origin_of(path), st.xml_path_of(path))
+        self.inp(label, value, st.origin_of(path), st.xml_path_of(path), path)
         d = self.tr.derived.get(path)
         if d and d[1] != self.t.id:
             self.child(d[1])

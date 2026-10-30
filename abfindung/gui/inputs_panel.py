@@ -180,6 +180,26 @@ class InputsPanel(QWidget):
         self._update_changes()
         self.settingsChanged.emit()
 
+    def locations(self) -> list[dict]:
+        """Every input field with where it is in the program (tab › group › label), its settings and XML path,
+        its value and origin and whether it takes part in the calculation (for the review prompt)."""
+        out = []
+        for key, (check, _content, _box) in self.sections.items():
+            tab = next((t for t, ps in zip(self.tab_titles, self.tab_paths) if f"sections.{key}" in ps), "")
+            out.append(dict(path=f"sections.{key}", tab=tab, groups=[], label=check.text(), value=check.isChecked(),
+                            origin="angabe", xml="", active=True))
+        for c in self.controls:
+            tab = next((t for t, ps in zip(self.tab_titles, self.tab_paths) if c.path in ps), "")
+            groups, w = [], c.parentWidget()
+            while w is not None and w is not self:
+                if isinstance(w, QGroupBox) and w.title():
+                    groups.insert(0, w.title())
+                w = w.parentWidget()
+            value, origin = self._current(c.path)
+            out.append(dict(path=c.path, tab=tab, groups=groups, label=c.lbl.text(), value=value, origin=origin,
+                            xml=self.s.xml_path_of(c.path), active=c.isEnabled()))
+        return out
+
     # -- changes since the last load / save ----------------------------------------------------
     def _tracked_paths(self) -> list[str]:
         return [c.path for c in self.controls] + [f"sections.{k}" for k in self.sections] + ["gestaltungen"]

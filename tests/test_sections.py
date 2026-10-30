@@ -167,9 +167,7 @@ def test_no_alg_removes_alg_everywhere(s, legal):
     r = run(s, legal)
     assert all(u.pv == 0 for u in r.units.values())
     assert list(knick(r).lines) == ["ohne Abfindung", "mit Abfindung"] and curves(r).alg == 0
-    alg = {k: t for k, t in r.rs.items() if t.group.startswith("ALG")}
-    assert all(t.value in (0, 0.0) for k, t in alg.items() if not k.endswith("_fristende"))
-    assert not any(k.endswith(("_dauer", "_sperrzeit", "_ruhen158")) for k in alg)
+    assert not [k for k, t in r.rs.items() if t.group.startswith("ALG") or k.startswith(("alg_", "pv_"))]
     assert not any("ALG ruht" in w for w, _ in r.warnings)
     assert "kein ALG" in " ".join(next(t for k, t in r.rs.items() if k.startswith("nullgrenze_")).steps)
 

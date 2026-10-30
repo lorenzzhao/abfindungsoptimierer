@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Lorenz Zhao
-"""Dialog showing the prompt for checking the legal rules in an AI chat (copy or save)."""
+"""Dialogs showing a prompt for an AI chat (copy or save): checking the legal rules, checking the whole calculation."""
 
 from __future__ import annotations
 
@@ -11,19 +11,15 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QLabel, Q
                                QVBoxLayout, QWidget)
 
 
-class LegalPromptDialog(QDialog):
-    def __init__(self, prompt: str, legal_path: str, parent: QWidget | None = None) -> None:
+class PromptDialog(QDialog):
+    def __init__(self, prompt: str, title: str, info_html: str, default_path: str,
+                 parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle("KI-Prompt: rechtliche Vorgaben prüfen")
+        self.setWindowTitle(title)
         self.resize(900, 700)
         self.prompt = prompt
-        self.legal_path = legal_path
-        info = QLabel(
-            "Diesen Text in einen KI-Chat kopieren. Er enthält die geladenen rechtlichen Vorgaben vollständig, das "
-            "XML-Schema und die Jahre der Planung – <b>keine persönlichen Daten</b>. Die Antwort enthält eine geänderte "
-            "XML-Datei: als eigene Datei speichern (die bisherige Datei nicht überschreiben), Änderungen prüfen und "
-            "über <i>Datei → Rechtliche Vorgaben öffnen</i> laden – das Programm prüft sie dabei gegen das Schema. "
-            "KI-Antworten können falsch sein; Werte mit amtlichen Quellen vergleichen.")
+        self.default_path = default_path
+        info = QLabel(info_html)
         info.setWordWrap(True)
         self.text = QPlainTextEdit(prompt)
         self.text.setReadOnly(True)
@@ -47,8 +43,8 @@ class LegalPromptDialog(QDialog):
 
     def save(self, path: str | None = None) -> bool:
         if not path:
-            start = str(Path(self.legal_path).with_name("ki_prompt_rechtliche_vorgaben.md"))
-            path, _ = QFileDialog.getSaveFileName(self, "Prompt speichern", start, "Markdown/Text (*.md *.txt)")
+            path, _ = QFileDialog.getSaveFileName(self, "Prompt speichern", self.default_path,
+                                                  "Markdown/Text (*.md *.txt)")
         if not path:
             return False
         try:
@@ -57,3 +53,28 @@ class LegalPromptDialog(QDialog):
             QMessageBox.critical(self, "Speichern fehlgeschlagen", str(e))
             return False
         return True
+
+
+class LegalPromptDialog(PromptDialog):
+    def __init__(self, prompt: str, legal_path: str, parent: QWidget | None = None) -> None:
+        super().__init__(
+            prompt, "KI-Prompt: rechtliche Vorgaben prüfen",
+            "Diesen Text in einen KI-Chat kopieren. Er enthält die geladenen rechtlichen Vorgaben vollständig, das "
+            "XML-Schema und die Jahre der Planung – <b>keine persönlichen Daten</b>. Die Antwort enthält eine geänderte "
+            "XML-Datei: als eigene Datei speichern (die bisherige Datei nicht überschreiben), Änderungen prüfen und "
+            "über <i>Datei → Rechtliche Vorgaben öffnen</i> laden – das Programm prüft sie dabei gegen das Schema. "
+            "KI-Antworten können falsch sein; Werte mit amtlichen Quellen vergleichen.",
+            str(Path(legal_path).with_name("ki_prompt_rechtliche_vorgaben.md")), parent)
+
+
+class ReviewPromptDialog(PromptDialog):
+    def __init__(self, prompt: str, folder: str, parent: QWidget | None = None) -> None:
+        super().__init__(
+            prompt, "KI-Prompt: gesamte Berechnung prüfen",
+            "Diesen Text in einen KI-Chat kopieren. Er enthält alle Eingaben mit ihrem Ort im Programm "
+            "(<i>Reiter › Gruppe › Feld</i>), alle berechneten Werte mit Rechenweg und die rechtlichen Vorgaben. Die KI "
+            "soll Fehler und Unstimmigkeiten mit diesem Ort benennen, damit man sie im Programm findet."
+            "<br/><b>Achtung: Der Text enthält Ihre persönlichen und finanziellen Daten</b> (Gehälter, Abfindung, "
+            "Daten, Familienstand …). Nur an einen Dienst geben, dem Sie diese Daten anvertrauen wollen, und vorher "
+            "durchsehen. KI-Antworten können falsch sein; Befunde selbst nachvollziehen.",
+            str(Path(folder) / "ki_prompt_gesamtpruefung.md"), parent)

@@ -499,3 +499,37 @@ def test_german_texts_for_qt_buttons(app):
     box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close | QDialogButtonBox.StandardButton.Cancel)
     texts = {b.text().replace("&", "") for b in box.buttons()}
     assert {"Schließen", "Abbrechen"} <= texts
+
+
+def test_result_area_switches(app):
+    from abfindung.gui.main_window import MainWindow
+
+    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    app.processEvents()
+    r = w.results
+    r.toggles["liquiditaet"].setChecked(False)
+    r.toggles["steuer_details"].setChecked(False)
+    assert r.items["liq_min"].isHidden() and r.items["liq_min"].parent().isHidden()
+    assert r.items["est_2027"].isHidden() and not r.items["steuer_2027"].isHidden()
+    assert "Liquiditätstiefpunkt" not in r.header.text()
+    assert w.res.saldo == pytest.approx(w.res.rs["saldo"].value)  # display only
+    r.set_focus("liq_min")  # e.g. a link in the explanation: the area is shown again
+    assert r.toggles["liquiditaet"].isChecked() and not r.items["liq_min"].isHidden() and r.focus_id == "liq_min"
+    r.toggles["liquiditaet"].setChecked(False)  # hiding the focused value moves the focus back to the saldo
+    assert r.focus_id == "saldo"
+    assert w.qs.value("results/liquiditaet") in (False, "false")
+    w.dirty = False
+    w.close()
+
+
+def test_no_alg_entries_without_claim(app):
+    from abfindung.gui.main_window import MainWindow
+
+    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    for ps in w.s.persons:
+        ps.alg_aktiv = False
+    w.recalc()
+    assert not [k for k in w.results.items if k.startswith(("alg_", "tl_", "pv_"))]
+    assert "ALG" not in w.results.header.text()
+    w.dirty = False
+    w.close()

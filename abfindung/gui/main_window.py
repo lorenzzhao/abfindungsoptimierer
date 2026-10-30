@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
         self.theme = themes.apply(app, dark)
 
         self.inputs = InputsPanel()
-        self.results = ResultsPanel()
+        self.results = ResultsPanel(settings=self.qs)
         self.charts = ChartPanel()
         self.explain = ExplainPanel()
         mid = QSplitter(Qt.Orientation.Vertical)
@@ -118,6 +118,7 @@ class MainWindow(QMainWindow):
         self.a_changes = act("Änderungen seit dem Speichern …", self.show_changes)
         self.a_opt = act("Optimieren …", self.optimize, "Ctrl+R")
         self.a_legal_prompt = act("KI-Prompt zur Prüfung der rechtlichen Vorgaben …", self.legal_prompt)
+        self.a_review_prompt = act("KI-Prompt zur Prüfung der gesamten Berechnung …", self.review_prompt)
         self.a_undo = act("Rückgängig", self.undo, QKeySequence.StandardKey.Undo)
         self.a_redo = act("Wiederholen", self.redo, QKeySequence.StandardKey.Redo)
         self.a_undo.setToolTip("Letzte Änderung rückgängig machen (Strg+Z)")
@@ -145,6 +146,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.a_opt)
         m.addSeparator()
         m.addAction(self.a_legal_prompt)
+        m.addAction(self.a_review_prompt)
         m = self.menuBar().addMenu("&Ansicht")
         m.addAction(self.a_dark)
         m = self.menuBar().addMenu("&Hilfe")
@@ -375,6 +377,17 @@ class MainWindow(QMainWindow):
         used = sorted({k.split("@")[0] for k in self.res.tracer.used_params}) if self.res and self.res.tracer else []
         years = self.res.years if self.res else []
         LegalPromptDialog(build_prompt(self.legal, years, used), self.legal.path, self).exec()
+
+    def review_prompt(self) -> None:
+        """Prompt for an independent check of inputs, results and legal rules in an AI chat (contains the
+        personal data; the dialog says so)."""
+        from ..review_prompt import build_prompt
+        from .legal_prompt_dialog import ReviewPromptDialog
+
+        if self.res is None or self.legal is None:
+            return
+        folder = str(Path(self.personal_path).parent) if self.personal_path else str(Path.home())
+        ReviewPromptDialog(build_prompt(self.res, self.legal, self.inputs.locations()), folder, self).exec()
 
     def optimize(self) -> None:
         if not self.s:

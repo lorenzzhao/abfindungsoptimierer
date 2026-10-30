@@ -36,7 +36,9 @@ Die Oberfläche hat drei Bereiche:
    Berechnung; sonst Einzelveranlagung, die Daten des Ehepartners bleiben in der Datei. Kinder (Geburtsjahr,
    Kindergeld) werden im Tab „Haushalt“ gepflegt; Geburtsdatum und Steuerklasse je Person im Personen-Tab.
 2. **Ergebnisse** (Mitte): alle berechneten Werte, gruppiert; ein Klick fokussiert genau einen Wert (▶, farbig
-   hinterlegt). Darunter drei Diagramme: Steuer & Knick (Gesamtsteuer über das zvE mit Nullgrenze und
+   hinterlegt). Schalter über der Liste blenden Bereiche aus, die nicht direkt in den Netto-Saldo eingehen
+   (Steuer-Zwischenwerte, Liquidität, abgeleitete Termine, Hinweise) – nur Anzeige, gerechnet und optimiert wird
+   immer mit allem; ein Verweis auf einen ausgeblendeten Wert blendet seinen Bereich wieder ein. Darunter drei Diagramme: Steuer & Knick (Gesamtsteuer über das zvE mit Nullgrenze und
    Grenzwirkung eines Abzugs), Zeitleiste (Gantt), Liquidität. Verschiedene Planungen vergleicht man
    durch Drehen an den Stellschrauben oder mit dem Optimierer. Ein Klick in ein Diagramm fokussiert den passenden Wert.
 3. **Erklärung** (rechts): Rechenweg des fokussierten Werts mit eingesetzten Zahlen, verwendete Eingangsdaten
@@ -218,8 +220,7 @@ Dateien werden beim Laden auf die Herkunft „abgeleitet“ umgestellt.
 - **Kein Arbeitslosengeld** je Person (Haken „Arbeitslosengeld beantragen“ im Abschnitt „Arbeitslosengeld“): keine
   Meldung bei der Agentur, kein ALG, keine Sperrzeit; die KV nach dem Austritt richtet sich nach dem nachgehenden
   Anspruch, der Familienversicherung oder der freiwilligen Versicherung. Ohne ALG entfallen auch der
-  Progressionsvorbehalt, die ALG-Linie im Knick-Diagramm und die ALG-Ergebnisse (nur das Fristende bleibt, es zählt
-  für die KV-Behandlung der Abfindung).
+  Progressionsvorbehalt, die ALG-Linie im Knick-Diagramm und alle ALG-Einträge der Ergebnisliste.
 - **Keine Krankenversicherung** je Person (Haken „Krankenversicherung berücksichtigen“ im Abschnitt
   „Krankenversicherung“): keine eigenen KV/PV-Beiträge, keine Arbeitnehmeranteile, keine KV/PV-Vorsorgeaufwendungen,
   kein KV-Mehrbeitrag durch die Abfindung. Der Bereich „KV“ (Tab) schaltet dasselbe für beide Personen.
@@ -228,6 +229,11 @@ Dateien werden beim Laden auf die Herkunft „abgeleitet“ umgestellt.
   Rechnung verwendeten und den ungeprüften Parametern sowie Regeln für eine schemakonforme Antwort (Änderungstabelle,
   vollständige geänderte XML-Datei). Enthält keine persönlichen Daten. Kopieren oder als Datei speichern; die
   Antwort als neue Datei speichern und über *Datei → Rechtliche Vorgaben öffnen* laden (XSD-Prüfung beim Laden).
+- **KI-Prompt zur Prüfung der gesamten Berechnung** (*Analyse*): ein Text für eine unabhängige Prüfung durch eine KI
+  mit allen Eingaben (je Feld der Ort im Programm „Reiter › Gruppe › Feld“, Einstellungs- und XML-Pfad, Herkunft,
+  ob der Wert verwendet wird), allen Ergebnissen (Bedeutung, Rechenweg, verwendete Eingaben als E-Nummern,
+  Parameter, Regeln), den Hinweisen und der Datei der rechtlichen Vorgaben. Die KI soll Befunde als Tabelle mit dem
+  Ort im Programm liefern. **Enthält die persönlichen und finanziellen Daten** – der Dialog weist darauf hin.
 - **Lohnsteuer-Freibetrag (ELStAM)** im Tab „Optionen“: wirkt nur auf den monatlichen Lohnsteuerabzug (Liquidität),
   nicht auf die Jahressteuer und den Saldo.
 - **Knick-Diagramm** (Tab „Steuer & Knick“, unten): Mehrsteuer je zusätzlichem Euro über dem übrigen zvE mit drei
