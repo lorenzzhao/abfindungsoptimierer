@@ -1,0 +1,107 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2025-2026 Lorenz Zhao (adapted from PDF Multifile Searcher)
+#
+# NOT TESTED YET: written for Windows, but only the Linux build has been run.
+#
+# Build the Windows release files: a portable ZIP and an Inno Setup installer.
+# Requirements: Python 3.11+ on PATH (python, only runs the build scripts), Inno Setup 6
+# (iscc). The program is built with the pinned standalone Python (packaging/pins.json)
+# and the pinned packages (packaging/release-constraints.txt); collect_licenses.py adds
+# the "licenses" folder and stops the build if any DLL has an unknown licence.
+# Output: release\ (relative to the repository root)
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$Root = (Resolve-Path "$PSScriptRoot\..\..").Path
+Set-Location $Root
+$Temp = if ($env:RUNNER_TEMP) { $env:RUNNER_TEMP } else { $env:TEMP }
+$Work = Join-Path $Temp "abfo-build"
+$Out = Join-Path $Root "release"
+$AppId = "abfindungsoptimierer"
+
+# On GitHub Actions, report failures as annotations: they are visible without signing in,
+# unlike the job logs.
+function Write-Annotation {
+    param([string]$Message)
+    if ($env:GITHUB_ACTIONS) {
+        $text = $Message -replace "%", "%25" -replace "`r", "" -replace "`n", "%0A"
+        Write-Host "::error title=Windows build::$text"
+    }
+}
+
+trap {
+    Write-Annotation ($_ | Out-String)
+    exit 1
+}
+
+function Invoke-Checked {
+    param([string]$Exe, [string[]]$Arguments)
+    $Lines = @(& $Exe @Arguments 2>&1 | ForEach-Object { "$_" })
+    $Lines | ForEach-Object { Write-Host $_ }
+    if ($LASTEXITCODE -ne 0) {
+        $Tail = ($Lines | Select-Object -Last 40) -join "`n"
+        throw "$Exe failed with exit code $LASTEXITCODE`n$Tail"
+    }
+}
+
+Write-Host "== Creating the build environment"
+if (Test-Path $Work) { Remove-Item -Recurse -Force $Work }
+New-Item -ItemType Directory -Force -Path $Work, $Out | Out-Null
+Invoke-Checked python @("-m", "venv", "$Work\bootstrap")
+Invoke-Checked "$Work\bootstrap\Scripts\python.exe" @("-m", "pip", "install", "--quiet", "zstandard")
+$Fetched = @(& "$Work\bootstrap\Scripts\python.exe" "packaging\fetch_python.py" "windows" $Work 2>&1 | ForEach-Object { "$_" })
+if ($LASTEXITCODE -ne 0) { throw "Fetching the standalone Python failed`n$($Fetched -join "`n")" }
+$Standalone = $Fetched[-1].Trim()
+Invoke-Checked $Standalone @("-m", "venv", "$Work\venv")
+$Py = "$Work\venv\Scripts\python.exe"
+Invoke-Checked $Py @("-m", "pip", "install", "--quiet", "--upgrade", "pip")
+Invoke-Checked $Py @("-m", "pip", "install", "--quiet", "-c", "packaging\release-constraints.txt", $Root, "pyinstaller")
+$Version = (& $Py -c "from importlib.metadata import version; print(version('abfindungsoptimierer'))").Trim()
+Write-Host "Version: $Version"
+
+Write-Host "== Building the program folder"
+Invoke-Checked "$Work\venv\Scripts\pyinstaller.exe" @(
+    "packaging\abfindungsoptimierer.spec", "--noconfirm",
+    "--distpath", "$Work\dist", "--workpath", "$Work\pyinstaller")
+$Bundle = "$Work\dist\$AppId"
+Copy-Item "packaging\README-binary.txt" "$Bundle\README.txt"
+Invoke-Checked $Py @("packaging\collect_licenses.py", "--bundle", $Bundle, "--python", "$Work\python")
+
+Write-Host "== Smoke tests"
+$Cli = "$Bundle\abfindungsoptimierer-cli.exe"
+Invoke-Checked $Cli @("--version")
+$Json = "$Work\smoke.json"
+& $Cli "tests\fixtures\beispiel_persoenlich.xml" "examples\gesetzliche_vorgaben_beispiel.xml" --compact --pdf "$Work\smoke.pdf" | Out-File -Encoding utf8 $Json
+if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path $Json -Pattern '"saldo"' -Quiet)) { throw "The command-line program failed" }
+if (-not (Test-Path "$Work\smoke.pdf")) { throw "PDF report missing" }
+$env:QT_QPA_PLATFORM = "offscreen"
+$Gui = Start-Process -FilePath "$Bundle\abfindungsoptimierer.exe" -PassThru
+Start-Sleep -Seconds 10
+if ($Gui.HasExited) { throw "The window program exited early with code $($Gui.ExitCode)" }
+Stop-Process -Id $Gui.Id -Force
+Remove-Item Env:QT_QPA_PLATFORM
+Start-Sleep -Seconds 2
+
+Write-Host "== Portable ZIP"
+$Zip = "$Out\$AppId-$Version-windows-x64-portable.zip"
+if (Test-Path $Zip) { Remove-Item $Zip }
+Compress-Archive -Path $Bundle -DestinationPath $Zip -CompressionLevel Optimal
+
+Write-Host "== Installer"
+$Command = Get-Command iscc -ErrorAction SilentlyContinue
+$Iscc = if ($Command) { $Command.Source } else { "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+Invoke-Checked $Iscc @("/Q", "/DAppVersion=$Version", "/DSourceDir=$Bundle", "/DOutputDir=$Out",
+    "packaging\windows\installer.iss")
+
+Write-Host "== Testing the installer"
+$Setup = "$Out\$AppId-$Version-windows-x64-setup.exe"
+$InstallDir = "$Work\installed"
+$Proc = Start-Process -FilePath $Setup -Wait -PassThru -ArgumentList @(
+    "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/CURRENTUSER", "/DIR=`"$InstallDir`"")
+if ($Proc.ExitCode -ne 0) { throw "Installer failed with exit code $($Proc.ExitCode)" }
+Invoke-Checked "$InstallDir\abfindungsoptimierer-cli.exe" @("--version")
+$Proc = Start-Process -FilePath "$InstallDir\unins000.exe" -Wait -PassThru -ArgumentList @(
+    "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART")
+if ($Proc.ExitCode -ne 0) { throw "Uninstaller failed with exit code $($Proc.ExitCode)" }
+
+Get-ChildItem $Out

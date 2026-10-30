@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<component type="desktop-application">
+  <id>abfindungsoptimierer</id>
+  <name>Abfindungsoptimierer</name>
+  <summary>Abfindung, Austritt, Arbeitslosengeld und Krankenversicherung planen</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="de.lorenzzhao">
+    <name>Lorenz Zhao</name>
+  </developer>
+  <description>
+    <p>
+      Modellrechnung für Abfindung (Fünftelregelung, Progressionsvorbehalt), Austrittsdatum,
+      Arbeitslosengeld und Krankenversicherung nach deutschem Recht, mit nachvollziehbarem
+      Rechenweg zu jedem Wert, Optimierer und PDF-Bericht. Ersetzt keine Steuer- oder Rechtsberatung.
+    </p>
+  </description>
+  <launchable type="desktop-id">abfindungsoptimierer.desktop</launchable>
+  <categories>
+    <category>Office</category>
+  </categories>
+  <releases>
+    <release version="@VERSION@"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

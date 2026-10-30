@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Abfindungsoptimierer
+GenericName=Abfindungsplanung
+Comment=Abfindung, Austritt, Arbeitslosengeld und Krankenversicherung planen
+Exec=abfindungsoptimierer
+Icon=abfindungsoptimierer
+Terminal=false
+Categories=Office;Finance;
+Keywords=Abfindung;Steuer;Fünftelregelung;Arbeitslosengeld;Krankenversicherung;
+StartupWMClass=abfindungsoptimierer

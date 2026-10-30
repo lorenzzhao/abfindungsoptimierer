@@ -1,0 +1,1158 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<RechtlicheVorgaben xmlns="urn:abfindung:recht:v1" version="1.0">
+  <Metadaten>
+    <Beschreibung>BEISPIELDATEI für Tests und Demonstration. Rechtliche Vorgaben (Steuer, ALG, KV/PV) – vor produktiver Nutzung prüfen. Keine persönlichen Daten.</Beschreibung>
+    <Stand>2026-10-13</Stand>
+    <Rechtsstand>Werte für 2026; Folgejahr wird mangels Kenntnis fortgeschrieben.</Rechtsstand>
+    <Hinweis>geprueft="true": im Erstellungsgespräch online nachgeprüft. geprueft="false": aus Fachwissen, vor produktiver Nutzung prüfen.</Hinweis>
+    <Hinweis>Alle Beträge in Euro. Keine Steuer- oder Rechtsberatung.</Hinweis>
+  </Metadaten>
+  <Einkommensteuertarif jahr="2026" geprueft="false" fortschreibungFuerFolgejahr="true">
+    <Zone nr="1" typ="steuerfrei">
+      <Untergrenze>0</Untergrenze>
+      <Obergrenze>12348</Obergrenze>
+      <Formel>ESt = 0</Formel>
+    </Zone>
+    <Zone nr="2" typ="progression_y">
+      <Untergrenze>12349</Untergrenze>
+      <Obergrenze>17799</Obergrenze>
+      <Formel>y = (zvE - 12348) / 10000; ESt = (a * y + b) * y</Formel>
+      <Koeffizient name="a">914.51</Koeffizient>
+      <Koeffizient name="b">1400</Koeffizient>
+    </Zone>
+    <Zone nr="3" typ="progression_z">
+      <Untergrenze>17800</Untergrenze>
+      <Obergrenze>69878</Obergrenze>
+      <Formel>z = (zvE - 17799) / 10000; ESt = (a * z + b) * z + c</Formel>
+      <Koeffizient name="a">173.1</Koeffizient>
+      <Koeffizient name="b">2397</Koeffizient>
+      <Koeffizient name="c">1034.87</Koeffizient>
+    </Zone>
+    <Zone nr="4" typ="linear">
+      <Untergrenze>69879</Untergrenze>
+      <Obergrenze>277825</Obergrenze>
+      <Formel>ESt = a * zvE - b</Formel>
+      <Koeffizient name="a">0.42</Koeffizient>
+      <Koeffizient name="b">11135.63</Koeffizient>
+    </Zone>
+    <Zone nr="5" typ="linear">
+      <Untergrenze>277826</Untergrenze>
+      <Formel>ESt = a * zvE - b</Formel>
+      <Koeffizient name="a">0.45</Koeffizient>
+      <Koeffizient name="b">19470.38</Koeffizient>
+    </Zone>
+    <Rundung>zvE auf volle Euro abrunden; ESt auf volle Euro abrunden (§ 32a Abs. 1 Satz 1 und 6 EStG)</Rundung>
+    <Splittingverfahren>Bei Zusammenveranlagung: ESt = 2 * ESt_Grundtarif(zvE / 2) (§ 32a Abs. 5 EStG)</Splittingverfahren>
+    <Quellenverweis quelle="Q_EStG">§ 32a Abs. 1, Abs. 5 EStG</Quellenverweis>
+  </Einkommensteuertarif>
+  <Parameter>
+    <Param id="est_grundfreibetrag" bereich="Einkommensteuer" wertTyp="decimal" einheit="EUR" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Grundfreibetrag je Person</Bezeichnung>
+      <Wert>12348</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 32a Abs. 1 Satz 2 Nr. 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="est_arbeitnehmer_pauschbetrag" bereich="Einkommensteuer" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false">
+      <Bezeichnung>Arbeitnehmer-Pauschbetrag je Person</Bezeichnung>
+      <Wert>1230</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 9a Satz 1 Nr. 1 Buchst. a EStG</Quellenverweis>
+    </Param>
+    <Param id="est_sonderausgaben_pauschbetrag_zusammen" bereich="Einkommensteuer" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="true">
+      <Bezeichnung>Sonderausgaben-Pauschbetrag bei Zusammenveranlagung</Bezeichnung>
+      <Wert>72</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10c Satz 1, 2 EStG</Quellenverweis>
+      <Hinweis>Einzelperson 36 €.</Hinweis>
+    </Param>
+    <Param id="est_vorsorgepauschale_hinweis" bereich="Einkommensteuer" wertTyp="text" einheit="keine" geprueft="false">
+      <Bezeichnung>Vorsorgeaufwendungen (KV/PV Basisabsicherung, RV) abziehbar</Bezeichnung>
+      <Wert>Basisabsicherung KV/PV unbegrenzt; Altersvorsorge bis Höchstbetrag</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10 Abs. 1 Nr. 2, Nr. 3, Abs. 3, Abs. 4 EStG</Quellenverweis>
+    </Param>
+    <Param id="kind_freibetrag_saechlich_je_elternteil" bereich="Kinder" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Kinderfreibetrag (sächliches Existenzminimum) je Elternteil und Kind</Bezeichnung>
+      <Wert>3414</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 32 Abs. 6 Satz 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="kind_freibetrag_bea_je_elternteil" bereich="Kinder" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Freibetrag für Betreuung, Erziehung, Ausbildung je Elternteil und Kind</Bezeichnung>
+      <Wert>1464</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 32 Abs. 6 Satz 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="kind_freibetrag_gesamt_zusammen" bereich="Kinder" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Summe Kinderfreibeträge je Kind bei Zusammenveranlagung</Bezeichnung>
+      <Wert>9756</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 32 Abs. 6 Satz 2 EStG</Quellenverweis>
+      <Hinweis>2025: 9.600 €.</Hinweis>
+    </Param>
+    <Param id="kind_kindergeld_monat" bereich="Kinder" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Kindergeld je Kind und Monat</Bezeichnung>
+      <Wert>259</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 66 Abs. 1 EStG</Quellenverweis>
+      <Hinweis>2025: 255 €.</Hinweis>
+    </Param>
+    <Param id="kind_guenstigerpruefung" bereich="Kinder" wertTyp="text" einheit="keine" geprueft="false">
+      <Bezeichnung>Günstigerprüfung Kinderfreibetrag gegen Kindergeld</Bezeichnung>
+      <Wert>Freibetrag nur, wenn Steuerentlastung &gt; Kindergeld; dann Kindergeld der ESt hinzurechnen</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 31 Satz 4 EStG</Quellenverweis>
+    </Param>
+    <Param id="kind_betreuung_anteil" bereich="Kinder" wertTyp="decimal" einheit="Anteil" geprueft="false" gueltigAbJahr="2025">
+      <Bezeichnung>Abziehbarer Anteil der Kinderbetreuungskosten</Bezeichnung>
+      <Wert>0.8</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10 Abs. 1 Nr. 5 EStG</Quellenverweis>
+    </Param>
+    <Param id="kind_betreuung_hoechstbetrag" bereich="Kinder" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false" gueltigAbJahr="2025">
+      <Bezeichnung>Höchstbetrag Kinderbetreuungskosten je Kind</Bezeichnung>
+      <Wert>4800</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10 Abs. 1 Nr. 5 EStG</Quellenverweis>
+    </Param>
+    <Param id="est_fuenftel_divisor" bereich="Einkommensteuer" wertTyp="integer" einheit="Anzahl" geprueft="false">
+      <Bezeichnung>Divisor/Multiplikator der Fünftelregelung</Bezeichnung>
+      <Wert>5</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 34 Abs. 1 Satz 2 EStG</Quellenverweis>
+    </Param>
+    <Param id="est_teilleistung_unschaedlich_anteil" bereich="Einkommensteuer" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Unschädliche Teilleistung in anderem Jahr (Anteil an Hauptleistung)</Bezeichnung>
+      <Wert>0.1</Wert>
+      <Quellenverweis quelle="Q_BMF2016">BMF v. 4.3.2016</Quellenverweis>
+      <Quellenverweis quelle="Q_BFH_IX_R_46_14">BFH IX R 46/14</Quellenverweis>
+    </Param>
+    <Param id="est_dezembergehalt_frist_wochen" bereich="Lohnsteuer" wertTyp="integer" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Laufender Arbeitslohn für Vorjahr gilt als Vorjahr, wenn innerhalb dieser Frist nach Jahresende gezahlt</Bezeichnung>
+      <Wert>3</Wert>
+      <Quellenverweis quelle="Q_LStR">R 39b.2 Abs. 1 Nr. 7 LStR</Quellenverweis>
+    </Param>
+    <Param id="est_progressionsvorbehalt_erklaerungsgrenze" bereich="Einkommensteuer" wertTyp="decimal" einheit="EUR" geprueft="false">
+      <Bezeichnung>Pflichtveranlagung bei Progressionsvorbehalts-Einkünften über</Bezeichnung>
+      <Wert>410</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 46 Abs. 2 Nr. 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="est_spenden_hoechstanteil" bereich="Einkommensteuer" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Spendenabzug höchstens Anteil am Gesamtbetrag der Einkünfte</Bezeichnung>
+      <Wert>0.2</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10b Abs. 1 Satz 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="est_spekulationsfrist_jahre" bereich="Einkommensteuer" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Spekulationsfrist Grundstücke</Bezeichnung>
+      <Wert>10</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 23 Abs. 1 Satz 1 Nr. 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="av_basisrente_abzugsanteil" bereich="Altersvorsorge" wertTyp="decimal" einheit="Anteil" geprueft="false" gueltigAbJahr="2023">
+      <Bezeichnung>Abziehbarer Anteil der Basisrentenbeiträge</Bezeichnung>
+      <Wert>1.0</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10 Abs. 3 Satz 6 EStG</Quellenverweis>
+    </Param>
+    <Param id="av_basisrente_hoechstbetrag_je_person" bereich="Altersvorsorge" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Höchstbetrag Altersvorsorgeaufwendungen je Person (verdoppelt bei Zusammenveranlagung, gekürzt um gesetzliche RV-Beiträge inkl. AG-Anteil)</Bezeichnung>
+      <Wert>30826</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10 Abs. 3 Satz 1 bis 3 EStG</Quellenverweis>
+      <Hinweis>Geschätzt: Höchstbeitrag knappschaftliche RV 2026 (BBG 124.800 € × 24,7 %). 2025: 29.344 €. Prüfen.</Hinweis>
+    </Param>
+    <Param id="av_bav_steuerfrei_anteil_bbg" bereich="Altersvorsorge" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Steuerfreie bAV-Beiträge pro Jahr (Anteil BBG RV)</Bezeichnung>
+      <Wert>0.08</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 3 Nr. 63 Satz 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="av_bav_vervielfaeltigung_anteil_bbg" bereich="Altersvorsorge" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Vervielfältigungsregel bei Ausscheiden: Anteil BBG RV je Dienstjahr</Bezeichnung>
+      <Wert>0.04</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 3 Nr. 63 Satz 3 EStG</Quellenverweis>
+    </Param>
+    <Param id="av_bav_vervielfaeltigung_max_jahre" bereich="Altersvorsorge" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Vervielfältigungsregel: maximal berücksichtigte Dienstjahre</Bezeichnung>
+      <Wert>10</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 3 Nr. 63 Satz 3 EStG</Quellenverweis>
+    </Param>
+    <Param id="av_bav_vervielfaeltigung_kuerzung_vorjahre" bereich="Altersvorsorge" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Kürzung um steuerfreie Beiträge im Austrittsjahr und in so vielen Vorjahren</Bezeichnung>
+      <Wert>6</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 3 Nr. 63 Satz 3 EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_disagio_max_anteil" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Marktübliches Disagio (sofort abziehbar) höchstens</Bezeichnung>
+      <Wert>0.05</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 11 Abs. 2 Satz 4 EStG</Quellenverweis>
+      <Hinweis>Verwaltungsauffassung: bei mindestens 5 Jahren Zinsbindung.</Hinweis>
+    </Param>
+    <Param id="verm_disagio_min_zinsbindung_jahre" bereich="Vermietung" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Mindestzinsbindung für marktübliches Disagio</Bezeichnung>
+      <Wert>5</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 11 Abs. 2 Satz 4 EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_afa_satz_standard" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Lineare AfA Wohngebäude, fertiggestellt 1925 bis 2022</Bezeichnung>
+      <Wert>0.02</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 7 Abs. 4 Satz 1 Nr. 2 Buchst. b EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_afa_satz_ab2023" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Lineare AfA Wohngebäude, fertiggestellt ab 2023</Bezeichnung>
+      <Wert>0.03</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 7 Abs. 4 Satz 1 Nr. 2 Buchst. a EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_afa_satz_vor1925" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Lineare AfA Wohngebäude, fertiggestellt vor 1925</Bezeichnung>
+      <Wert>0.025</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 7 Abs. 4 Satz 1 Nr. 2 Buchst. c EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_afa_degressiv_satz" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Degressive AfA Wohngebäude (Baubeginn/Erwerb 1.10.2023 bis 30.9.2029)</Bezeichnung>
+      <Wert>0.05</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 7 Abs. 5a EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_anschaffungsnah_grenze" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Anschaffungsnahe Herstellungskosten: Grenze (netto, Anteil Gebäude-AK)</Bezeichnung>
+      <Wert>0.15</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 6 Abs. 1 Nr. 1a EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_anschaffungsnah_jahre" bereich="Vermietung" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Anschaffungsnahe Herstellungskosten: Zeitraum nach Anschaffung</Bezeichnung>
+      <Wert>3</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 6 Abs. 1 Nr. 1a EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_verbilligt_untergrenze" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Verbilligte Vermietung: unter diesem Anteil der ortsüblichen Miete Aufteilung</Bezeichnung>
+      <Wert>0.5</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 21 Abs. 2 Satz 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_verbilligt_prognosegrenze" bereich="Vermietung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Verbilligte Vermietung: zwischen Untergrenze und diesem Anteil Totalüberschussprognose</Bezeichnung>
+      <Wert>0.66</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 21 Abs. 2 Satz 2 EStG</Quellenverweis>
+    </Param>
+    <Param id="verm_erhaltung_verteilung_max_jahre" bereich="Vermietung" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Wahlweise Verteilung größeren Erhaltungsaufwands (Wohngebäude)</Bezeichnung>
+      <Wert>5</Wert>
+      <Quellenverweis quelle="Q_EStDV">§ 82b EStDV</Quellenverweis>
+    </Param>
+    <Param id="lst_fuenftel_im_abzug" bereich="Lohnsteuer" wertTyp="boolean" einheit="keine" geprueft="true" gueltigAbJahr="2025">
+      <Bezeichnung>Fünftelregelung im Lohnsteuerabzug zulässig</Bezeichnung>
+      <Wert>false</Wert>
+      <Quellenverweis quelle="Q_WaChG">Wachstumschancengesetz; Aufhebung § 39b Abs. 3 Satz 9, 10 EStG a. F.</Quellenverweis>
+    </Param>
+    <Param id="lst_erm_frist_beginn" bereich="Lohnsteuer" wertTyp="monatTag" einheit="keine" geprueft="true">
+      <Bezeichnung>Lohnsteuerermäßigung: Antrag frühestens am (Vorjahr)</Bezeichnung>
+      <Wert>--10-01</Wert>
+      <Quellenverweis quelle="Q_LStErm">§ 39a Abs. 2 Satz 2 EStG</Quellenverweis>
+    </Param>
+    <Param id="lst_erm_frist_ende" bereich="Lohnsteuer" wertTyp="monatTag" einheit="keine" geprueft="true">
+      <Bezeichnung>Lohnsteuerermäßigung: Antrag spätestens am (Gültigkeitsjahr)</Bezeichnung>
+      <Wert>--11-30</Wert>
+      <Quellenverweis quelle="Q_LStErm">§ 39a Abs. 2 Satz 3 EStG</Quellenverweis>
+    </Param>
+    <Param id="lst_erm_antragsgrenze" bereich="Lohnsteuer" wertTyp="decimal" einheit="EUR" geprueft="true">
+      <Bezeichnung>Antragsgrenze für Werbungskosten, Sonderausgaben, außergewöhnliche Belastungen</Bezeichnung>
+      <Wert>600</Wert>
+      <Quellenverweis quelle="Q_LStErm">§ 39a Abs. 2 Satz 4 EStG</Quellenverweis>
+      <Hinweis>Gilt nicht für Verluste aus anderen Einkunftsarten.</Hinweis>
+    </Param>
+    <Param id="lst_erm_gueltigkeit_jahre" bereich="Lohnsteuer" wertTyp="integer" einheit="Jahre" geprueft="true">
+      <Bezeichnung>Maximale Gültigkeit eines Freibetrags</Bezeichnung>
+      <Wert>2</Wert>
+      <Quellenverweis quelle="Q_LStErm">§ 39a Abs. 1 Satz 3 EStG</Quellenverweis>
+    </Param>
+    <Param id="soli_satz" bereich="Solidaritaetszuschlag" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Solidaritätszuschlag</Bezeichnung>
+      <Wert>0.055</Wert>
+      <Quellenverweis quelle="Q_SolZG">§ 4 Satz 1 SolZG</Quellenverweis>
+    </Param>
+    <Param id="soli_freigrenze_zusammen" bereich="Solidaritaetszuschlag" wertTyp="decimal" einheit="EUR" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Freigrenze (Bemessungsgrundlage ESt) bei Zusammenveranlagung</Bezeichnung>
+      <Wert>40700</Wert>
+      <Quellenverweis quelle="Q_SolZG">§ 3 Abs. 3 SolZG</Quellenverweis>
+      <Hinweis>Einzelveranlagung 20.350 €.</Hinweis>
+    </Param>
+    <Param id="soli_milderungssatz" bereich="Solidaritaetszuschlag" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Milderungszone: höchstens dieser Anteil des Unterschieds zwischen ESt und Freigrenze</Bezeichnung>
+      <Wert>0.119</Wert>
+      <Quellenverweis quelle="Q_SolZG">§ 4 Satz 2 SolZG</Quellenverweis>
+    </Param>
+    <Param id="soli_bemessung_kinder" bereich="Solidaritaetszuschlag" wertTyp="text" einheit="keine" geprueft="false">
+      <Bezeichnung>Bemessungsgrundlage Soli/KiSt</Bezeichnung>
+      <Wert>Stets ESt nach Abzug der Kinderfreibeträge (ohne Kindergeld-Hinzurechnung)</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 51a Abs. 2 EStG</Quellenverweis>
+    </Param>
+    <Param id="kist_satz_by_bw" bereich="Kirchensteuer" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Kirchensteuersatz Bayern und Baden-Württemberg</Bezeichnung>
+      <Wert>0.08</Wert>
+      <Quellenverweis quelle="Q_KiStG">Kirchensteuergesetze der Länder</Quellenverweis>
+    </Param>
+    <Param id="kist_satz_sonst" bereich="Kirchensteuer" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Kirchensteuersatz übrige Länder</Bezeichnung>
+      <Wert>0.09</Wert>
+      <Quellenverweis quelle="Q_KiStG">Kirchensteuergesetze der Länder</Quellenverweis>
+    </Param>
+    <Param id="kap_abgeltung_satz" bereich="Kapitalertraege" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Abgeltungsteuersatz</Bezeichnung>
+      <Wert>0.25</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 32d Abs. 1 EStG</Quellenverweis>
+    </Param>
+    <Param id="kap_sparer_pauschbetrag_zusammen" bereich="Kapitalertraege" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false" gueltigAbJahr="2023">
+      <Bezeichnung>Sparer-Pauschbetrag bei Zusammenveranlagung</Bezeichnung>
+      <Wert>2000</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 20 Abs. 9 EStG</Quellenverweis>
+    </Param>
+    <Param id="kap_nicht_im_zve" bereich="Kapitalertraege" wertTyp="boolean" einheit="keine" geprueft="false">
+      <Bezeichnung>Abgeltungsbesteuerte Kapitalerträge gehören nicht zum zvE</Bezeichnung>
+      <Wert>true</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 2 Abs. 5b EStG</Quellenverweis>
+    </Param>
+    <Param id="alg_satz_mit_kind" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="true">
+      <Bezeichnung>Leistungssatz mit Kind</Bezeichnung>
+      <Wert>0.67</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 149 Nr. 1 SGB III</Quellenverweis>
+      <Quellenverweis quelle="Q_ALGRatgeber">Ratgeber 2026</Quellenverweis>
+    </Param>
+    <Param id="alg_satz_ohne_kind" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="true">
+      <Bezeichnung>Leistungssatz ohne Kind</Bezeichnung>
+      <Wert>0.6</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 149 Nr. 2 SGB III</Quellenverweis>
+      <Quellenverweis quelle="Q_ALGRatgeber">Ratgeber 2026</Quellenverweis>
+    </Param>
+    <Param id="alg_sv_pauschale" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Sozialversicherungspauschale bei Berechnung des Leistungsentgelts</Bezeichnung>
+      <Wert>0.2</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 153 Abs. 1 Satz 2 Nr. 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_lohnsteuer_basis" bereich="Arbeitslosengeld" wertTyp="text" einheit="keine" geprueft="false">
+      <Bezeichnung>Lohnsteuer im Leistungsentgelt</Bezeichnung>
+      <Wert>Nach Lohnsteuerklasse zu Jahresbeginn bzw. Steuerklassenwechsel nach § 153 Abs. 3</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 153 Abs. 1 Satz 2 Nr. 2, Abs. 2, Abs. 3 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_bbg_monat" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Beitragsbemessungsgrenze Arbeitslosenversicherung (Obergrenze Bemessungsentgelt)</Bezeichnung>
+      <Wert>8450</Wert>
+      <Quellenverweis quelle="Q_ALGRatgeber">BBG ALV 2026</Quellenverweis>
+    </Param>
+    <Param id="alg_tage_pro_monat" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Tage" geprueft="false">
+      <Bezeichnung>Kalendermonat wird mit 30 Tagen angesetzt</Bezeichnung>
+      <Wert>30</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 154 Satz 2 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_anwartschaft_monate" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Anwartschaftszeit: Versicherungspflichtverhältnis mindestens</Bezeichnung>
+      <Wert>12</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 142 Abs. 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_rahmenfrist_monate" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Rahmenfrist vor Entstehung des Anspruchs</Bezeichnung>
+      <Wert>30</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 143 Abs. 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_bemessungsrahmen_monate" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Bemessungsrahmen, endet mit letztem Tag des letzten Versicherungspflichtverhältnisses</Bezeichnung>
+      <Wert>12</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 150 Abs. 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_sperrzeit_arbeitsaufgabe_wochen" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Sperrzeit bei Arbeitsaufgabe (Regel)</Bezeichnung>
+      <Wert>12</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 159 Abs. 3 Satz 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_sperrzeit_arbeitsaufgabe_kurz_wochen" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Sperrzeit, wenn das Arbeitsverhältnis ohnehin innerhalb von 6 Wochen geendet hätte</Bezeichnung>
+      <Wert>3</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 159 Abs. 3 Satz 2 Nr. 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_sperrzeit_arbeitsaufgabe_haerte_wochen" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Sperrzeit bei besonderer Härte bzw. Ende innerhalb 12 Wochen</Bezeichnung>
+      <Wert>6</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 159 Abs. 3 Satz 2 Nr. 2 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_sperrzeit_eigenbemuehungen_wochen" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Sperrzeit bei unzureichenden Eigenbemühungen</Bezeichnung>
+      <Wert>2</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 159 Abs. 5 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_sperrzeit_meldeversaeumnis_wochen" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Sperrzeit bei Meldeversäumnis oder verspäteter Arbeitsuchendmeldung</Bezeichnung>
+      <Wert>1</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 159 Abs. 6 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_sperrzeit_arbeitsablehnung_stufen" bereich="Arbeitslosengeld" wertTyp="text" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Sperrzeit bei Arbeitsablehnung (1., 2., weitere)</Bezeichnung>
+      <Wert>3;6;12</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 159 Abs. 4 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_minderung_sperrzeit_mindestanteil" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="true">
+      <Bezeichnung>Minderung der Anspruchsdauer bei 12-Wochen-Sperrzeit mindestens</Bezeichnung>
+      <Wert>0.25</Wert>
+      <Quellenverweis quelle="Q_SGB3_148">§ 148 Abs. 1 Nr. 4 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_minderung_entfaellt_nach_jahren" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Jahre" geprueft="true">
+      <Bezeichnung>Minderung entfällt, wenn Ereignis bei Anspruchsentstehung länger zurückliegt als</Bezeichnung>
+      <Wert>1</Wert>
+      <Quellenverweis quelle="Q_SGB3_148">§ 148 Abs. 2 Satz 2 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_erloeschen_jahre" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Erlöschen des Anspruchs nach Entstehung</Bezeichnung>
+      <Wert>4</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 161 Abs. 2 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_arbeitsuchend_frist_monate" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Arbeitsuchendmeldung spätestens vor Beendigung</Bezeichnung>
+      <Wert>3</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 38 Abs. 1 Satz 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_arbeitsuchend_kurzfrist_tage" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Tage" geprueft="false">
+      <Bezeichnung>Arbeitsuchendmeldung bei kürzerer Frist binnen nach Kenntnis</Bezeichnung>
+      <Wert>3</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 38 Abs. 1 Satz 2 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_ruhen158_max_jahre" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Ruhen wegen Entlassungsentschädigung längstens</Bezeichnung>
+      <Wert>1</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 158 Abs. 2 Satz 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_ruhen158_frist_ausgeschlossen_monate" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Fiktive Kündigungsfrist bei zeitlich unbegrenztem Ausschluss der ordentlichen Kündigung</Bezeichnung>
+      <Wert>18</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 158 Abs. 1 Satz 3 Nr. 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_ruhen158_anrechnung_start" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Anrechenbarer Anteil der Entlassungsentschädigung (Ausgangswert)</Bezeichnung>
+      <Wert>0.6</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 158 Abs. 2 Satz 2 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_ruhen158_anrechnung_schritt" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Minderung je 5 Jahre Betriebszugehörigkeit und je 5 Lebensjahre über 35</Bezeichnung>
+      <Wert>0.05</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 158 Abs. 2 Satz 3 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_ruhen158_anrechnung_alter_ab" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Lebensalter, ab dem je 5 Jahre gemindert wird</Bezeichnung>
+      <Wert>35</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 158 Abs. 2 Satz 3 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_ruhen158_anrechnung_min" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Anrechenbarer Anteil mindestens</Bezeichnung>
+      <Wert>0.25</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 158 Abs. 2 Satz 3 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_wichtiger_grund_abfindung_min" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="keine" geprueft="false">
+      <Bezeichnung>Wichtiger Grund bei Aufhebungsvertrag: Abfindung mindestens (Monatsgehälter je Beschäftigungsjahr)</Bezeichnung>
+      <Wert>0.25</Wert>
+      <Quellenverweis quelle="Q_BSG_B11aAL4705R">BSG v. 12.7.2006, B 11a AL 47/05 R</Quellenverweis>
+      <Quellenverweis quelle="Q_FW159">Fachliche Weisungen zu § 159</Quellenverweis>
+    </Param>
+    <Param id="alg_wichtiger_grund_abfindung_max" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="keine" geprueft="false">
+      <Bezeichnung>Wichtiger Grund bei Aufhebungsvertrag: Abfindung höchstens (Monatsgehälter je Beschäftigungsjahr)</Bezeichnung>
+      <Wert>0.5</Wert>
+      <Quellenverweis quelle="Q_BSG_B11aAL4705R">BSG v. 12.7.2006, B 11a AL 47/05 R</Quellenverweis>
+      <Quellenverweis quelle="Q_FW159">Fachliche Weisungen zu § 159</Quellenverweis>
+    </Param>
+    <Param id="alg_nebeneinkommen_freibetrag" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="false">
+      <Bezeichnung>Freibetrag Nebeneinkommen</Bezeichnung>
+      <Wert>165</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 155 Abs. 1 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_nebentaetigkeit_max_stunden" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Stunden" geprueft="false">
+      <Bezeichnung>Beschäftigungslosigkeit nur bei weniger als ... Wochenstunden</Bezeichnung>
+      <Wert>15</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 138 Abs. 3 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_zumutbar_abschlag_m1_3" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Zumutbare Entgeltminderung Monate 1 bis 3</Bezeichnung>
+      <Wert>0.2</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 140 Abs. 3 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_zumutbar_abschlag_m4_6" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Zumutbare Entgeltminderung Monate 4 bis 6</Bezeichnung>
+      <Wert>0.3</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 140 Abs. 3 SGB III</Quellenverweis>
+    </Param>
+    <Param id="alg_pendelzeit_max_stunden" bereich="Arbeitslosengeld" wertTyp="decimal" einheit="Stunden" geprueft="false">
+      <Bezeichnung>Zumutbare Pendelzeit täglich bei mehr als 6 Stunden Arbeitszeit</Bezeichnung>
+      <Wert>2.5</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 140 Abs. 4 SGB III</Quellenverweis>
+    </Param>
+    <Param id="rv_alg_bemessung_anteil" bereich="Rentenversicherung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>RV-Beiträge während ALG auf Anteil des Bemessungsentgelts</Bezeichnung>
+      <Wert>0.8</Wert>
+      <Quellenverweis quelle="Q_SGB6">§ 166 Abs. 1 Nr. 2 SGB VI</Quellenverweis>
+    </Param>
+    <Param id="rv_bbg_monat" bereich="Rentenversicherung" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Beitragsbemessungsgrenze RV (allgemein)</Bezeichnung>
+      <Wert>8450</Wert>
+      <Quellenverweis quelle="Q_ALGRatgeber">BBG 2026</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB6">§ 159 SGB VI</Quellenverweis>
+    </Param>
+    <Param id="kv_bbg_monat" bereich="Krankenversicherung" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Beitragsbemessungsgrenze KV/PV</Bezeichnung>
+      <Wert>5812.5</Wert>
+      <Quellenverweis quelle="Q_TK">TK 2026</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB5">§ 223 Abs. 3 SGB V</Quellenverweis>
+    </Param>
+    <Param id="kv_versicherungspflichtgrenze" bereich="Krankenversicherung" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Versicherungspflichtgrenze</Bezeichnung>
+      <Wert>77400</Wert>
+      <Quellenverweis quelle="Q_TK">TK 2026</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB5">§ 6 Abs. 6 SGB V</Quellenverweis>
+    </Param>
+    <Param id="kv_mindestbemessung_monat" bereich="Krankenversicherung" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Mindestbemessungsgrundlage freiwillig Versicherte</Bezeichnung>
+      <Wert>1318.33</Wert>
+      <Quellenverweis quelle="Q_KVRechner">Rechner 2026</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB5">§ 240 Abs. 4 SGB V</Quellenverweis>
+    </Param>
+    <Param id="kv_satz_allgemein" bereich="Krankenversicherung" wertTyp="decimal" einheit="Anteil" geprueft="true">
+      <Bezeichnung>Allgemeiner Beitragssatz (mit Krankengeld)</Bezeichnung>
+      <Wert>0.146</Wert>
+      <Quellenverweis quelle="Q_SGB5">§ 241 SGB V</Quellenverweis>
+      <Quellenverweis quelle="Q_KVRechner">Rechner 2026</Quellenverweis>
+    </Param>
+    <Param id="kv_satz_ermaessigt" bereich="Krankenversicherung" wertTyp="decimal" einheit="Anteil" geprueft="true">
+      <Bezeichnung>Ermäßigter Beitragssatz (ohne Krankengeld)</Bezeichnung>
+      <Wert>0.14</Wert>
+      <Quellenverweis quelle="Q_SGB5">§ 243 SGB V</Quellenverweis>
+      <Quellenverweis quelle="Q_KVRechner">Rechner 2026</Quellenverweis>
+    </Param>
+    <Param id="kv_zusatzbeitrag_durchschnitt" bereich="Krankenversicherung" wertTyp="decimal" einheit="Anteil" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Durchschnittlicher Zusatzbeitrag</Bezeichnung>
+      <Wert>0.029</Wert>
+      <Quellenverweis quelle="Q_KVRechner">Rechner 2026</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB5">§ 242a SGB V</Quellenverweis>
+      <Hinweis>Kassenindividuell abweichend.</Hinweis>
+    </Param>
+    <Param id="kv_hoechstbeitrag_kv_monat" bereich="Krankenversicherung" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Höchstbeitrag KV (mit Krankengeld, Ø-Zusatzbeitrag)</Bezeichnung>
+      <Wert>1017.19</Wert>
+      <Quellenverweis quelle="Q_VermZentrum">2026</Quellenverweis>
+    </Param>
+    <Param id="kv_bezugsgroesse_monat" bereich="Krankenversicherung" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Bezugsgröße (West)</Bezeichnung>
+      <Wert>3955</Wert>
+      <Quellenverweis quelle="Q_KVRechner">Rechner 2026</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB4">§ 18 SGB IV</Quellenverweis>
+    </Param>
+    <Param id="kv_famvers_grenze_anteil_bezugsgroesse" bereich="Krankenversicherung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Familienversicherung: Gesamteinkommen höchstens Anteil der Bezugsgröße (1/7)</Bezeichnung>
+      <Wert>0.142857</Wert>
+      <Quellenverweis quelle="Q_SGB5">§ 10 Abs. 1 Satz 1 Nr. 5 SGB V</Quellenverweis>
+    </Param>
+    <Param id="kv_nachgehender_anspruch_monate" bereich="Krankenversicherung" wertTyp="integer" einheit="Monate" geprueft="true">
+      <Bezeichnung>Nachgehender Leistungsanspruch nach Ende der Pflichtmitgliedschaft</Bezeichnung>
+      <Wert>1</Wert>
+      <Quellenverweis quelle="Q_SGB5">§ 19 Abs. 2 SGB V</Quellenverweis>
+      <Quellenverweis quelle="Q_Verdi">Praxistipp Sperrzeit</Quellenverweis>
+    </Param>
+    <Param id="kv_sperrzeit_agentur_ab_monat" bereich="Krankenversicherung" wertTyp="integer" einheit="Monate" geprueft="true">
+      <Bezeichnung>Versicherungspflicht über Agentur bei Sperrzeit ab dem ... Monat</Bezeichnung>
+      <Wert>2</Wert>
+      <Quellenverweis quelle="Q_SGB5">§ 5 Abs. 1 Nr. 2 SGB V</Quellenverweis>
+      <Quellenverweis quelle="Q_Verdi">Praxistipp Sperrzeit</Quellenverweis>
+      <Quellenverweis quelle="Q_KKInfo">Ratgeber Sperrzeit</Quellenverweis>
+    </Param>
+    <Param id="kv_abfindung_verteilung_monate" bereich="Krankenversicherung" wertTyp="integer" einheit="Monate" geprueft="true">
+      <Bezeichnung>Freiwillig Versicherte: einmalige Einnahmen auf ... Monate verteilt</Bezeichnung>
+      <Wert>12</Wert>
+      <Quellenverweis quelle="Q_BeitrVerf">BeitrVerfGrsSz § 5 Abs. 3</Quellenverweis>
+      <Quellenverweis quelle="Q_BSG_B12KR620R">BSG B 12 KR 6/20 R</Quellenverweis>
+      <Hinweis>Für Abfindungen von der Kasse bestätigen lassen.</Hinweis>
+    </Param>
+    <Param id="pv_satz_basis" bereich="Pflegeversicherung" wertTyp="decimal" einheit="Anteil" geprueft="false" gueltigAbJahr="2025">
+      <Bezeichnung>Allgemeiner Beitragssatz PV</Bezeichnung>
+      <Wert>0.036</Wert>
+      <Quellenverweis quelle="Q_SGB11">§ 55 Abs. 1 SGB XI</Quellenverweis>
+    </Param>
+    <Param id="pv_kinderlosenzuschlag" bereich="Pflegeversicherung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Zuschlag für Kinderlose</Bezeichnung>
+      <Wert>0.006</Wert>
+      <Quellenverweis quelle="Q_SGB11">§ 55 Abs. 3 Satz 1 SGB XI</Quellenverweis>
+    </Param>
+    <Param id="pv_abschlag_je_kind" bereich="Pflegeversicherung" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Abschlag je Kind ab dem 2. bis zum 5. Kind (Kinder unter 25)</Bezeichnung>
+      <Wert>0.0025</Wert>
+      <Quellenverweis quelle="Q_SGB11">§ 55 Abs. 3 Satz 4 SGB XI</Quellenverweis>
+    </Param>
+    <Param id="pv_hoechstbeitrag_kinderlos_monat" bereich="Pflegeversicherung" wertTyp="decimal" einheit="EUR_pro_Monat" geprueft="true" gueltigAbJahr="2026">
+      <Bezeichnung>Höchstbeitrag PV kinderlos</Bezeichnung>
+      <Wert>244.13</Wert>
+      <Quellenverweis quelle="Q_VermZentrum">2026</Quellenverweis>
+    </Param>
+    <Param id="ar_kuendigungsfrist_grund_wochen" bereich="Arbeitsrecht" wertTyp="integer" einheit="Wochen" geprueft="false">
+      <Bezeichnung>Grundkündigungsfrist (zum 15. oder Monatsende)</Bezeichnung>
+      <Wert>4</Wert>
+      <Quellenverweis quelle="Q_BGB">§ 622 Abs. 1 BGB</Quellenverweis>
+    </Param>
+    <Param id="ar_wettbewerbsverbot_karenz_anteil" bereich="Arbeitsrecht" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Mindestkarenzentschädigung nachvertragliches Wettbewerbsverbot</Bezeichnung>
+      <Wert>0.5</Wert>
+      <Quellenverweis quelle="Q_HGB">§ 74 Abs. 2 HGB</Quellenverweis>
+    </Param>
+    <Param id="ar_bav_unverfallbar_jahre" bereich="Arbeitsrecht" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Unverfallbarkeit bAV: Zusagedauer</Bezeichnung>
+      <Wert>3</Wert>
+      <Quellenverweis quelle="Q_BetrAVG">§ 1b Abs. 1 BetrAVG</Quellenverweis>
+    </Param>
+    <Param id="ar_bav_unverfallbar_alter" bereich="Arbeitsrecht" wertTyp="integer" einheit="Jahre" geprueft="false">
+      <Bezeichnung>Unverfallbarkeit bAV: Mindestalter bei Ausscheiden</Bezeichnung>
+      <Wert>21</Wert>
+      <Quellenverweis quelle="Q_BetrAVG">§ 1b Abs. 1 BetrAVG</Quellenverweis>
+    </Param>
+    <Param id="ar_ksch1a_abfindung_je_jahr" bereich="Arbeitsrecht" wertTyp="decimal" einheit="keine" geprueft="false">
+      <Bezeichnung>Abfindungsanspruch bei betriebsbedingter Kündigung nach § 1a KSchG (Monatsverdienste je Beschäftigungsjahr)</Bezeichnung>
+      <Wert>0.5</Wert>
+      <Quellenverweis quelle="Q_KSchG">§ 1a Abs. 2 KSchG</Quellenverweis>
+    </Param>
+    <Param id="verf_nachzahlungszins_monat" bereich="Verfahren" wertTyp="decimal" einheit="Anteil" geprueft="false">
+      <Bezeichnung>Nachzahlungszinsen je vollem Monat</Bezeichnung>
+      <Wert>0.0015</Wert>
+      <Quellenverweis quelle="Q_AO">§ 233a, § 238 Abs. 1a AO</Quellenverweis>
+    </Param>
+    <Param id="verf_zinslauf_karenz_monate" bereich="Verfahren" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Zinslauf beginnt nach Ablauf von ... Monaten nach Ende des Steuerjahres</Bezeichnung>
+      <Wert>15</Wert>
+      <Quellenverweis quelle="Q_AO">§ 233a Abs. 2 AO</Quellenverweis>
+    </Param>
+    <Param id="alg_rahmenfrist_erweitert_monate" bereich="Arbeitslosengeld" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Erweiterte Rahmenfrist für die Anspruchsdauer</Bezeichnung>
+      <Wert>60</Wert>
+      <Quellenverweis quelle="Q_SGB3">§ 147 Abs. 1 Satz 2 SGB III</Quellenverweis>
+      <Hinweis>Versicherungsmonate für T_ALG_Anspruchsdauer werden innerhalb dieser Frist gezählt.</Hinweis>
+    </Param>
+    <Param id="soli_freigrenze_einzeln" bereich="Solidaritaetszuschlag" wertTyp="decimal" einheit="EUR" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Freigrenze (Bemessungsgrundlage ESt) bei Einzelveranlagung</Bezeichnung>
+      <Wert>20350</Wert>
+      <Quellenverweis quelle="Q_SolZG">§ 3 Abs. 3 SolZG</Quellenverweis>
+    </Param>
+    <Param id="kap_sparer_pauschbetrag_einzeln" bereich="Kapitalertraege" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="false" gueltigAbJahr="2023">
+      <Bezeichnung>Sparer-Pauschbetrag bei Einzelveranlagung</Bezeichnung>
+      <Wert>1000</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 20 Abs. 9 EStG</Quellenverweis>
+    </Param>
+    <Param id="est_sonderausgaben_pauschbetrag_einzeln" bereich="Einkommensteuer" wertTyp="decimal" einheit="EUR_pro_Jahr" geprueft="true">
+      <Bezeichnung>Sonderausgaben-Pauschbetrag bei Einzelveranlagung</Bezeichnung>
+      <Wert>36</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 10c EStG</Quellenverweis>
+    </Param>
+    <Param id="rv_beitragssatz_gesamt" bereich="Rentenversicherung" wertTyp="decimal" einheit="Anteil" geprueft="false" gueltigAbJahr="2026">
+      <Bezeichnung>Beitragssatz allgemeine Rentenversicherung (AN + AG)</Bezeichnung>
+      <Wert>0.186</Wert>
+      <Quellenverweis quelle="Q_SGB6">§ 158 SGB VI</Quellenverweis>
+      <Hinweis>Für die Kürzung des Basisrenten-Höchstbetrags um die gesetzlichen RV-Beiträge (R_Basisrente).</Hinweis>
+    </Param>
+    <Param id="est_einzelveranlagung_sonderausgaben_haelftig" bereich="Einkommensteuer" wertTyp="text" einheit="keine" geprueft="false">
+      <Bezeichnung>Einzelveranlagung: Sonderausgaben auf gemeinsamen Antrag je zur Hälfte</Bezeichnung>
+      <Wert>auf gemeinsamen Antrag je zur Hälfte</Wert>
+      <Quellenverweis quelle="Q_EStG">§ 26a Abs. 2 EStG</Quellenverweis>
+    </Param>
+    <Param id="abf_auszahlung_spaetestens_monate_default" bereich="Arbeitsrecht" wertTyp="integer" einheit="Monate" geprueft="false">
+      <Bezeichnung>Späteste Auszahlung der Abfindung nach Austritt (Standard)</Bezeichnung>
+      <Wert>36</Wert>
+      <Quellenverweis quelle="Q_Abfindungsangebot">Abfindungsangebot (vertraglich, kein Gesetz)</Quellenverweis>
+    </Param>
+  </Parameter>
+  <Tabellen>
+    <Tabelle id="T_ALG_Anspruchsdauer" bereich="Arbeitslosengeld" geprueft="false">
+      <Bezeichnung>Anspruchsdauer nach Versicherungspflichtmonaten und Alter</Bezeichnung>
+      <Spalte name="versicherungsmonate_min" einheit="Monate"/>
+      <Spalte name="alter_min" einheit="Jahre"/>
+      <Spalte name="anspruch_tage" einheit="Tage"/>
+      <Zeile>
+        <Zelle spalte="versicherungsmonate_min">12</Zelle>
+        <Zelle spalte="alter_min">0</Zelle>
+        <Zelle spalte="anspruch_tage">180</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="versicherungsmonate_min">16</Zelle>
+        <Zelle spalte="alter_min">0</Zelle>
+        <Zelle spalte="anspruch_tage">240</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="versicherungsmonate_min">20</Zelle>
+        <Zelle spalte="alter_min">0</Zelle>
+        <Zelle spalte="anspruch_tage">300</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="versicherungsmonate_min">24</Zelle>
+        <Zelle spalte="alter_min">0</Zelle>
+        <Zelle spalte="anspruch_tage">360</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="versicherungsmonate_min">30</Zelle>
+        <Zelle spalte="alter_min">50</Zelle>
+        <Zelle spalte="anspruch_tage">450</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="versicherungsmonate_min">36</Zelle>
+        <Zelle spalte="alter_min">55</Zelle>
+        <Zelle spalte="anspruch_tage">540</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="versicherungsmonate_min">48</Zelle>
+        <Zelle spalte="alter_min">58</Zelle>
+        <Zelle spalte="anspruch_tage">720</Zelle>
+      </Zeile>
+      <Quellenverweis quelle="Q_SGB3">§ 147 Abs. 2 SGB III</Quellenverweis>
+      <Hinweis>Versicherungsmonate innerhalb der erweiterten Rahmenfrist von 5 Jahren (§ 147 Abs. 1 Satz 2 SGB III).</Hinweis>
+    </Tabelle>
+    <Tabelle id="T_Kuendigungsfristen_AG" bereich="Arbeitsrecht" geprueft="false">
+      <Bezeichnung>Gesetzliche Kündigungsfristen des Arbeitgebers zum Monatsende</Bezeichnung>
+      <Spalte name="betriebsjahre_min" einheit="Jahre"/>
+      <Spalte name="frist_monate" einheit="Monate"/>
+      <Zeile>
+        <Zelle spalte="betriebsjahre_min">2</Zelle>
+        <Zelle spalte="frist_monate">1</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="betriebsjahre_min">5</Zelle>
+        <Zelle spalte="frist_monate">2</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="betriebsjahre_min">8</Zelle>
+        <Zelle spalte="frist_monate">3</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="betriebsjahre_min">10</Zelle>
+        <Zelle spalte="frist_monate">4</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="betriebsjahre_min">12</Zelle>
+        <Zelle spalte="frist_monate">5</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="betriebsjahre_min">15</Zelle>
+        <Zelle spalte="frist_monate">6</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="betriebsjahre_min">20</Zelle>
+        <Zelle spalte="frist_monate">7</Zelle>
+      </Zeile>
+      <Quellenverweis quelle="Q_BGB">§ 622 Abs. 2 BGB</Quellenverweis>
+      <Hinweis>Vertragliche oder tarifliche längere Fristen haben Vorrang und sind für § 158 SGB III maßgeblich.</Hinweis>
+    </Tabelle>
+    <Tabelle id="T_PV_Kinderabschlag" bereich="Pflegeversicherung" geprueft="false">
+      <Bezeichnung>Arbeitnehmer- bzw. Selbstzahler-Abschlag nach Kinderzahl (Kinder unter 25)</Bezeichnung>
+      <Spalte name="kinder" einheit="Anzahl"/>
+      <Spalte name="abschlag" einheit="Anteil"/>
+      <Zeile>
+        <Zelle spalte="kinder">1</Zelle>
+        <Zelle spalte="abschlag">0</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="kinder">2</Zelle>
+        <Zelle spalte="abschlag">0.0025</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="kinder">3</Zelle>
+        <Zelle spalte="abschlag">0.005</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="kinder">4</Zelle>
+        <Zelle spalte="abschlag">0.0075</Zelle>
+      </Zeile>
+      <Zeile>
+        <Zelle spalte="kinder">5</Zelle>
+        <Zelle spalte="abschlag">0.01</Zelle>
+      </Zeile>
+      <Quellenverweis quelle="Q_SGB11">§ 55 Abs. 3 SGB XI</Quellenverweis>
+    </Tabelle>
+  </Tabellen>
+  <Regeln>
+    <Regel id="R_Zufluss" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Zuflussprinzip</Bezeichnung>
+      <Beschreibung>Einnahmen (Abfindung, sonstige Bezüge) im Kalenderjahr des Zuflusses; Ausgaben im Jahr des Abflusses.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 11 Abs. 1, Abs. 2 EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_LaufenderArbeitslohn" bereich="Lohnsteuer" geprueft="false">
+      <Bezeichnung>Laufender Arbeitslohn</Bezeichnung>
+      <Beschreibung>Gilt im Jahr als bezogen, in dem der Lohnzahlungszeitraum endet; Zahlung bis ca. 3 Wochen nach Jahresende gehört zum Vorjahr. Sonstige Bezüge (Bonus, Urlaubsabgeltung, Überstundenauszahlung) im Zuflussjahr.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 38a Abs. 1 Satz 2, 3 EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_LStR">R 39b.2 LStR</Quellenverweis>
+    </Regel>
+    <Regel id="R_Entschaedigung" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Abfindung als Entschädigung</Bezeichnung>
+      <Beschreibung>Abfindung wegen Auflösung des Arbeitsverhältnisses ist Entschädigung und außerordentliche Einkunft; begünstigt bei Zusammenballung im Zuflussjahr.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 24 Nr. 1 Buchst. a, § 34 Abs. 2 Nr. 2 EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_BMF2013">BMF v. 1.11.2013, Rz. 8 ff.</Quellenverweis>
+    </Regel>
+    <Regel id="R_Zusammenballung" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Zusammenballung</Bezeichnung>
+      <Beschreibung>Begünstigung nur, wenn Einkünfte des Zuflussjahres inkl. Entschädigung höher sind als die bei Fortbestand bezogenen Einkünfte; Auszahlung in einem Jahr, unschädliche Teilleistung bis Parameter est_teilleistung_unschaedlich_anteil.</Beschreibung>
+      <Formel>begünstigt = (Einkünfte_mit_Entschädigung &gt; Einkünfte_bei_Fortsetzung) UND (Teilbetrag_anderes_Jahr &lt;= 0,10 * Hauptbetrag)</Formel>
+      <Quellenverweis quelle="Q_BMF2013">BMF v. 1.11.2013, Rz. 8 ff.</Quellenverweis>
+      <Quellenverweis quelle="Q_BMF2016">BMF v. 4.3.2016</Quellenverweis>
+      <Quellenverweis quelle="Q_BFH_IX_R_46_14">BFH IX R 46/14</Quellenverweis>
+    </Regel>
+    <Regel id="R_Fuenftel_Normal" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Fünftelregelung, verbleibendes zvE nicht negativ</Bezeichnung>
+      <Beschreibung>Steuer auf zvE ohne außerordentliche Einkünfte (v) plus Fünffaches der Differenz Steuer(v + AE/5) − Steuer(v).</Beschreibung>
+      <Formel>ESt = St(v) + 5 * (St(v + AE/5) - St(v)); St = Tarif, bei Zusammenveranlagung Splitting</Formel>
+      <Quellenverweis quelle="Q_EStG">§ 34 Abs. 1 Satz 2 EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Fuenftel_Negativ" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Fünftelregelung, verbleibendes zvE negativ</Bezeichnung>
+      <Beschreibung>Übersteigen die außerordentlichen Einkünfte das zvE, ist ESt das Fünffache der Steuer auf ein Fünftel des zvE.</Beschreibung>
+      <Formel>ESt = 5 * St(zvE / 5)  mit zvE = v + AE, v &lt; 0</Formel>
+      <Quellenverweis quelle="Q_EStG">§ 34 Abs. 1 Satz 3 EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_EStH">H 34.2 EStH</Quellenverweis>
+    </Regel>
+    <Regel id="R_Fuenftel_Progressionsvorbehalt" bereich="Einkommensteuer" geprueft="true">
+      <Bezeichnung>Fünftelregelung mit Progressionsvorbehalt (BFH-Methode)</Bezeichnung>
+      <Beschreibung>Integrierte Berechnung: Progressionsvorbehalts-Einkünfte (PV, z. B. ALG) werden dem verbleibenden zvE in voller Höhe hinzugerechnet und wirken nur auf den Steuersatz. Ist v negativ, wird PV zuerst mit v verrechnet; nur ein positiver Rest wirkt auf den Satz.</Beschreibung>
+      <Formel>satz(x) = St(x)/x (0 wenn x&lt;=0).
+Fall v &gt;= 0: rest = v*satz(v+PV); diff = (v+AE/5)*satz(v+AE/5+PV) - rest; ESt = rest + 5*diff.
+Fall v &lt; 0: zvE = v+AE; R = max(0, v+PV); f = zvE/5; ESt = 5 * f * satz(f + R).
+Fall AE = 0: ESt = v * satz(v+PV) (v &gt; 0).</Formel>
+      <Quellenverweis quelle="Q_BFH_VI_R_44_07">BFH v. 17.1.2008, VI R 44/07</Quellenverweis>
+      <Quellenverweis quelle="Q_BFH_IX_R_93_07">BFH v. 22.9.2009, IX R 93/07</Quellenverweis>
+      <Quellenverweis quelle="Q_EStG">§ 32b Abs. 1, Abs. 2, § 34 Abs. 1 EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Progressionsvorbehalt" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Progressionsvorbehalt ohne außerordentliche Einkünfte</Bezeichnung>
+      <Beschreibung>Besonderer Steuersatz aus zvE + PV-Einkünfte, angewendet auf das zvE.</Beschreibung>
+      <Formel>ESt = zvE * St(zvE + PV) / (zvE + PV)</Formel>
+      <Quellenverweis quelle="Q_EStG">§ 32b Abs. 2 EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Guenstigerpruefung" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Günstigerprüfung Kinder</Bezeichnung>
+      <Beschreibung>Variante 1: zvE ohne Kinderfreibeträge, Kindergeld bleibt. Variante 2: zvE mit Kinderfreibeträgen, Kindergeld wird der ESt hinzugerechnet. Niedrigere Belastung gilt. Soli/KiSt immer nach Variante 2 bemessen.</Beschreibung>
+      <Formel>Belastung = min( ESt_ohneKFB , ESt_mitKFB + Kindergeld_Jahr ); Soli aus ESt_mitKFB</Formel>
+      <Quellenverweis quelle="Q_EStG">§ 31 Satz 4, § 51a Abs. 2 EStG</Quellenverweis>
+      <Unsicherheit>Zusammenspiel mit § 34 und § 32b vereinfacht; Steuersoftware zur Kontrolle.</Unsicherheit>
+    </Regel>
+    <Regel id="R_Soli" bereich="Solidaritaetszuschlag" geprueft="false">
+      <Bezeichnung>Solidaritätszuschlag</Bezeichnung>
+      <Beschreibung>5,5 % der Bemessungs-ESt; keine Erhebung bis Freigrenze; Milderungszone.</Beschreibung>
+      <Formel>Soli = 0 wenn ESt &lt;= Freigrenze, sonst min(0,055*ESt; 0,119*(ESt - Freigrenze))</Formel>
+      <Quellenverweis quelle="Q_SolZG">§§ 3, 4 SolZG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Abgeltung" bereich="Kapitalertraege" geprueft="false">
+      <Bezeichnung>Kapitalerträge</Bezeichnung>
+      <Beschreibung>Abgeltungsteuer separat, nicht im zvE, kein Einfluss auf Fünftelregelung oder Progressionsvorbehalt; Günstigerprüfung auf Antrag.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 32d Abs. 1, Abs. 6, § 2 Abs. 5b EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Verlustausgleich" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Verlustausgleich</Bezeichnung>
+      <Beschreibung>Negative Einkünfte (z. B. Vermietung) werden mit positiven Einkünften aller Einkunftsarten ausgeglichen, auch mit der Abfindung. Nicht ausgeglichene Verluste: Rück-/Vortrag.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 2 Abs. 3, § 10d EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_LSt_Abfindung" bereich="Lohnsteuer" geprueft="true">
+      <Bezeichnung>Lohnsteuer auf die Abfindung</Bezeichnung>
+      <Beschreibung>Seit 2025 regulärer Abzug als sonstiger Bezug ohne Fünftelregelung; Ermäßigung nur in der Veranlagung (Liquiditätseffekt).</Beschreibung>
+      <Quellenverweis quelle="Q_WaChG">Wachstumschancengesetz</Quellenverweis>
+      <Quellenverweis quelle="Q_EStG">§ 39b Abs. 3 EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_LSt_Ermaessigung" bereich="Lohnsteuer" geprueft="false">
+      <Bezeichnung>Lohnsteuerermäßigung</Bezeichnung>
+      <Beschreibung>Freibetrag in ELStAM; eintragbar u. a. Kinderbetreuung und Verluste aus Vermietung bestehender Objekte; nicht: Fünftelregelung, Vorsorgeaufwendungen, Verluste eines im Jahr angeschafften Gebäudes. Schätzung genügt bei Glaubhaftmachung. Pflichtveranlagung.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 39a Abs. 1 Nr. 2, Nr. 5, § 37 Abs. 3 Satz 8, § 46 Abs. 2 Nr. 4 EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_LStErm">Anleitung 2025</Quellenverweis>
+    </Regel>
+    <Regel id="R_ALG_Hoehe" bereich="Arbeitslosengeld" geprueft="false">
+      <Bezeichnung>Höhe ALG</Bezeichnung>
+      <Beschreibung>Bemessungsentgelt (Bemessungsrahmen 1 Jahr, BBG) → Leistungsentgelt = Bemessungsentgelt − SV-Pauschale − Lohnsteuer (Steuerklasse) − Soli; ALG = Leistungsentgelt × Leistungssatz. Abfindung wird nicht angerechnet.</Beschreibung>
+      <Formel>ALG_Tag = (BE_Tag - 0,20*BE_Tag - LSt_Tag - Soli_Tag) * Leistungssatz</Formel>
+      <Quellenverweis quelle="Q_SGB3">§§ 149 bis 154 SGB III</Quellenverweis>
+    </Regel>
+    <Regel id="R_ALG_Dauer" bereich="Arbeitslosengeld" geprueft="true">
+      <Bezeichnung>Anspruchsdauer</Bezeichnung>
+      <Beschreibung>Aus Tabelle T_ALG_Anspruchsdauer; minus Sperrzeittage, bei 12 Wochen mindestens ein Viertel; Minderung entfällt, wenn Ereignis bei Anspruchsentstehung länger als 1 Jahr zurückliegt.</Beschreibung>
+      <Formel>Dauer = Tabelle - (wenn Arbeitslosmeldung - Ereignis &gt; 1 Jahr: 0, sonst max(Sperrzeittage, 0,25 * Tabelle))</Formel>
+      <Quellenverweis quelle="Q_SGB3">§ 147 SGB III</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB3_148">§ 148 Abs. 1 Nr. 4, Abs. 2 Satz 2 SGB III</Quellenverweis>
+    </Regel>
+    <Regel id="R_Sperrzeit" bereich="Arbeitslosengeld" geprueft="true">
+      <Bezeichnung>Sperrzeit bei Arbeitsaufgabe</Bezeichnung>
+      <Beschreibung>Lösung des Beschäftigungsverhältnisses (Aufhebungsvertrag, abgesprochener Abwicklungsvertrag) ohne wichtigen Grund. Beginn am Tag nach dem Ereignis, bei Beendigung mit Beginn der Beschäftigungslosigkeit (auch bei Freistellung). Läuft kalendermäßig ab, unabhängig von Antrag und anderen Ruhenstatbeständen.</Beschreibung>
+      <Quellenverweis quelle="Q_SGB3">§ 159 Abs. 1 Satz 2 Nr. 1, Abs. 2 SGB III</Quellenverweis>
+      <Quellenverweis quelle="Q_FW159">FW 159.2 Abs. 1, Abs. 3</Quellenverweis>
+      <Quellenverweis quelle="Q_BSG_B11AL3503R">BSG B 11 AL 35/03 R</Quellenverweis>
+    </Regel>
+    <Regel id="R_WichtigerGrund" bereich="Arbeitslosengeld" geprueft="false">
+      <Bezeichnung>Wichtiger Grund</Bezeichnung>
+      <Beschreibung>Unter anderem: drohende rechtmäßige betriebsbedingte Arbeitgeberkündigung zum selben Zeitpunkt, Frist eingehalten, Abfindung 0,25 bis 0,5 Monatsgehälter je Beschäftigungsjahr. Hinnahme einer Kündigung mit Angebot nach § 1a KSchG unschädlich.</Beschreibung>
+      <Quellenverweis quelle="Q_BSG_B11aAL4705R">BSG B 11a AL 47/05 R</Quellenverweis>
+      <Quellenverweis quelle="Q_FW159">FW zu § 159</Quellenverweis>
+      <Quellenverweis quelle="Q_KSchG">§ 1a KSchG</Quellenverweis>
+      <Unsicherheit>Im Einzelfall von der Agentur zu beurteilen.</Unsicherheit>
+    </Regel>
+    <Regel id="R_Ruhen158" bereich="Arbeitslosengeld" geprueft="false">
+      <Bezeichnung>Ruhen wegen Entlassungsentschädigung</Bezeichnung>
+      <Beschreibung>Bei Unterschreitung der ordentlichen Arbeitgeberfrist ruht ALG ab Ende Arbeitsverhältnis bis Ende der fiktiven Frist, längstens 1 Jahr; früher, wenn anrechenbarer Teil der Abfindung durch kalendertägliches Arbeitsentgelt aufgebraucht ist. Kein Einfluss auf Anspruchsdauer.</Beschreibung>
+      <Formel>anteil = max(0,25; 0,60 - 0,05*floor(BZ/5) - 0,05*floor(max(0,Alter-35)/5)); Ende = min(Fristende, Ende_AV + 1 Jahr, Ende_AV + anteil*Abfindung / Entgelt_Tag)</Formel>
+      <Quellenverweis quelle="Q_SGB3">§ 158 Abs. 1, Abs. 2 SGB III</Quellenverweis>
+    </Regel>
+    <Regel id="R_Ruhen157" bereich="Arbeitslosengeld" geprueft="false">
+      <Bezeichnung>Ruhen bei Arbeitsentgelt und Urlaubsabgeltung</Bezeichnung>
+      <Beschreibung>ALG ruht, solange Arbeitsentgelt gezahlt wird, und für die Dauer abgegoltenen Urlaubs.</Beschreibung>
+      <Quellenverweis quelle="Q_SGB3">§ 157 Abs. 1, Abs. 2 SGB III</Quellenverweis>
+    </Regel>
+    <Regel id="R_Parallel" bereich="Arbeitslosengeld" geprueft="true">
+      <Bezeichnung>Verhältnis Sperrzeit und Ruhen</Bezeichnung>
+      <Beschreibung>Sperrzeit und Ruhen nach §§ 157, 158 laufen gleichzeitig; nur mehrere Sperrzeiten aus verschiedenen Gründen laufen nacheinander. ALG-Beginn = max(Ende Sperrzeit, Ende Ruhen, Arbeitslosmeldung).</Beschreibung>
+      <Quellenverweis quelle="Q_FW159">FW 159.2 Abs. 3, Abs. 7, Abs. 8</Quellenverweis>
+    </Regel>
+    <Regel id="R_ALG_Steuer" bereich="Arbeitslosengeld" geprueft="false">
+      <Bezeichnung>Steuer auf ALG</Bezeichnung>
+      <Beschreibung>Steuerfrei, Progressionsvorbehalt.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 3 Nr. 2 Buchst. a, § 32b Abs. 1 Satz 1 Nr. 1 Buchst. a EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_KV_ALG" bereich="Krankenversicherung" geprueft="true">
+      <Bezeichnung>KV bei ALG-Bezug</Bezeichnung>
+      <Beschreibung>Versicherungspflicht, Beiträge trägt die Bundesagentur; auch wenn der Anspruch nur wegen Sperrzeit oder Urlaubsabgeltung ruht (ab 2. Sperrzeitmonat, 1. Monat nachgehender Anspruch bei vorher Pflichtversicherten; vorher freiwillig Versicherte zahlen 1. Monat selbst).</Beschreibung>
+      <Quellenverweis quelle="Q_SGB5">§ 5 Abs. 1 Nr. 2, § 19 Abs. 2, § 251 Abs. 4a SGB V</Quellenverweis>
+      <Quellenverweis quelle="Q_Verdi">Praxistipp</Quellenverweis>
+      <Quellenverweis quelle="Q_KKInfo">Ratgeber</Quellenverweis>
+    </Regel>
+    <Regel id="R_KV_RuhenAbfindung" bereich="Krankenversicherung" geprueft="true">
+      <Bezeichnung>KV bei Ruhen wegen Abfindung</Bezeichnung>
+      <Beschreibung>Ruht der Anspruch (auch) nach § 158, besteht keine Versicherungspflicht über die Agentur; nach nachgehendem Anspruch freiwillige Versicherung (obligatorische Anschlussversicherung).</Beschreibung>
+      <Quellenverweis quelle="Q_SGB5">§ 5 Abs. 1 Nr. 2, § 188 Abs. 4 SGB V</Quellenverweis>
+      <Quellenverweis quelle="Q_SGMuenchen">SG München S 15 KR 2273/19</Quellenverweis>
+      <Unsicherheit>Verhältnis nachgehender Anspruch / Anschlussversicherung mit Kasse klären.</Unsicherheit>
+    </Regel>
+    <Regel id="R_KV_Freiwillig" bereich="Krankenversicherung" geprueft="true">
+      <Bezeichnung>Beitrag freiwillig Versicherte</Bezeichnung>
+      <Beschreibung>Gesamte wirtschaftliche Leistungsfähigkeit: u. a. Kapitalerträge, Mieten, Abfindungen (in vollem Umfang). Bemessung zwischen Mindestbemessung und BBG; Einmalzahlungen auf 12 Monate verteilt.</Beschreibung>
+      <Formel>Beitrag_Monat = clamp(Einnahmen_Monat; kv_mindestbemessung_monat; kv_bbg_monat) * (kv_satz + zusatzbeitrag + pv_satz_effektiv)</Formel>
+      <Quellenverweis quelle="Q_SGB5">§ 240 SGB V</Quellenverweis>
+      <Quellenverweis quelle="Q_BeitrVerf">BeitrVerfGrsSz §§ 3 bis 5</Quellenverweis>
+      <Quellenverweis quelle="Q_BSG_B12KR620R">BSG B 12 KR 6/20 R</Quellenverweis>
+      <Unsicherheit>Zuordnung der Abfindung zu Monaten kassenabhängig.</Unsicherheit>
+    </Regel>
+    <Regel id="R_KV_AbfindungPflicht" bereich="Krankenversicherung" geprueft="false">
+      <Bezeichnung>Abfindung bei Pflichtversicherten</Bezeichnung>
+      <Beschreibung>Echte Abfindung ist kein Arbeitsentgelt und beitragsfrei.</Beschreibung>
+      <Quellenverweis quelle="Q_SGB4">§ 14 Abs. 1 SGB IV</Quellenverweis>
+      <Quellenverweis quelle="Q_BSG_12RK2088">BSG v. 21.2.1990, 12 RK 20/88</Quellenverweis>
+    </Regel>
+    <Regel id="R_KV_Familie" bereich="Krankenversicherung" geprueft="false">
+      <Bezeichnung>Familienversicherung</Bezeichnung>
+      <Beschreibung>Nur bei Gesamteinkommen bis 1/7 der Bezugsgröße monatlich.</Beschreibung>
+      <Quellenverweis quelle="Q_SGB5">§ 10 Abs. 1 Satz 1 Nr. 5 SGB V</Quellenverweis>
+    </Regel>
+    <Regel id="R_Krankengeld" bereich="Krankenversicherung" geprueft="true">
+      <Bezeichnung>Krankengeld</Bezeichnung>
+      <Beschreibung>Ruht während einer Sperrzeit.</Beschreibung>
+      <Quellenverweis quelle="Q_SGB5">§ 49 Abs. 1 Nr. 3a SGB V</Quellenverweis>
+    </Regel>
+    <Regel id="R_Freistellung" bereich="Arbeitsrecht" geprueft="false">
+      <Bezeichnung>Unwiderrufliche Freistellung bis Fristende</Bezeichnung>
+      <Beschreibung>Arbeitsverhältnis und SV-Beschäftigung bestehen fort (Gehalt, KV, RV). Leistungsrechtlich kann Beschäftigungslosigkeit und damit Sperrzeit schon mit Freistellungsbeginn eintreten; ALG ruht, solange Entgelt gezahlt wird. Kein Ruhen nach § 158 bei eingehaltener Frist.</Beschreibung>
+      <Quellenverweis quelle="Q_FW159">FW 159.2 Abs. 1</Quellenverweis>
+      <Quellenverweis quelle="Q_BSG_B12KR2207R">BSG v. 24.9.2008, B 12 KR 22/07 R</Quellenverweis>
+      <Quellenverweis quelle="Q_SGB3">§§ 157, 158 SGB III</Quellenverweis>
+      <Unsicherheit>Ereignis für Ein-Jahres-Regel (Freistellungsbeginn oder Vertragsende) mit Agentur klären.</Unsicherheit>
+    </Regel>
+    <Regel id="R_Basisrente" bereich="Altersvorsorge" geprueft="false">
+      <Bezeichnung>Basisrente</Bezeichnung>
+      <Beschreibung>Beiträge als Sonderausgaben bis Höchstbetrag (Zusammenveranlagung doppelt, gekürzt um gesetzliche RV-Beiträge); Abfluss im Jahr; zertifizierter Vertrag; spätere Leistungen voll steuerpflichtig.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 10 Abs. 1 Nr. 2 Buchst. b, Abs. 3, § 11 Abs. 2, § 22 Nr. 1 Satz 3 Buchst. a Doppelbuchst. aa EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_AltZertG">§ 5a AltZertG</Quellenverweis>
+    </Regel>
+    <Regel id="R_bAV_Ausscheiden" bereich="Altersvorsorge" geprueft="false">
+      <Bezeichnung>bAV aus Anlass der Beendigung</Bezeichnung>
+      <Beschreibung>Steuerfrei bis 4 % BBG-RV × Dienstjahre (max. 10), gekürzt um steuerfreie Beiträge nach § 3 Nr. 63 Satz 1 im Austrittsjahr und den 6 Vorjahren. Vereinbarung mit Arbeitgeber vor Fälligkeit. Spätere Leistungen steuerpflichtig.</Beschreibung>
+      <Formel>Freibetrag = 0,04 * BBG_RV_Jahr * min(Dienstjahre; 10) - steuerfreie_Beiträge(Austrittsjahr + 6 Vorjahre)</Formel>
+      <Quellenverweis quelle="Q_EStG">§ 3 Nr. 63 Satz 3, § 22 Nr. 5 EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Erhaltung" bereich="Vermietung" geprueft="false">
+      <Bezeichnung>Erhaltungsaufwand und AfA</Bezeichnung>
+      <Beschreibung>Erhaltungsaufwand sofort abziehbar im Zahlungsjahr (wahlweise Verteilung 2 bis 5 Jahre); Herstellungskosten und Anschaffungsnebenkosten nur über AfA; anschaffungsnahe Herstellungskosten (15 %, 3 Jahre). AfA zeitanteilig ab Übergang von Nutzen und Lasten.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 9 Abs. 1 Satz 3 Nr. 1, Nr. 7, §§ 6 Abs. 1 Nr. 1a, 7 EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_EStR">R 21.1 EStR</Quellenverweis>
+      <Quellenverweis quelle="Q_EStDV">§ 82b EStDV</Quellenverweis>
+    </Regel>
+    <Regel id="R_Grenzen_Gestaltung" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Grenzen der Gestaltung</Bezeichnung>
+      <Beschreibung>Einkünfteerzielungsabsicht erforderlich; unangemessene Gestaltungen nicht anerkannt; Verluste aus Steuerstundungsmodellen beschränkt.</Beschreibung>
+      <Quellenverweis quelle="Q_BFH_GrS_4_82">BFH GrS 4/82</Quellenverweis>
+      <Quellenverweis quelle="Q_AO">§ 42 AO</Quellenverweis>
+      <Quellenverweis quelle="Q_EStG">§ 15b EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Rente_ALG" bereich="Rentenversicherung" geprueft="false">
+      <Bezeichnung>Rentenversicherung während ALG</Bezeichnung>
+      <Beschreibung>Pflichtversicherung, Beiträge auf 80 % des Bemessungsentgelts durch die Agentur.</Beschreibung>
+      <Quellenverweis quelle="Q_SGB6">§ 3 Satz 1 Nr. 3, § 166 Abs. 1 Nr. 2 SGB VI</Quellenverweis>
+    </Regel>
+    <Regel id="R_Einzelveranlagung" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Einzelveranlagung von Ehegatten</Bezeichnung>
+      <Beschreibung>Wahlrecht je Kalenderjahr, ausgeübt mit der Steuererklärung. Grundtarif je Person; Einkünfte und Verlustausgleich nur innerhalb der Person; Sonderausgaben bei dem, der sie getragen hat, auf gemeinsamen Antrag je zur Hälfte; Kinderfreibeträge und Kindergeld je zur Hälfte; Soli-Freigrenze, Sparer-Pauschbetrag und Basisrenten-Höchstbetrag je Person; Fünftelregelung und Progressionsvorbehalt je Person. Lohnt sich, wenn eine Abfindung in der Spalte mit negativem übrigem zvE steht und das Gehalt des Partners das gemeinsame zvE sonst über die Nullgrenze heben würde; kostet den Splittingvorteil auf das Gehalt.</Beschreibung>
+      <Formel>Belastung = min(ESt_zusammen; Σ ESt_einzel(Person))</Formel>
+      <Quellenverweis quelle="Q_EStG">§§ 26, 26a EStG</Quellenverweis>
+    </Regel>
+    <Regel id="R_Zusammenballung_Folgejahr" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Zusammenballung bei Zahlung in einem späteren Jahr</Bezeichnung>
+      <Beschreibung>Bei Zahlung in einem Jahr nach dem Austritt gilt die Zusammenballung im Regelfall als erfüllt, wenn die Abfindung die Einnahmen übersteigt, die bei Fortsetzung des Arbeitsverhältnisses in diesem Jahr angefallen wären. Die Abfindung muss in einem Betrag fließen; Teilbeträge in einem anderen Jahr bis est_teilleistung_unschaedlich_anteil sind unschädlich.</Beschreibung>
+      <Formel>erfüllt = Abfindung &gt; Jahresgehalt des letzten vollen Jahres vor Austritt (fortgeschrieben)</Formel>
+      <Quellenverweis quelle="Q_BMF2013">BMF v. 1.11.2013, Rz. 8 ff.</Quellenverweis>
+    </Regel>
+    <Regel id="R_Gestaltungsrisiko" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Risiko steuerlicher Gestaltungen</Bezeichnung>
+      <Beschreibung>Gestaltungen werden nur anerkannt, wenn sie wirtschaftlich begründet und tatsächlich durchgeführt sind (§ 42 AO); Verluste aus Steuerstundungsmodellen sind beschränkt (§ 15b EStG); Einkünfteerzielungsabsicht erforderlich (BFH GrS 4/82). Stufen: Basisrente gering; späterer Zahlungstermin gering bis mittel; Einzelveranlagung keins; bAV-Umwandlung gering; Erhaltungsaufwand gering, wenn echt; Disagio gering bis mittel; Immobilienkauf mit Verlusten mittel.</Beschreibung>
+      <Quellenverweis quelle="Q_AO">§ 42 AO</Quellenverweis>
+      <Quellenverweis quelle="Q_EStG">§ 15b EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_BFH_GrS_4_82">BFH GrS 4/82</Quellenverweis>
+      <Unsicherheit>Einzelfallprüfung durch die Finanzverwaltung.</Unsicherheit>
+    </Regel>
+    <Regel id="R_Faelligkeit" bereich="Einkommensteuer" geprueft="false">
+      <Bezeichnung>Fälligkeit und Zufluss der Abfindung</Bezeichnung>
+      <Beschreibung>Die Abfindung fließt im Kalenderjahr der Zahlung zu. Ein späterer Fälligkeitstermin wird anerkannt, wenn er vor Fälligkeit vertraglich vereinbart wurde; bereits fällige Beträge dürfen nicht verschoben werden. Eine einvernehmliche frühere Zahlung ist möglich.</Beschreibung>
+      <Quellenverweis quelle="Q_EStG">§ 11 Abs. 1, § 38a Abs. 1 Satz 3 EStG</Quellenverweis>
+      <Quellenverweis quelle="Q_BFH_IX_R_1_09">BFH v. 11.11.2009, IX R 1/09</Quellenverweis>
+    </Regel>
+  </Regeln>
+  <Quellen>
+    <Quelle id="Q_EStG" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Einkommensteuergesetz (EStG)</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/estg/</Url>
+    </Quelle>
+    <Quelle id="Q_EStDV" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Einkommensteuer-Durchführungsverordnung (EStDV)</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/estdv_1955/</Url>
+    </Quelle>
+    <Quelle id="Q_SolZG" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Solidaritätszuschlaggesetz 1995</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/solzg_1995/</Url>
+    </Quelle>
+    <Quelle id="Q_KiStG" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Kirchensteuergesetze der Länder</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_AO" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Abgabenordnung (AO)</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/ao_1977/</Url>
+    </Quelle>
+    <Quelle id="Q_WaChG" art="Gesetz" onlineGeprueft="true">
+      <Fundstelle>Wachstumschancengesetz, BGBl. 2024 I Nr. 108 (Fünftelregelung nicht mehr im Lohnsteuerabzug ab 2025)</Fundstelle>
+      <Url>https://datenbank.nwb.de/Dokument/1093296</Url>
+    </Quelle>
+    <Quelle id="Q_AltZertG" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Altersvorsorgeverträge-Zertifizierungsgesetz</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/altzertg/</Url>
+    </Quelle>
+    <Quelle id="Q_SGB3" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Sozialgesetzbuch III</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/sgb_3/</Url>
+    </Quelle>
+    <Quelle id="Q_SGB3_148" art="Gesetz" onlineGeprueft="true">
+      <Fundstelle>§ 148 SGB III (Wortlaut)</Fundstelle>
+      <Url>https://www.hensche.de/Rechtsanwalt_Arbeitsrecht_Gesetze_SGBIII_p148.html</Url>
+    </Quelle>
+    <Quelle id="Q_SGB4" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Sozialgesetzbuch IV</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/sgb_4/</Url>
+    </Quelle>
+    <Quelle id="Q_SGB5" art="Gesetz" onlineGeprueft="true">
+      <Fundstelle>Sozialgesetzbuch V</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/sgb_5/BJNR024820988.html</Url>
+    </Quelle>
+    <Quelle id="Q_SGB6" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Sozialgesetzbuch VI</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/sgb_6/</Url>
+    </Quelle>
+    <Quelle id="Q_SGB11" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Sozialgesetzbuch XI</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/sgb_11/</Url>
+    </Quelle>
+    <Quelle id="Q_BGB" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Bürgerliches Gesetzbuch</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/bgb/</Url>
+    </Quelle>
+    <Quelle id="Q_KSchG" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Kündigungsschutzgesetz</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/kschg/</Url>
+    </Quelle>
+    <Quelle id="Q_HGB" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Handelsgesetzbuch</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/hgb/</Url>
+    </Quelle>
+    <Quelle id="Q_BetrAVG" art="Gesetz" onlineGeprueft="false">
+      <Fundstelle>Betriebsrentengesetz</Fundstelle>
+      <Url>https://www.gesetze-im-internet.de/betravg/</Url>
+    </Quelle>
+    <Quelle id="Q_BFH_VI_R_44_07" art="Urteil" onlineGeprueft="true">
+      <Fundstelle>BFH, Urteil v. 17.1.2008, VI R 44/07</Fundstelle>
+      <Url>https://www.anwalt24.de/urteile/bfh/2008-01-17/vi-r-44_07</Url>
+    </Quelle>
+    <Quelle id="Q_BFH_IX_R_93_07" art="Urteil" onlineGeprueft="true">
+      <Fundstelle>BFH, Urteil v. 22.9.2009, IX R 93/07</Fundstelle>
+      <Url>https://www.anwalt24.de/urteile/bfh/2009-09-22/ix-r-93_07</Url>
+    </Quelle>
+    <Quelle id="Q_BFH_IX_R_46_14" art="Urteil" onlineGeprueft="false">
+      <Fundstelle>BFH, Urteil v. 13.10.2015, IX R 46/14 (unschädliche Teilleistung)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_BFH_GrS_4_82" art="Urteil" onlineGeprueft="false">
+      <Fundstelle>BFH, Beschluss v. 25.6.1984, GrS 4/82 (Einkünfteerzielungsabsicht)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_BSG_B11aAL4705R" art="Urteil" onlineGeprueft="false">
+      <Fundstelle>BSG, Urteil v. 12.7.2006, B 11a AL 47/05 R (wichtiger Grund bei Aufhebungsvertrag)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_BSG_B11AL3503R" art="Urteil" onlineGeprueft="false">
+      <Fundstelle>BSG, Urteil v. 18.12.2003, B 11 AL 35/03 R (Abwicklungsvertrag)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_BSG_12RK2088" art="Urteil" onlineGeprueft="false">
+      <Fundstelle>BSG, Urteil v. 21.2.1990, 12 RK 20/88 (Abfindung kein Arbeitsentgelt)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_BSG_B12KR620R" art="Urteil" onlineGeprueft="true">
+      <Fundstelle>BSG, Urteil B 12 KR 6/20 R (Verteilung Einmalzahlung auf 12 Monate)</Fundstelle>
+      <Url>https://datenbank.nwb.de/Dokument/1007930/</Url>
+    </Quelle>
+    <Quelle id="Q_BSG_B12KR2207R" art="Urteil" onlineGeprueft="false">
+      <Fundstelle>BSG, Urteil v. 24.9.2008, B 12 KR 22/07 R (Beschäftigung bei Freistellung)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_SGMuenchen" art="Urteil" onlineGeprueft="true">
+      <Fundstelle>SG München, Gerichtsbescheid v. 9.2.2021, S 15 KR 2273/19</Fundstelle>
+      <Url>https://www.gesetze-bayern.de/Content/Pdf/Y-300-Z-BECKRS-B-2021-N-5707</Url>
+    </Quelle>
+    <Quelle id="Q_FW159" art="Verwaltung" onlineGeprueft="true">
+      <Fundstelle>Fachliche Weisungen der BA zu § 159 SGB III</Fundstelle>
+      <Url>https://www.arbeitsagentur.de/datei/fw-sgb-iii-159_ba015166.pdf</Url>
+    </Quelle>
+    <Quelle id="Q_FW148" art="Verwaltung" onlineGeprueft="false">
+      <Fundstelle>Fachliche Weisungen der BA zu § 148 SGB III</Fundstelle>
+      <Url>https://arbeitsagentur.de/datei/fw-sgb-iii-148_ba015155.pdf</Url>
+    </Quelle>
+    <Quelle id="Q_BMF2013" art="Verwaltung" onlineGeprueft="false">
+      <Fundstelle>BMF-Schreiben v. 1.11.2013, BStBl I 2013, 1326 (Entschädigungen, § 34 EStG)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_BMF2016" art="Verwaltung" onlineGeprueft="false">
+      <Fundstelle>BMF-Schreiben v. 4.3.2016, BStBl I 2016, 277 (Teilleistungen)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_LStR" art="Verwaltung" onlineGeprueft="false">
+      <Fundstelle>Lohnsteuer-Richtlinien, R 39b.2</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_EStH" art="Verwaltung" onlineGeprueft="false">
+      <Fundstelle>Einkommensteuer-Hinweise, H 34.2</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_EStR" art="Verwaltung" onlineGeprueft="false">
+      <Fundstelle>Einkommensteuer-Richtlinien, R 21.1</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_BeitrVerf" art="Verwaltung" onlineGeprueft="true">
+      <Fundstelle>Beitragsverfahrensgrundsätze Selbstzahler (GKV-Spitzenverband)</Fundstelle>
+      <Url>https://sozialversicherung-kompetent.de/sozialversicherung/gemeinsame-vorschriften/1085-abfindungen-beitragspflicht-in-sozialversicherung.html</Url>
+    </Quelle>
+    <Quelle id="Q_LStErm" art="Verwaltung" onlineGeprueft="true">
+      <Fundstelle>Anleitung zum Antrag auf Lohnsteuer-Ermäßigung ab 2025</Fundstelle>
+      <Url>https://berlin.de/sen/finanzen/steuern/downloads/einkommen-und-lohnsteuerformulare/lst-3-abc-elsatm-ab-2025-anleitung-ermaessigung.pdf</Url>
+    </Quelle>
+    <Quelle id="Q_TK" art="Sekundaerquelle" onlineGeprueft="true">
+      <Fundstelle>Techniker Krankenkasse, freiwillige Versicherung 2026</Fundstelle>
+      <Url>https://www.tk.de/techniker/versicherung/gut-versichert-in-jeder-lebenslage/freiwillige-krankenversicherung-tk/bedeutung-moeglichkeiten-freiwillige-versicherung-2006576</Url>
+    </Quelle>
+    <Quelle id="Q_KVRechner" art="Sekundaerquelle" onlineGeprueft="true">
+      <Fundstelle>deutschland-rechner.de, freiwillige Krankenversicherung 2026</Fundstelle>
+      <Url>https://www.deutschland-rechner.de/freiwillige-krankenversicherung-rechner</Url>
+    </Quelle>
+    <Quelle id="Q_VermZentrum" art="Sekundaerquelle" onlineGeprueft="true">
+      <Fundstelle>Vermögenszentrum, Beitragsbemessungsgrenze KV 2026</Fundstelle>
+      <Url>https://www.vermoegenszentrum.de/wissen/beitragsbemessungsgrenze-krankenversicherung</Url>
+    </Quelle>
+    <Quelle id="Q_ALGRatgeber" art="Sekundaerquelle" onlineGeprueft="true">
+      <Fundstelle>Arbeitslosengeld I 2026 (BBG ALV, Leistungssätze)</Fundstelle>
+      <Url>https://finanz-rechner-hub.de/arbeitslosengeld-1-anspruch/</Url>
+    </Quelle>
+    <Quelle id="Q_Verdi" art="Sekundaerquelle" onlineGeprueft="true">
+      <Fundstelle>ver.di, Sperrzeit bei Arbeitsaufgabe</Fundstelle>
+      <Url>https://verdi-bub.de/wissen/praxistipps/arbeitslosengeld-sperrzeit-bei-arbeitsaufgabe</Url>
+    </Quelle>
+    <Quelle id="Q_KKInfo" art="Sekundaerquelle" onlineGeprueft="true">
+      <Fundstelle>krankenkasseninfo.de, Krankenversicherung bei Sperrzeit</Fundstelle>
+      <Url>https://www.krankenkasseninfo.de/ratgeber/61910/krankenversicherung-bei-arbeitslosengeldsperre.html</Url>
+    </Quelle>
+    <Quelle id="Q_BFH_IX_R_1_09" art="Urteil" onlineGeprueft="false">
+      <Fundstelle>BFH, Urteil v. 11.11.2009, IX R 1/09 (Verschiebung der Fälligkeit einer Abfindung)</Fundstelle>
+    </Quelle>
+    <Quelle id="Q_Abfindungsangebot" art="Sekundaerquelle" onlineGeprueft="false">
+      <Fundstelle>Abfindungsangebot des Arbeitgebers (vertragliche Regelung, kein Gesetz)</Fundstelle>
+    </Quelle>
+  </Quellen>
+</RechtlicheVorgaben>

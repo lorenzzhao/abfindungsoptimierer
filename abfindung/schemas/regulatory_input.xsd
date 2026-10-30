@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later; Copyright (C) 2026 Lorenz Zhao -->
+<!--
+  Schema für rechtliche Vorgaben (Steuer, Arbeitslosengeld, Kranken- und Pflegeversicherung,
+  Arbeitsrecht), die ein Optimierungstool für Abfindungen und Austrittszeitpunkte benötigt.
+  Enthält keine persönlichen Daten.
+  Namespace: urn:abfindung:recht:v1
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:abfindung:recht:v1"
+           xmlns:r="urn:abfindung:recht:v1"
+           targetNamespace="urn:abfindung:recht:v1"
+           elementFormDefault="qualified">
+
+  <xs:element name="RechtlicheVorgaben">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Metadaten" type="MetadatenTyp"/>
+        <xs:element name="Einkommensteuertarif" type="TarifTyp" maxOccurs="unbounded"/>
+        <xs:element name="Parameter" type="ParameterListeTyp"/>
+        <xs:element name="Tabellen" type="TabellenListeTyp"/>
+        <xs:element name="Regeln" type="RegelListeTyp"/>
+        <xs:element name="Quellen" type="QuellenListeTyp"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:key name="ParameterId"><xs:selector xpath="r:Parameter/r:Param"/><xs:field xpath="@id"/></xs:key>
+    <xs:key name="QuelleId"><xs:selector xpath="r:Quellen/r:Quelle"/><xs:field xpath="@id"/></xs:key>
+    <xs:keyref name="ParamQuelleRef" refer="QuelleId"><xs:selector xpath="r:Parameter/r:Param/r:Quellenverweis"/><xs:field xpath="@quelle"/></xs:keyref>
+    <xs:keyref name="RegelQuelleRef" refer="QuelleId"><xs:selector xpath="r:Regeln/r:Regel/r:Quellenverweis"/><xs:field xpath="@quelle"/></xs:keyref>
+    <xs:keyref name="TarifQuelleRef" refer="QuelleId"><xs:selector xpath="r:Einkommensteuertarif/r:Quellenverweis"/><xs:field xpath="@quelle"/></xs:keyref>
+    <xs:key name="RegelId"><xs:selector xpath="r:Regeln/r:Regel"/><xs:field xpath="@id"/></xs:key>
+    <xs:key name="TabelleId"><xs:selector xpath="r:Tabellen/r:Tabelle"/><xs:field xpath="@id"/></xs:key>
+    <xs:keyref name="TabelleQuelleRef" refer="QuelleId"><xs:selector xpath="r:Tabellen/r:Tabelle/r:Quellenverweis"/><xs:field xpath="@quelle"/></xs:keyref>
+  </xs:element>
+
+  <!-- Metadaten -->
+  <xs:complexType name="MetadatenTyp">
+    <xs:sequence>
+      <xs:element name="Beschreibung" type="xs:string"/>
+      <xs:element name="Stand" type="xs:date"/>
+      <xs:element name="Rechtsstand" type="xs:string"/>
+      <xs:element name="Hinweis" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Einkommensteuertarif § 32a EStG -->
+  <xs:complexType name="TarifTyp">
+    <xs:sequence>
+      <xs:element name="Zone" type="TarifzoneTyp" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element name="Rundung" type="xs:string"/>
+      <xs:element name="Splittingverfahren" type="xs:string"/>
+      <xs:element name="Quellenverweis" type="QuellenverweisTyp" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="jahr" type="xs:gYear" use="required"/>
+    <xs:attribute name="geprueft" type="xs:boolean" use="required"/>
+    <xs:attribute name="fortschreibungFuerFolgejahr" type="xs:boolean" default="false"/>
+  </xs:complexType>
+
+  <xs:complexType name="TarifzoneTyp">
+    <xs:sequence>
+      <xs:element name="Untergrenze" type="xs:decimal"/>
+      <xs:element name="Obergrenze" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="Formel" type="xs:string"/>
+      <xs:element name="Koeffizient" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:decimal">
+              <xs:attribute name="name" type="xs:string" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="nr" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="typ" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="steuerfrei"/>
+          <xs:enumeration value="progression_y"/>
+          <xs:enumeration value="progression_z"/>
+          <xs:enumeration value="linear"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Einzelparameter -->
+  <xs:complexType name="ParameterListeTyp">
+    <xs:sequence>
+      <xs:element name="Param" type="ParamTyp" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ParamTyp">
+    <xs:sequence>
+      <xs:element name="Bezeichnung" type="xs:string"/>
+      <xs:element name="Wert" type="xs:string"/>
+      <xs:element name="Quellenverweis" type="QuellenverweisTyp" maxOccurs="unbounded"/>
+      <xs:element name="Hinweis" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdTyp" use="required"/>
+    <xs:attribute name="bereich" type="BereichTyp" use="required"/>
+    <xs:attribute name="wertTyp" type="WertTypTyp" use="required"/>
+    <xs:attribute name="einheit" type="EinheitTyp" use="required"/>
+    <xs:attribute name="gueltigAbJahr" type="xs:gYear" use="optional"/>
+    <xs:attribute name="gueltigBisJahr" type="xs:gYear" use="optional"/>
+    <xs:attribute name="geprueft" type="xs:boolean" use="required"/>
+  </xs:complexType>
+
+  <!-- Tabellen (z. B. ALG-Bezugsdauer, Kündigungsfristen) -->
+  <xs:complexType name="TabellenListeTyp">
+    <xs:sequence>
+      <xs:element name="Tabelle" type="TabelleTyp" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TabelleTyp">
+    <xs:sequence>
+      <xs:element name="Bezeichnung" type="xs:string"/>
+      <xs:element name="Spalte" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="name" type="IdTyp" use="required"/>
+          <xs:attribute name="einheit" type="EinheitTyp" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Zeile" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Zelle" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:simpleContent>
+                  <xs:extension base="xs:decimal">
+                    <xs:attribute name="spalte" type="IdTyp" use="required"/>
+                  </xs:extension>
+                </xs:simpleContent>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Quellenverweis" type="QuellenverweisTyp" maxOccurs="unbounded"/>
+      <xs:element name="Hinweis" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdTyp" use="required"/>
+    <xs:attribute name="bereich" type="BereichTyp" use="required"/>
+    <xs:attribute name="geprueft" type="xs:boolean" use="required"/>
+  </xs:complexType>
+
+  <!-- Rechenregeln (verbal und als Pseudoformel) -->
+  <xs:complexType name="RegelListeTyp">
+    <xs:sequence>
+      <xs:element name="Regel" type="RegelTyp" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RegelTyp">
+    <xs:sequence>
+      <xs:element name="Bezeichnung" type="xs:string"/>
+      <xs:element name="Beschreibung" type="xs:string"/>
+      <xs:element name="Formel" type="xs:string" minOccurs="0"/>
+      <xs:element name="Quellenverweis" type="QuellenverweisTyp" maxOccurs="unbounded"/>
+      <xs:element name="Unsicherheit" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdTyp" use="required"/>
+    <xs:attribute name="bereich" type="BereichTyp" use="required"/>
+    <xs:attribute name="geprueft" type="xs:boolean" use="required"/>
+  </xs:complexType>
+
+  <!-- Quellen -->
+  <xs:complexType name="QuellenListeTyp">
+    <xs:sequence>
+      <xs:element name="Quelle" type="QuelleTyp" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="QuelleTyp">
+    <xs:sequence>
+      <xs:element name="Fundstelle" type="xs:string"/>
+      <xs:element name="Url" type="xs:anyURI" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdTyp" use="required"/>
+    <xs:attribute name="art" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Gesetz"/>
+          <xs:enumeration value="Urteil"/>
+          <xs:enumeration value="Verwaltung"/>
+          <xs:enumeration value="Sekundaerquelle"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="onlineGeprueft" type="xs:boolean" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="QuellenverweisTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="quelle" type="IdTyp" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Einfache Typen -->
+  <xs:simpleType name="IdTyp">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Za-z][A-Za-z0-9_]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="BereichTyp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Einkommensteuer"/>
+      <xs:enumeration value="Lohnsteuer"/>
+      <xs:enumeration value="Solidaritaetszuschlag"/>
+      <xs:enumeration value="Kirchensteuer"/>
+      <xs:enumeration value="Kinder"/>
+      <xs:enumeration value="Kapitalertraege"/>
+      <xs:enumeration value="Vermietung"/>
+      <xs:enumeration value="Altersvorsorge"/>
+      <xs:enumeration value="Arbeitslosengeld"/>
+      <xs:enumeration value="Krankenversicherung"/>
+      <xs:enumeration value="Pflegeversicherung"/>
+      <xs:enumeration value="Rentenversicherung"/>
+      <xs:enumeration value="Arbeitsrecht"/>
+      <xs:enumeration value="Verfahren"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="WertTypTyp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="decimal"/>
+      <xs:enumeration value="integer"/>
+      <xs:enumeration value="boolean"/>
+      <xs:enumeration value="text"/>
+      <xs:enumeration value="monatTag"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="EinheitTyp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EUR"/>
+      <xs:enumeration value="EUR_pro_Monat"/>
+      <xs:enumeration value="EUR_pro_Jahr"/>
+      <xs:enumeration value="Anteil"/>
+      <xs:enumeration value="Tage"/>
+      <xs:enumeration value="Wochen"/>
+      <xs:enumeration value="Monate"/>
+      <xs:enumeration value="Jahre"/>
+      <xs:enumeration value="Stunden"/>
+      <xs:enumeration value="Anzahl"/>
+      <xs:enumeration value="keine"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

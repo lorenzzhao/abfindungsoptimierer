@@ -1,0 +1,198 @@
+Third-party notices / Drittkomponenten
+======================================
+
+Abfindungsoptimierer
+Copyright (C) 2026 Lorenz Zhao
+Licensed under the GNU General Public License, version 3 or (at your option) any later
+version (GPL-3.0-or-later); see LICENSE.
+
+This file lists the third-party components of the program, their licenses, and how the
+license conditions are met when the program is distributed. It is a summary to help with
+license review, not legal advice. The authoritative license texts are those shipped with
+each component. Exact versions of everything in a standalone package are listed in its
+licenses/VERSIONS.txt.
+
+(Kurzfassung auf Deutsch: Das Programm steht unter der GPL-3.0-or-later. Alle enthaltenen
+Fremdkomponenten stehen unter Lizenzen, die mit der GPL-3.0 vereinbar sind. Die
+eigenständigen Pakete enthalten im Ordner "licenses" alle Lizenztexte und Hinweise; der
+Quellcode des Programms und der LGPL-Komponenten wird mit jedem Paket weitergegeben.)
+
+
+1. How the program is distributed
+---------------------------------
+
+  - As source code (this repository and the source archive
+    abfindungsoptimierer-<version>-source.tar.gz). It does NOT contain the third-party
+    components: pip installs them separately from PyPI, each with its own license files.
+
+  - As standalone programs for Linux (AppImage, tar.gz) and, prepared, for Windows
+    (installer, portable ZIP), built with PyInstaller. These DO contain the components of
+    sections 2 and 3 and follow section 5. Every package has a "licenses" folder with all
+    license texts and notices, an exact version list (VERSIONS.txt) and the source code
+    locations (SOURCES.txt).
+
+All licenses listed below are compatible with the GPL-3.0-or-later.
+
+
+2. Components of the program
+----------------------------
+
+Qt for Python: PySide6-Essentials and shiboken6, and the Qt libraries they contain
+  Purpose:  graphical user interface
+  Project:  https://doc.qt.io/qtforpython-6/
+  License:  LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only (used under the LGPL-3.0)
+  Notes:    The third-party code inside Qt is listed in licenses/qt/
+            QT_THIRD_PARTY_NOTICES.txt. The Linux wheels also contain the ICU libraries
+            (Unicode License, licenses/qt/ICU-LICENSE.txt).
+
+matplotlib
+  Purpose:  charts
+  Project:  https://matplotlib.org
+  License:  Matplotlib License (based on the PSF License; permissive)
+  Notes:    Statically contains FreeType (FreeType License), Qhull (Qhull License), Agg and
+            others; ships the DejaVu fonts (Bitstream Vera License, public domain parts) and
+            the STIX and Computer Modern fonts (SIL OFL 1.1 / BaKoMa license). All texts are
+            in matplotlib's license file in licenses/packages/matplotlib/. The PDF report
+            embeds subsets of the DejaVu fonts, which their license allows.
+  Dependencies, each with its license files in licenses/packages/<name>/:
+    numpy             BSD-3-Clause and others; the Linux wheel bundles OpenBLAS
+                      (BSD-3-Clause), LAPACK (BSD-3-Clause) and the GCC runtime libraries of
+                      AlmaLinux 8 (GCC 8.5.0): libgfortran (GPL-3.0-or-later WITH
+                      GCC-exception-3.1) and libquadmath (LGPL-2.1-or-later), as separate,
+                      replaceable shared libraries.
+    contourpy         BSD-3-Clause
+    cycler            BSD-3-Clause
+    fonttools         MIT
+    kiwisolver        BSD-3-Clause
+    packaging         Apache-2.0 OR BSD-2-Clause
+    pillow            MIT-CMU (HPND); the wheels bundle libjpeg-turbo, libpng, libtiff,
+                      libwebp, OpenJPEG, Little CMS, FreeType, HarfBuzz, Brotli, libavif,
+                      xz/liblzma, zstd, libxcb and libXau – all permissive, listed with
+                      their texts in pillow's license file
+    pyparsing         MIT
+    python-dateutil   Apache-2.0 / BSD-3-Clause
+    six               MIT
+    tzdata            Apache-2.0 (time zone data: public domain)
+
+lxml
+  Purpose:  reading, writing and XSD validation of the XML files
+  Project:  https://lxml.de
+  License:  BSD-3-Clause
+  Notes:    The etree module statically contains libxml2, libxslt and libexslt (MIT), zlib
+            (Zlib) and GNU libiconv 1.18 (LGPL-2.1); see licenses/packages/lxml/ and
+            licenses/LGPL-2.1.txt.
+
+ReportLab
+  Purpose:  PDF report
+  Project:  https://www.reportlab.com/opensource/
+  License:  BSD-3-Clause
+  Notes:    The sample fonts of ReportLab (reportlab/fonts, one of them under the GPL) are
+            not included in the standalone packages; the report uses the DejaVu fonts.
+  Dependency: charset-normalizer (MIT).
+
+
+3. Additional components of the standalone programs
+---------------------------------------------------
+
+Python (python-build-standalone)
+  The programs contain the Python interpreter (Python Software Foundation License 2.0)
+  in the build of https://github.com/astral-sh/python-build-standalone. It contains
+  libraries such as OpenSSL 3 (Apache-2.0), SQLite (public domain), libffi (MIT),
+  libedit (BSD-3-Clause), ncurses (MIT/X11), xz/liblzma (0BSD), bzip2, zlib, expat (MIT),
+  mpdecimal (BSD-2-Clause) and libuuid (BSD-3-Clause); licenses/python/ holds the license
+  texts of exactly those built into the bundled interpreter and modules, the list of code
+  incorporated in CPython itself (CPython-<version>-incorporated-software.txt), the HACL*
+  license (MIT) and the Unicode License of the unicodedata module.
+
+PyInstaller
+  The program launchers (abfindungsoptimierer, abfindungsoptimierer-cli) are PyInstaller's
+  bootloader: GPL-2.0-or-later with an exception that allows distributing it with
+  programs under any license; see licenses/pyinstaller/.
+
+Linux system libraries (Linux packages only)
+  A few libraries that not every Linux system provides are taken from the build system
+  (AlmaLinux 8), for example the XCB utility libraries and libxkbcommon. The build allows
+  only permissively licensed system libraries; licenses/system-libraries/
+  SYSTEM_LIBRARIES.txt lists each one with package, version, license and source package,
+  and the folder holds their license files. Libraries every Linux desktop provides
+  (glibc, the C++ runtime, GLib, X11, Wayland, OpenGL, fontconfig, FreeType, D-Bus, zlib)
+  are not included; the program uses the system's copies.
+
+Microsoft Visual C++ runtime (Windows packages only)
+  vcruntime140*.dll, msvcp140*.dll and concrt140.dll: Microsoft Distributable Code,
+  redistributed together with the program under Microsoft's license terms; see
+  licenses/microsoft/.
+
+AppImage runtime (Linux AppImage only)
+  The AppImage file starts with the AppImage type 2 runtime (MIT,
+  https://github.com/AppImage/type2-runtime), which statically contains libfuse 3.15
+  (LGPL-2.1), squashfuse (BSD-2-Clause), zstd (BSD-3-Clause), zlib (Zlib),
+  mimalloc (MIT) and musl libc (MIT); see licenses/appimage-runtime/.
+
+Inno Setup (Windows installer only)
+  The installer is made with Inno Setup (Inno Setup License, permissive). Its setup
+  program only installs and uninstalls this program.
+
+
+4. Development tools
+--------------------
+
+Used for testing and building only, never part of the program: pytest (MIT),
+pyflakes (MIT), setuptools (MIT, build backend), Docker and AlmaLinux (build container).
+
+
+5. How the license conditions of the standalone programs are met
+-------------------------------------------------------------------
+
+GPL-3.0 (the program itself)
+  - licenses/LICENSE contains the license; the About dialog (Hilfe → Über …) and
+    --version show the copyright, the license, the warranty disclaimer and where the
+    source code is; "Lizenzen …" in the About dialog shows every license text.
+  - The complete corresponding source code, including the build scripts in packaging/, is
+    the archive abfindungsoptimierer-<version>-source.tar.gz. It is produced by the same
+    build as the packages and must be passed on together with them (GPL-3.0, section 6a).
+
+LGPL-3.0 (Qt and Qt for Python) and LGPL-2.1 (libfuse in the AppImage runtime)
+  - licenses/ contains the LGPL-3.0 and the GPL-3.0 it builds on; the AppImage also
+    contains the LGPL-2.1 (licenses/appimage-runtime/).
+  - The About dialog shows Qt's copyright notice and links both licenses.
+  - The programs are built in folder mode, so the Qt libraries are ordinary files in the
+    _internal/PySide6 folder and can be replaced with modified versions. The AppImage
+    runtime can be rebuilt with a modified libfuse from its source code.
+  - The unchanged source code of exactly the bundled versions of Qt (qtbase, qtsvg,
+    qtwayland), Qt for Python (pyside-setup), the AppImage runtime and libfuse is
+    downloaded by the build into release/sources/ and passed on together with the
+    packages; licenses/SOURCES.txt lists the archives with their checksums. The versions
+    are pinned in packaging/pins.json and packaging/release-constraints.txt.
+
+LGPL-2.1 (libiconv in lxml, libquadmath in NumPy) and the GCC runtime in NumPy
+(libgfortran, GPL-3.0-or-later WITH GCC-exception-3.1)
+  - licenses/LGPL-2.1.txt and the license texts in licenses/packages/numpy/ and
+    licenses/packages/lxml/ (with a NOTE.txt each).
+  - libquadmath and libgfortran are separate shared libraries in numpy.libs and can be
+    replaced. libiconv is linked statically into lxml; lxml's complete source code
+    (buildlibxml.py builds it with its static libraries) is passed on with the packages,
+    so lxml can be rebuilt with a modified libiconv and replace the lxml folder.
+  - The source code of exactly these versions – lxml 6.1.3, GNU libiconv 1.18 and the
+    AlmaLinux 8 source package gcc-8.5.0-28.el8_10.alma.1 – is downloaded by the build
+    into release/sources/ and passed on together with the packages (pinned with their
+    checksums in packaging/pins.json).
+
+Notices of permissive licenses (MIT, BSD, Apache-2.0, PSF, Matplotlib, HPND, Unicode,
+zlib, FreeType and others)
+  - The license texts and copyright notices of every bundled component are in licenses/.
+    The build (packaging/collect_licenses.py) assembles them and stops if any binary in a
+    package cannot be assigned to a component with a known license, or if a Linux system
+    library is under a GPL-family license.
+
+
+6. Files in this repository
+---------------------------
+
+All source code, the XML schemas, the icon and the documentation were written for this
+project and are under the project license. examples/gesetzliche_vorgaben_beispiel.xml and
+the test data in tests/fixtures contain invented or publicly available legal figures and
+fictitious personal data. The packaging scripts are adapted from PDF Multifile Searcher
+by the same author. The files in packaging/licenses/ are the unmodified license texts
+and notices of the components above; QT_THIRD_PARTY_NOTICES.txt is collected from the Qt
+documentation by packaging/fetch_qt_notices.py.

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Leere Vorlage für neue persönliche Daten (Datei → Neu). Alle Werte sind Platzhalter. -->
+<PersoenlicheDaten xmlns="urn:abfindung:persoenlich:v1" version="1.0">
+  <Metadaten>
+    <Beschreibung>Neue persönliche Daten</Beschreibung>
+    <Stand>2026-01-01</Stand>
+    <Waehrung>EUR</Waehrung>
+    <Hinweis>Vorlage des Abfindungsoptimierers – bitte alle Werte prüfen und eintragen.</Hinweis>
+  </Metadaten>
+
+  <Haushalt>
+    <Familienstand>ledig</Familienstand>
+    <Veranlagungsart>Einzelveranlagung</Veranlagungsart>
+    <Kirchensteuerpflichtig herkunft="angabe">false</Kirchensteuerpflichtig>
+    <Bundesland herkunft="angabe">NW</Bundesland>
+    <Kinder/>
+  </Haushalt>
+
+  <Personen>
+    <Person id="P1" rolle="Steuerpflichtiger">
+      <Geburtsdatum>1980-01-01</Geburtsdatum>
+      <Steuerklasse>I</Steuerklasse>
+      <Beschaeftigung>
+        <BetriebszugehoerigkeitJahre herkunft="angabe">0</BetriebszugehoerigkeitJahre>
+        <KuendigungsfristArbeitgeberMonate herkunft="abgeleitet">0</KuendigungsfristArbeitgeberMonate>
+        <Bruttogehalt herkunft="angabe" jahr="2026">0</Bruttogehalt>
+        <GeplantesEnde herkunft="planung">2026-12-31</GeplantesEnde>
+        <Rentenversicherungspflichtig herkunft="angabe">true</Rentenversicherungspflichtig>
+      </Beschaeftigung>
+      <Abfindung>
+        <Betrag herkunft="angabe">0</Betrag>
+        <FuenftelregelungVoraussetzungen herkunft="abgeleitet">true</FuenftelregelungVoraussetzungen>
+      </Abfindung>
+      <Krankenversicherung>
+        <Status herkunft="abgeleitet">pflichtversichert</Status>
+        <BeitragFreiwilligMonat herkunft="abgeleitet">0</BeitragFreiwilligMonat>
+      </Krankenversicherung>
+      <Arbeitslosengeld>
+        <BetragMonat herkunft="abgeleitet">0</BetragMonat>
+        <Leistungssatz herkunft="abgeleitet">0.6</Leistungssatz>
+        <SperrzeitErwartet herkunft="abgeleitet">false</SperrzeitErwartet>
+      </Arbeitslosengeld>
+    </Person>
+  </Personen>
+
+  <Vermietung>
+    <AnzahlObjekte>0</AnzahlObjekte>
+    <Einkuenfte herkunft="angabe" jahr="2026" person="P1">0</Einkuenfte>
+  </Vermietung>
+
+  <Kapitalertraege>
+    <Ertrag herkunft="angabe" jahr="2026" person="P1">0</Ertrag>
+  </Kapitalertraege>
+
+  <Planung>
+    <Massnahmen/>
+    <Annahmen>
+      <Annahme id="ui_P1__salary_mode" einheit="keine" herkunft="angabe">jahr</Annahme>
+    </Annahmen>
+  </Planung>
+</PersoenlicheDaten>

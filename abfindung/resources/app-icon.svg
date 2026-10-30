@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later; Copyright (C) 2026 Lorenz Zhao -->
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect x="8" y="8" width="240" height="240" rx="44" fill="#0b5394"/>
+  <path d="M40 196 L96 150 L132 170 L212 84" fill="none" stroke="#7fd6a4" stroke-width="16"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M174 80 L216 80 L216 122" fill="none" stroke="#7fd6a4" stroke-width="16"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="80" y="118" font-family="DejaVu Sans, Arial, sans-serif" font-size="96" font-weight="bold"
+        fill="#ffffff" text-anchor="middle">€</text>
+</svg>

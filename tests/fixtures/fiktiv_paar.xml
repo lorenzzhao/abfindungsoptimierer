@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fiktiver Testdatensatz (Paar). Alle Werte sind erfunden und so gewählt, dass möglichst viele Rechenfälle
+     vorkommen: Kirchensteuer, drei Kinder (eines wird volljährig, eines unter 14), eine ältere Person mit langer
+     Betriebszugehörigkeit (Ruhen § 158 mit Altersabschlag, lange ALG-Dauer), eine Person über der
+     Versicherungspflichtgrenze (freiwillig versichert), Mietverlust und -gewinn, Kapitalerträge,
+     Auszahlungsfenster und unterschiedliche Austrittsdaten. -->
+<PersoenlicheDaten xmlns="urn:abfindung:persoenlich:v1" version="1.0">
+  <Metadaten>
+    <Beschreibung>Fiktiver Testdatensatz (Paar) für Regressionstests.</Beschreibung>
+    <Stand>2026-06-01</Stand>
+    <Waehrung>EUR</Waehrung>
+    <Hinweis>Alle Werte sind erfunden.</Hinweis>
+  </Metadaten>
+
+  <Haushalt>
+    <Familienstand>verheiratet</Familienstand>
+    <Veranlagungsart>Zusammenveranlagung</Veranlagungsart>
+    <Kirchensteuerpflichtig herkunft="angabe">true</Kirchensteuerpflichtig>
+    <Bundesland herkunft="angabe">HE</Bundesland>
+    <Kinder>
+      <Kind id="K1"><Geburtsjahr>2009</Geburtsjahr><Kindergeldbezug>true</Kindergeldbezug></Kind>
+      <Kind id="K2"><Geburtsjahr>2012</Geburtsjahr><Kindergeldbezug>true</Kindergeldbezug></Kind>
+      <Kind id="K3"><Geburtsjahr>2020</Geburtsjahr><Kindergeldbezug>true</Kindergeldbezug></Kind>
+    </Kinder>
+    <Kinderbetreuungskosten herkunft="angabe" jahr="2026">3600</Kinderbetreuungskosten>
+  </Haushalt>
+
+  <Personen>
+    <Person id="P1" rolle="Ehemann">
+      <Geburtsdatum>1966-08-20</Geburtsdatum>
+      <Steuerklasse>III</Steuerklasse>
+      <Beschaeftigung>
+        <BetriebszugehoerigkeitJahre herkunft="angabe">22</BetriebszugehoerigkeitJahre>
+        <KuendigungsfristArbeitgeberMonate herkunft="angabe">7</KuendigungsfristArbeitgeberMonate>
+        <Bruttogehalt herkunft="angabe" jahr="2026">52000</Bruttogehalt>
+        <Bruttogehalt herkunft="angabe" jahr="2027">53000</Bruttogehalt>
+        <GeplantesEnde herkunft="planung">2027-08-31</GeplantesEnde>
+        <Rentenversicherungspflichtig herkunft="angabe">true</Rentenversicherungspflichtig>
+      </Beschaeftigung>
+      <Abfindung>
+        <Betrag herkunft="angabe">160000</Betrag>
+        <FuenftelregelungVoraussetzungen herkunft="angabe">true</FuenftelregelungVoraussetzungen>
+      </Abfindung>
+      <Krankenversicherung>
+        <Status herkunft="angabe">pflichtversichert</Status>
+        <BeitragFreiwilligMonat herkunft="annahme">410</BeitragFreiwilligMonat>
+      </Krankenversicherung>
+      <Arbeitslosengeld>
+        <BetragMonat herkunft="annahme">1650</BetragMonat>
+        <Leistungssatz herkunft="abgeleitet">0.67</Leistungssatz>
+        <SperrzeitErwartet herkunft="annahme">true</SperrzeitErwartet>
+      </Arbeitslosengeld>
+      <Auszahlungsfenster fruehestens="2027-08" spaetestensMonateNachAustritt="30" herkunft="angabe"/>
+    </Person>
+    <Person id="P2" rolle="Ehefrau">
+      <Geburtsdatum>1979-12-03</Geburtsdatum>
+      <Steuerklasse>V</Steuerklasse>
+      <Beschaeftigung>
+        <BetriebszugehoerigkeitJahre herkunft="angabe">7</BetriebszugehoerigkeitJahre>
+        <KuendigungsfristArbeitgeberMonate herkunft="angabe">2</KuendigungsfristArbeitgeberMonate>
+        <Bruttogehalt herkunft="angabe" jahr="2026">92000</Bruttogehalt>
+        <Bruttogehalt herkunft="angabe" jahr="2027">94000</Bruttogehalt>
+        <GeplantesEnde herkunft="planung">2027-05-31</GeplantesEnde>
+        <Rentenversicherungspflichtig herkunft="angabe">true</Rentenversicherungspflichtig>
+      </Beschaeftigung>
+      <Abfindung>
+        <Betrag herkunft="angabe">95000</Betrag>
+        <FuenftelregelungVoraussetzungen herkunft="angabe">true</FuenftelregelungVoraussetzungen>
+      </Abfindung>
+      <Krankenversicherung>
+        <Status herkunft="angabe">freiwillig_gesetzlich</Status>
+        <BeitragFreiwilligMonat herkunft="annahme">905</BeitragFreiwilligMonat>
+      </Krankenversicherung>
+      <Arbeitslosengeld>
+        <BetragMonat herkunft="annahme">2380</BetragMonat>
+        <Leistungssatz herkunft="abgeleitet">0.67</Leistungssatz>
+        <SperrzeitErwartet herkunft="annahme">true</SperrzeitErwartet>
+      </Arbeitslosengeld>
+    </Person>
+  </Personen>
+
+  <Vermietung>
+    <AnzahlObjekte>1</AnzahlObjekte>
+    <Einkuenfte herkunft="angabe" jahr="2026" person="P1">-1800</Einkuenfte>
+    <Einkuenfte herkunft="angabe" jahr="2026" person="P2">2600</Einkuenfte>
+  </Vermietung>
+
+  <Kapitalertraege>
+    <Ertrag herkunft="angabe" jahr="2026" person="P1">1200</Ertrag>
+    <Ertrag herkunft="angabe" jahr="2026" person="P2">7400</Ertrag>
+  </Kapitalertraege>
+
+  <Planung>
+    <Massnahmen/>
+    <Annahmen>
+      <Annahme id="werbungskosten_je_person" einheit="EUR_pro_Jahr" herkunft="angabe">1700</Annahme>
+      <Annahme id="sozialabgaben_anteil_gehalt" einheit="Anteil" herkunft="annahme">0.2</Annahme>
+    </Annahmen>
+  </Planung>
+</PersoenlicheDaten>

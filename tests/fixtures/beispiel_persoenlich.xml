@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Beispieldatei mit ERFUNDENEN Werten (Max und Erika Muster). Keine echten Personendaten. -->
+<PersoenlicheDaten xmlns="urn:abfindung:persoenlich:v1" version="1.0">
+  <Metadaten>
+    <Beschreibung>Synthetische Beispieldaten für Tests und Demonstration des Abfindungsoptimierers.</Beschreibung>
+    <Stand>2026-09-15</Stand>
+    <Waehrung>EUR</Waehrung>
+    <Hinweis>Alle Werte sind erfunden.</Hinweis>
+  </Metadaten>
+
+  <Haushalt>
+    <Familienstand>verheiratet</Familienstand>
+    <Veranlagungsart>Zusammenveranlagung</Veranlagungsart>
+    <Kirchensteuerpflichtig herkunft="angabe">false</Kirchensteuerpflichtig>
+    <Bundesland herkunft="angabe">NW</Bundesland>
+    <Kinder>
+      <Kind id="K1"><Geburtsjahr>2015</Geburtsjahr><Kindergeldbezug>true</Kindergeldbezug></Kind>
+      <Kind id="K2"><Geburtsjahr>2019</Geburtsjahr><Kindergeldbezug>true</Kindergeldbezug></Kind>
+    </Kinder>
+    <Kinderbetreuungskosten herkunft="annahme" jahr="2025">3000</Kinderbetreuungskosten>
+  </Haushalt>
+
+  <Personen>
+    <Person id="P_Erika" rolle="Ehefrau">
+      <Geburtsdatum>1980-05-10</Geburtsdatum>
+      <Steuerklasse>IV</Steuerklasse>
+      <Beschaeftigung>
+        <BetriebszugehoerigkeitJahre herkunft="angabe">10</BetriebszugehoerigkeitJahre>
+        <KuendigungsfristArbeitgeberMonate herkunft="angabe">4</KuendigungsfristArbeitgeberMonate>
+        <Bruttogehalt herkunft="angabe" jahr="2026">70000</Bruttogehalt>
+        <Bruttogehalt herkunft="angabe" jahr="2025">68000</Bruttogehalt>
+        <GeplantesEnde herkunft="planung">2026-12-31</GeplantesEnde>
+        <Alternative id="E_Freistellung" art="Freistellung" freistellungAb="2027-01-01" ende="2027-03-31" herkunft="planung"/>
+        <Rentenversicherungspflichtig herkunft="angabe">true</Rentenversicherungspflichtig>
+      </Beschaeftigung>
+      <Abfindung>
+        <Betrag herkunft="angabe">150000</Betrag>
+        <FuenftelregelungVoraussetzungen herkunft="annahme">true</FuenftelregelungVoraussetzungen>
+      </Abfindung>
+      <Krankenversicherung>
+        <Status herkunft="angabe">pflichtversichert</Status>
+        <BeitragFreiwilligMonat herkunft="annahme">250</BeitragFreiwilligMonat>
+      </Krankenversicherung>
+      <Arbeitslosengeld>
+        <BetragMonat herkunft="annahme">2300</BetragMonat>
+        <Leistungssatz herkunft="abgeleitet">0.67</Leistungssatz>
+        <SperrzeitErwartet herkunft="annahme">true</SperrzeitErwartet>
+      </Arbeitslosengeld>
+    </Person>
+    <Person id="P_Max" rolle="Ehemann">
+      <Geburtsdatum>1978-11-20</Geburtsdatum>
+      <Steuerklasse>IV</Steuerklasse>
+      <Beschaeftigung>
+        <BetriebszugehoerigkeitJahre herkunft="angabe">6</BetriebszugehoerigkeitJahre>
+        <KuendigungsfristArbeitgeberMonate herkunft="angabe">2</KuendigungsfristArbeitgeberMonate>
+        <Bruttogehalt herkunft="angabe" jahr="2026">80000</Bruttogehalt>
+        <Bruttogehalt herkunft="angabe" jahr="2025">78000</Bruttogehalt>
+        <GeplantesEnde herkunft="planung">2027-02-28</GeplantesEnde>
+        <Rentenversicherungspflichtig herkunft="angabe">true</Rentenversicherungspflichtig>
+      </Beschaeftigung>
+      <Abfindung>
+        <Betrag herkunft="angabe">100000</Betrag>
+        <FuenftelregelungVoraussetzungen herkunft="annahme">true</FuenftelregelungVoraussetzungen>
+      </Abfindung>
+      <Krankenversicherung>
+        <Status herkunft="angabe">freiwillig_gesetzlich</Status>
+        <BeitragFreiwilligMonat herkunft="annahme">280</BeitragFreiwilligMonat>
+      </Krankenversicherung>
+      <Arbeitslosengeld>
+        <BetragMonat herkunft="annahme">2500</BetragMonat>
+        <Leistungssatz herkunft="abgeleitet">0.67</Leistungssatz>
+        <SperrzeitErwartet herkunft="annahme">true</SperrzeitErwartet>
+      </Arbeitslosengeld>
+    </Person>
+  </Personen>
+
+  <Steuerbescheid jahr="2025">
+    <Posten id="brutto_max" bezeichnung="Bruttoarbeitslohn" person="P_Max">78000</Posten>
+    <Posten id="brutto_erika" bezeichnung="Bruttoarbeitslohn" person="P_Erika">68000</Posten>
+    <Posten id="gde_gesamt" bezeichnung="Gesamtbetrag der Einkünfte, gemeinsam">145000</Posten>
+    <Posten id="sonderausgaben" bezeichnung="Vorsorgeaufwendungen und Kinderbetreuung (Sonderausgaben)">30000</Posten>
+    <Posten id="kinderfreibetraege" bezeichnung="Kinderfreibeträge (2 Kinder)">19200</Posten>
+    <Posten id="zve" bezeichnung="Zu versteuerndes Einkommen">95800</Posten>
+    <Posten id="est_tariflich" bezeichnung="Einkommensteuer auf das zvE">20000</Posten>
+    <Posten id="festgesetzt" bezeichnung="Festgesetzte Steuer gesamt">26000</Posten>
+  </Steuerbescheid>
+
+  <Vermietung>
+    <AnzahlObjekte>1</AnzahlObjekte>
+    <Einkuenfte herkunft="angabe" jahr="2025" person="P_Max">2000</Einkuenfte>
+    <Einkuenfte herkunft="angabe" jahr="2025" person="P_Erika">2000</Einkuenfte>
+    <ObjekteAngeschafftInLetzten3Jahren herkunft="angabe">false</ObjekteAngeschafftInLetzten3Jahren>
+  </Vermietung>
+
+  <Kapitalertraege>
+    <Ertrag herkunft="annahme" jahr="2025" person="P_Max">3000</Ertrag>
+    <Ertrag herkunft="annahme" jahr="2025" person="P_Erika">6000</Ertrag>
+  </Kapitalertraege>
+
+  <Planung>
+    <Massnahmen>
+    </Massnahmen>
+    <Annahmen>
+      <Annahme id="werbungskosten_je_person" einheit="EUR_pro_Jahr" herkunft="annahme">1500</Annahme>
+      <Annahme id="sozialabgaben_anteil_gehalt" einheit="Anteil" herkunft="annahme">0.21</Annahme>
+    </Annahmen>
+  </Planung>
+
+</PersoenlicheDaten>

@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Echte Nutzerdaten gehören nicht ins Repository
+persoenliche_daten*.xml
+gesetzliche_vorgaben*.xml
+rechtliche_vorgaben*.xml
+!examples/*.xml
+*.bak
+
+# Exporte
+*.pdf
+out/
+release/

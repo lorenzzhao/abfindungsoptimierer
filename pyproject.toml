@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "abfindungsoptimierer"
+version = "0.1.0"
+description = "Planungs- und Optimierungstool für Abfindung, Austritt, Arbeitslosengeld und Krankenversicherung (Deutschland)"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.txt"]
+authors = [{ name = "Lorenz Zhao" }]
+requires-python = ">=3.11"
+dependencies = [
+    "PySide6-Essentials>=6.6",
+    "matplotlib>=3.8",
+    "lxml>=5.0",
+    "reportlab>=4.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+abfindungsoptimierer-cli = "abfindung.cli:main"
+
+[project.gui-scripts]
+abfindungsoptimierer = "abfindung.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["abfindung*"]
+
+[tool.setuptools.package-data]
+abfindung = ["schemas/*.xsd", "resources/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

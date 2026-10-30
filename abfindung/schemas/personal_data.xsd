@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later; Copyright (C) 2026 Lorenz Zhao -->
+<!--
+  Schema für die persönlichen Eingabedaten eines Tools zur Optimierung von Abfindung,
+  Austrittszeitpunkt, Arbeitslosengeld und Krankenversicherung.
+  Namespace: urn:abfindung:persoenlich:v1
+  Jeder Wert trägt eine Herkunft (angabe, abgeleitet, annahme,
+  planung, illustrativ, berechnet), damit das Tool unsichere Werte kennzeichnen kann.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:abfindung:persoenlich:v1"
+           xmlns:p="urn:abfindung:persoenlich:v1"
+           targetNamespace="urn:abfindung:persoenlich:v1"
+           elementFormDefault="qualified">
+
+  <xs:element name="PersoenlicheDaten">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Metadaten" type="MetadatenTyp"/>
+        <xs:element name="Haushalt" type="HaushaltTyp"/>
+        <xs:element name="Personen" type="PersonenTyp"/>
+        <xs:element name="Steuerbescheid" type="SteuerbescheidTyp" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="Vermietung" type="VermietungTyp"/>
+        <xs:element name="Kapitalertraege" type="KapitalertraegeTyp"/>
+        <xs:element name="Planung" type="PlanungTyp"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:key name="PersonId">
+      <xs:selector xpath="p:Personen/p:Person"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+    <xs:keyref name="BescheidPersonRef" refer="PersonId">
+      <xs:selector xpath="p:Steuerbescheid/p:Posten"/>
+      <xs:field xpath="@person"/>
+    </xs:keyref>
+    <xs:keyref name="VermietungPersonRef" refer="PersonId">
+      <xs:selector xpath="p:Vermietung/p:Einkuenfte"/>
+      <xs:field xpath="@person"/>
+    </xs:keyref>
+    <xs:keyref name="KapitalPersonRef" refer="PersonId">
+      <xs:selector xpath="p:Kapitalertraege/p:Ertrag"/>
+      <xs:field xpath="@person"/>
+    </xs:keyref>
+  </xs:element>
+
+  <!-- Grundtypen -->
+  <xs:simpleType name="HerkunftTyp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="angabe"/>
+      <xs:enumeration value="abgeleitet"/>
+      <xs:enumeration value="annahme"/>
+      <xs:enumeration value="planung"/>
+      <xs:enumeration value="illustrativ"/>
+      <xs:enumeration value="berechnet"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Erlaubte Herkunft je Art des Werts:
+       Fakt (angabe, annahme), ableitbar (+ abgeleitet), planbar (planung, angabe, annahme),
+       planbar mit Herleitung (+ abgeleitet). HerkunftTyp (alle Werte) nur für freie Einträge
+       (Planung/Massnahmen/Parameter, Planung/Annahmen/Annahme). -->
+  <xs:simpleType name="HerkunftFaktTyp">
+    <xs:restriction base="HerkunftTyp">
+      <xs:enumeration value="angabe"/>
+      <xs:enumeration value="annahme"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="HerkunftAbleitbarTyp">
+    <xs:restriction base="HerkunftTyp">
+      <xs:enumeration value="angabe"/>
+      <xs:enumeration value="annahme"/>
+      <xs:enumeration value="abgeleitet"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="HerkunftPlanTyp">
+    <xs:restriction base="HerkunftTyp">
+      <xs:enumeration value="planung"/>
+      <xs:enumeration value="angabe"/>
+      <xs:enumeration value="annahme"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="IdTyp">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Za-z][A-Za-z0-9_]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PersonRefTyp">
+    <xs:restriction base="IdTyp"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="EinheitTyp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EUR"/>
+      <xs:enumeration value="EUR_pro_Monat"/>
+      <xs:enumeration value="EUR_pro_Jahr"/>
+      <xs:enumeration value="Anteil"/>
+      <xs:enumeration value="Monate"/>
+      <xs:enumeration value="Tage"/>
+      <xs:enumeration value="Jahre"/>
+      <xs:enumeration value="Anzahl"/>
+      <xs:enumeration value="keine"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="BetragTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="herkunft" type="HerkunftTyp" use="required"/>
+        <xs:attribute name="jahr" type="xs:gYear" use="optional"/>
+        <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+
+
+
+  <xs:complexType name="BetragFaktTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="herkunft" type="HerkunftFaktTyp" use="required"/>
+        <xs:attribute name="jahr" type="xs:gYear" use="optional"/>
+        <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="BetragAbleitbarTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="herkunft" type="HerkunftAbleitbarTyp" use="required"/>
+        <xs:attribute name="jahr" type="xs:gYear" use="optional"/>
+        <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="BetragPlanTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="herkunft" type="HerkunftPlanTyp" use="required"/>
+        <xs:attribute name="jahr" type="xs:gYear" use="optional"/>
+        <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="BoolFaktTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:boolean">
+        <xs:attribute name="herkunft" type="HerkunftFaktTyp" use="required"/>
+        <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="BoolAbleitbarTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:boolean">
+        <xs:attribute name="herkunft" type="HerkunftAbleitbarTyp" use="required"/>
+        <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="TextFaktTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="herkunft" type="HerkunftFaktTyp" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="TextAbleitbarTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="herkunft" type="HerkunftAbleitbarTyp" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="DatumPlanTyp">
+    <xs:simpleContent>
+      <xs:extension base="xs:date">
+        <xs:attribute name="herkunft" type="HerkunftPlanTyp" use="required"/>
+        <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Metadaten -->
+  <xs:complexType name="MetadatenTyp">
+    <xs:sequence>
+      <xs:element name="Beschreibung" type="xs:string"/>
+      <xs:element name="Stand" type="xs:date"/>
+      <xs:element name="Waehrung" type="xs:string" fixed="EUR"/>
+      <xs:element name="Hinweis" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Haushalt -->
+  <xs:complexType name="HaushaltTyp">
+    <xs:sequence>
+      <xs:element name="Familienstand">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="verheiratet"/>
+            <xs:enumeration value="ledig"/>
+            <xs:enumeration value="geschieden"/>
+            <xs:enumeration value="verwitwet"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Veranlagungsart">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Zusammenveranlagung"/>
+            <xs:enumeration value="Einzelveranlagung"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Kirchensteuerpflichtig" type="BoolFaktTyp"/>
+      <xs:element name="Bundesland" type="TextAbleitbarTyp"/>
+      <xs:element name="Finanzamt" type="TextFaktTyp" minOccurs="0"/>
+      <xs:element name="Kinder">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Kind" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Geburtsjahr" type="xs:gYear"/>
+                  <xs:element name="Kindergeldbezug" type="xs:boolean"/>
+                </xs:sequence>
+                <xs:attribute name="id" type="IdTyp" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Kinderbetreuungskosten" type="BetragFaktTyp" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Personen -->
+  <xs:complexType name="PersonenTyp">
+    <xs:sequence>
+      <xs:element name="Person" type="PersonTyp" minOccurs="1" maxOccurs="2"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PersonTyp">
+    <xs:sequence>
+      <xs:element name="Geburtsdatum" type="xs:date"/>
+      <xs:element name="Steuerklasse">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="I"/><xs:enumeration value="II"/><xs:enumeration value="III"/>
+            <xs:enumeration value="IV"/><xs:enumeration value="V"/><xs:enumeration value="VI"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Beschaeftigung" type="BeschaeftigungTyp"/>
+      <xs:element name="Abfindung" type="AbfindungTyp"/>
+      <xs:element name="Krankenversicherung" type="KrankenversicherungTyp"/>
+      <xs:element name="Arbeitslosengeld" type="ArbeitslosengeldTyp"/>
+      <!-- Optional: Zeitraum, in dem die Abfindung gezahlt werden darf -->
+      <xs:element name="Auszahlungsfenster" minOccurs="0">
+        <xs:complexType>
+          <xs:attribute name="fruehestens" type="xs:gYearMonth" use="required"/>
+          <xs:attribute name="spaetestensMonateNachAustritt" type="xs:positiveInteger" use="required"/>
+          <xs:attribute name="herkunft" type="HerkunftPlanTyp" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id" type="IdTyp" use="required"/>
+    <xs:attribute name="rolle" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Ehefrau"/>
+          <xs:enumeration value="Ehemann"/>
+          <xs:enumeration value="Partner"/>
+          <xs:enumeration value="Steuerpflichtiger"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="BeschaeftigungTyp">
+    <xs:sequence>
+      <xs:element name="BetriebszugehoerigkeitJahre" type="BetragFaktTyp"/>
+      <xs:element name="KuendigungsfristArbeitgeberMonate" type="BetragAbleitbarTyp"/>
+      <xs:element name="Bruttogehalt" type="BetragFaktTyp" maxOccurs="unbounded"/>
+      <xs:element name="GeplantesEnde" type="DatumPlanTyp"/>
+      <xs:element name="Alternative" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="id" type="IdTyp" use="required"/>
+          <xs:attribute name="art" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="Freistellung"/>
+                <xs:enumeration value="AnderesEnddatum"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="freistellungAb" type="xs:date" use="optional"/>
+          <xs:attribute name="ende" type="xs:date" use="required"/>
+          <xs:attribute name="herkunft" type="HerkunftPlanTyp" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Rentenversicherungspflichtig" type="BoolFaktTyp"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AbfindungTyp">
+    <xs:sequence>
+      <xs:element name="Betrag" type="BetragPlanTyp"/>
+      <xs:element name="FuenftelregelungVoraussetzungen" type="BoolAbleitbarTyp"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="KrankenversicherungTyp">
+    <xs:sequence>
+      <xs:element name="Status">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="KVStatusTyp">
+              <xs:attribute name="herkunft" type="HerkunftAbleitbarTyp" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="BeitragFreiwilligMonat" type="BetragAbleitbarTyp"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="KVStatusTyp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="pflichtversichert"/>
+      <xs:enumeration value="freiwillig_gesetzlich"/>
+      <xs:enumeration value="privat"/>
+      <xs:enumeration value="unbekannt"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ArbeitslosengeldTyp">
+    <xs:sequence>
+      <xs:element name="BetragMonat" type="BetragAbleitbarTyp"/>
+      <xs:element name="Leistungssatz" type="BetragAbleitbarTyp"/>
+      <xs:element name="SperrzeitErwartet" type="BoolAbleitbarTyp"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Steuerbescheid -->
+  <xs:complexType name="SteuerbescheidTyp">
+    <xs:sequence>
+      <xs:element name="Posten" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:decimal">
+              <xs:attribute name="id" type="IdTyp" use="required"/>
+              <xs:attribute name="bezeichnung" type="xs:string" use="required"/>
+              <xs:attribute name="person" type="PersonRefTyp" use="optional"/>
+              <xs:attribute name="faelligAm" type="xs:date" use="optional"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="jahr" type="xs:gYear" use="required"/>
+  </xs:complexType>
+
+  <!-- Vermietung -->
+  <xs:complexType name="VermietungTyp">
+    <xs:sequence>
+      <xs:element name="AnzahlObjekte" type="xs:nonNegativeInteger"/>
+      <xs:element name="Einkuenfte" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="BetragFaktTyp">
+              <xs:attribute name="person" type="PersonRefTyp" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ObjekteAngeschafftInLetzten3Jahren" type="BoolFaktTyp" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Kapitalerträge -->
+  <xs:complexType name="KapitalertraegeTyp">
+    <xs:sequence>
+      <xs:element name="Ertrag" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="BetragFaktTyp">
+              <xs:attribute name="person" type="PersonRefTyp" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Planung -->
+  <xs:complexType name="PlanungTyp">
+    <xs:sequence>
+      <xs:element name="Massnahmen">
+        <xs:complexType>
+          <xs:sequence>
+            <!-- Eine Gestaltung je Element (mehrfach je Art möglich); Parameter je nach Art, immer "gegenwert". -->
+            <xs:element name="Massnahme" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Bezeichnung" type="xs:string"/>
+                  <xs:element name="Parameter" maxOccurs="unbounded">
+                    <xs:complexType>
+                      <xs:simpleContent>
+                        <xs:extension base="BetragTyp">
+                          <xs:attribute name="name" type="IdTyp" use="required"/>
+                          <xs:attribute name="einheit" type="EinheitTyp" use="required"/>
+                        </xs:extension>
+                      </xs:simpleContent>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+                <xs:attribute name="id" type="IdTyp" use="required"/>
+                <xs:attribute name="art" use="required">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="Basisrente"/>
+                      <xs:enumeration value="Erhaltungsaufwand"/>
+                      <xs:enumeration value="Immobilienkauf"/>
+                      <xs:enumeration value="Spende"/>
+                      <xs:enumeration value="Sonstige"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="jahr" type="xs:gYear" use="required"/>
+                <!-- Sonstige Gestaltung: Person, deren Einkommen gemindert wird -->
+                <xs:attribute name="person" type="PersonRefTyp" use="optional"/>
+                <!-- Immobilienkauf: AfA-Art -->
+                <xs:attribute name="afaArt" use="optional">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="standard"/>
+                      <xs:enumeration value="ab2023"/>
+                      <xs:enumeration value="vor1925"/>
+                      <xs:enumeration value="degressiv"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Annahmen">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Annahme" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:simpleContent>
+                  <xs:extension base="xs:string">
+                    <xs:attribute name="id" type="IdTyp" use="required"/>
+                    <xs:attribute name="einheit" type="EinheitTyp" use="required"/>
+                    <xs:attribute name="herkunft" type="HerkunftTyp" use="required"/>
+                    <xs:attribute name="hinweis" type="xs:string" use="optional"/>
+                  </xs:extension>
+                </xs:simpleContent>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <!-- Optional: Veranlagungsart je Jahr (§§ 26, 26a EStG) -->
+      <xs:element name="Veranlagungswahl" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="jahr" type="xs:gYear" use="required"/>
+          <xs:attribute name="art" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="auto"/>
+                <xs:enumeration value="zusammen"/>
+                <xs:enumeration value="einzel"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="sonderausgabenHaelftig" type="xs:boolean" default="false"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
