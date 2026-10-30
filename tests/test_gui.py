@@ -533,3 +533,14 @@ def test_no_alg_entries_without_claim(app):
     assert "ALG" not in w.results.header.text()
     w.dirty = False
     w.close()
+
+
+def test_wayland_textinput_messages_silenced(monkeypatch):
+    from abfindung.__main__ import QUIET_LOGGING, quiet_qt_logging
+
+    monkeypatch.setenv("QT_LOGGING_RULES", "qt.qpa.wayland.textinput=true")
+    quiet_qt_logging()
+    import os
+    assert os.environ["QT_LOGGING_RULES"] == QUIET_LOGGING + ";qt.qpa.wayland.textinput=true"  # the user's rule wins
+    quiet_qt_logging()
+    assert os.environ["QT_LOGGING_RULES"].count(QUIET_LOGGING) == 1

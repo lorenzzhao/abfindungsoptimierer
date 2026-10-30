@@ -5,7 +5,18 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
+
+# Qt's Wayland text input writes "Trying to disable … but 0x0 is focused" on every focus change (a harmless Qt
+# message). Silenced here; rules the user sets in QT_LOGGING_RULES come later and take precedence.
+QUIET_LOGGING = "qt.qpa.wayland.textinput=false"
+
+
+def quiet_qt_logging() -> None:
+    rules = os.environ.get("QT_LOGGING_RULES", "")
+    if QUIET_LOGGING not in rules:
+        os.environ["QT_LOGGING_RULES"] = ";".join(r for r in (QUIET_LOGGING, rules) if r)
 
 
 def install_german_translation(app) -> bool:
@@ -39,6 +50,7 @@ def main(argv=None) -> int:
     from .gui.main_window import MainWindow
 
     QLocale.setDefault(QLocale(QLocale.Language.German, QLocale.Country.Germany))
+    quiet_qt_logging()  # before the QApplication reads the rules
     app = QApplication(sys.argv[:1])
     install_german_translation(app)
     app.setApplicationName("Abfindungsoptimierer")
