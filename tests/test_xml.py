@@ -1,4 +1,5 @@
 from datetime import date
+from pathlib import Path
 
 import pytest
 
@@ -91,3 +92,13 @@ def test_old_file_with_variants_is_migrated(tmp_path):
     f.write_text(old, encoding="utf-8")
     notes = load_personal(f).migration_notes
     assert len(notes) == 3 and all("nicht mehr unterstützt" in n for n in notes)
+
+
+def test_source_address_matches_release_scripts():
+    """The address shown in the program (About dialog, --version) is the release page the build refers to."""
+    import json
+
+    from abfindung import legal
+
+    pins = json.loads((Path(LEGAL).parent.parent / "packaging" / "pins.json").read_text(encoding="utf-8"))
+    assert legal.SOURCE_URL == pins["project_url"] and legal.SOURCE_URL in legal.version_text("x")

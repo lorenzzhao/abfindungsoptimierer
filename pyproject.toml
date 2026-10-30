@@ -18,6 +18,11 @@ dependencies = [
     "reportlab>=4.0",
 ]
 
+[project.urls]
+Source = "https://github.com/lorenzzhao/abfindungsoptimierer"
+Releases = "https://github.com/lorenzzhao/abfindungsoptimierer/releases"
+License = "https://www.gnu.org/licenses/gpl-3.0.html"
+
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 

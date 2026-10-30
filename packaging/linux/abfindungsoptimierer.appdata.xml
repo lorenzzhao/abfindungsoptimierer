@@ -16,6 +16,7 @@
       Rechenweg zu jedem Wert, Optimierer und PDF-Bericht. Ersetzt keine Steuer- oder Rechtsberatung.
     </p>
   </description>
+  <url type="homepage">https://github.com/lorenzzhao/abfindungsoptimierer</url>
   <launchable type="desktop-id">abfindungsoptimierer.desktop</launchable>
   <categories>
     <category>Office</category>

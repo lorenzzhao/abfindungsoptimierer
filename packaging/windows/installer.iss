@@ -20,6 +20,7 @@
 
 #define AppName "Abfindungsoptimierer"
 #define AppExe "abfindungsoptimierer.exe"
+#define AppUrl "https://github.com/lorenzzhao/abfindungsoptimierer"
 
 [Setup]
 ; Never change the AppId: Windows uses it to recognise upgrades.
@@ -28,6 +29,9 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
 AppPublisher=Lorenz Zhao
+AppPublisherURL={#AppUrl}
+AppSupportURL={#AppUrl}/issues
+AppUpdatesURL={#AppUrl}/releases
 AppCopyright=Copyright (C) 2026 Lorenz Zhao
 VersionInfoVersion={#AppVersion}
 DefaultDirName={autopf}\{#AppName}

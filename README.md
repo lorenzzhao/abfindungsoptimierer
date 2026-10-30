@@ -69,7 +69,7 @@ packaging/linux/build-in-docker.sh
 
 Ergebnis in `release/`: `Abfindungsoptimierer-<Version>-x86_64.AppImage`, `abfindungsoptimierer-<Version>-linux-x86_64.tar.gz`,
 das Quellcode-Archiv `abfindungsoptimierer-<Version>-source.tar.gz`, die Quellen der LGPL-/GPL-Komponenten in `release/sources/`
-und `SHA256SUMS.txt`. Der Build verwendet ein festgelegtes Python (python-build-standalone) und festgelegte
+und `SHA256SUMS.txt` (siehe *Release*). Der Build verwendet ein festgelegtes Python (python-build-standalone) und festgelegte
 Paketversionen (`packaging/pins.json`, `packaging/release-constraints.txt`), führt die Tests aus, sammelt mit
 `packaging/collect_licenses.py` alle Lizenztexte in den Ordner `licenses` des Programms und bricht ab, wenn eine
 Binärdatei keiner Komponente mit bekannter Lizenz zugeordnet werden kann.
@@ -77,9 +77,37 @@ Binärdatei keiner Komponente mit bekannter Lizenz zugeordnet werden kann.
 Windows: `pwsh packaging/windows/build.ps1` (Python ≥ 3.11 und Inno Setup 6 nötig) – vorbereitet, aber noch nicht
 getestet.
 
-**Weitergabe:** Die Pakete immer zusammen mit dem Quellcode-Archiv und dem Ordner `sources/` weitergeben (GPL-3.0
-Abschnitt 6, LGPL). Nach einer Änderung am Icon (`abfindung/resources/app-icon.svg`):
-`QT_QPA_PLATFORM=offscreen python packaging/render_icons.py`.
+Nach einer Änderung am Icon (`abfindung/resources/app-icon.svg`): `QT_QPA_PLATFORM=offscreen python packaging/render_icons.py`.
+
+## Release
+
+Programm und Quellcode werden an derselben Stelle zum Download angeboten, der Release-Seite von
+<https://github.com/lorenzzhao/abfindungsoptimierer>. Damit sind die Quellcode-Pflichten der GPL-3.0 (für das Programm)
+und der LGPL (Qt, Qt for Python, libiconv, libquadmath, libfuse) sowie der GCC-Laufzeit erfüllt („gleichwertiger Zugang
+an derselben Stelle“). Die Adresse steht in `abfindung/legal.py` (`SOURCE_URL`) und `packaging/pins.json`
+(`project_url`); der Build bricht ab, wenn beide nicht übereinstimmen.
+
+1. Version in `pyproject.toml` und `abfindung/__init__.py` setzen, committen, Tag anlegen und pushen:
+
+   ```bash
+   git tag -a v0.1.0 -m "Version 0.1.0"
+   git push origin master v0.1.0
+   ```
+
+2. Aus dem sauberen Stand des Tags bauen: `packaging/linux/build-in-docker.sh` (Ergebnis in `release/`).
+3. Eine GitHub-Release zum Tag anlegen und **alle** Dateien anhängen – die Pakete, das Quellcode-Archiv, die
+   Versionsliste, `SHA256SUMS.txt` und jede Datei aus `release/sources/`:
+
+   ```bash
+   gh release create v0.1.0 --title "Abfindungsoptimierer 0.1.0" release/*.AppImage release/*.tar.gz release/*.txt release/sources/*
+   ```
+
+4. Die Quellarchive mindestens drei Jahre auf der Release-Seite lassen.
+
+Die Pakete nur über die Release-Seite verteilen bzw. auf sie verlinken. Wer eine Paketdatei direkt weitergibt
+(E-Mail, USB-Stick), muss die Quellen beilegen oder statt der Datei den Link zur Release-Seite weitergeben.
+Aktualisierte Komponenten (`packaging/release-constraints.txt`, `packaging/pins.json`) immer zusammen mit ihren
+Quellarchiven und Prüfsummen ändern; lxml und numpy sind an die Archive von libiconv bzw. GCC gebunden.
 
 ## Lizenz
 

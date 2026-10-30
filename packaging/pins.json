@@ -2,9 +2,11 @@
   "_comment": [
     "Exact versions of everything that goes into the standalone release packages.",
     "Licence notices and source archives are collected for exactly these versions, so",
-    "change them only together (see docs/RELEASING.md, 'Upgrading bundled components').",
-    "lxml/libiconv: libiconv version = lxml.etree.ICONV_COMPILED_VERSION; GCC: build id note of numpy.libs/libquadmath*.so."
+    "change them only together (see README.md, section 'Release').",
+    "lxml/libiconv: libiconv version = lxml.etree.ICONV_COMPILED_VERSION; GCC: build id note of numpy.libs/libquadmath*.so.",
+    "project_url: repository whose release page offers the packages, the program's source archive and the LGPL/GPL sources (\"download from the same place\"); must match SOURCE_URL in abfindung/legal.py."
   ],
+  "project_url": "https://github.com/lorenzzhao/abfindungsoptimierer",
   "python": {
     "version": "3.12.14",
     "build": "python-build-standalone 20260901",

@@ -33,6 +33,7 @@ from pathlib import Path
 from pins import PACKAGING, ROOT, load_pins
 
 PINS = load_pins()
+PROJECT_URL = PINS["project_url"]
 APP_DISTRIBUTION = "abfindungsoptimierer"
 # Python packages bundled into the program (besides PySide6 / shiboken6 and Python itself); their licence
 # files are copied from their metadata. Binaries inside "<package>/" or "<package>.libs/" belong to them.
@@ -58,9 +59,9 @@ BUNDLED_DISTRIBUTIONS = (APP_DISTRIBUTION, "PySide6-Essentials", "shiboken6", *P
 LICENSE_NOTES = {
     "numpy": "numpy.libs contains the GCC runtime of AlmaLinux 8 (GCC 8.5.0): libgfortran under GPL-3.0-or-later "
     "WITH GCC-exception-3.1 and libquadmath under LGPL-2.1-or-later. Both are separate shared libraries that can "
-    "be replaced; their source code is passed on with the package (see SOURCES.txt).",
+    "be replaced; their source code is offered for download with the package (see SOURCES.txt).",
     "lxml": "The lxml module etree statically contains GNU libiconv 1.18 (LGPL-2.1, ../../LGPL-2.1.txt). The source "
-    "code of lxml and of libiconv is passed on with the package (see SOURCES.txt), so lxml can be rebuilt with a "
+    "code of lxml and of libiconv is offered for download with the package (see SOURCES.txt), so lxml can be rebuilt with a "
     "modified libiconv (lxml's buildlibxml.py) and replace the lxml folder of this package.",
 }
 WINDOWS = sys.platform.startswith("win")
@@ -344,19 +345,22 @@ def classify(bundle: Path) -> dict[str, list[Path]]:
 
 def sources_text(version: str, versions: dict[str, str], appimage: bool) -> str:
     platform = "windows" if WINDOWS else "linux"
+    release = f"{PROJECT_URL}/releases/tag/v{version}"
     lines = [
         "Source code",
         "===========",
         "",
         f"Abfindungsoptimierer {version} (GPL-3.0-or-later):",
-        f"  abfindungsoptimierer-{version}-source.tar.gz",
-        "  This archive with the complete source code, including the scripts in the packaging",
-        "  folder that built this package, is passed on together with every copy of the program.",
+        f"  {release}",
+        f"  abfindungsoptimierer-{version}-source.tar.gz on that page is the complete source code,",
+        "  including the scripts in the packaging folder that built this package. The same",
+        f"  state is the tag v{version} of {PROJECT_URL}.",
         "",
         "This package contains libraries under the GNU LGPL (Qt, Qt for Python, libiconv in lxml,",
         "libquadmath in NumPy) and the GCC runtime under the GPL with the GCC Runtime Library",
-        "Exception. Their complete source code, in exactly the version contained here, is passed on",
-        "together with the program in the folder sources/ next to the packages:",
+        "Exception. Their complete source code, in exactly the version contained here, is offered",
+        "for download on the same release page as this package:",
+        f"  {release}",
         "",
     ]
     for source in PINS["sources"]:
@@ -374,9 +378,9 @@ def sources_text(version: str, versions: dict[str, str], appimage: bool) -> str:
         "To use a modified Qt, replace the Qt libraries in the PySide6 folder of this",
         "package with your own build of the same Qt version.",
         "",
-        "If you received this package without these archives, ask the person who gave it to you",
-        "or the author (Lorenz Zhao); the source code will be provided for at least three years",
-        "after this version.",
+        "If any of these archives is no longer available at the release page, open an issue at",
+        f"{PROJECT_URL}/issues and the source code will be provided, for at least three years",
+        "after this release.",
         "",
         "Components under permissive licences (Python, matplotlib, NumPy, Pillow, lxml, ReportLab",
         "and others) have no source code obligation; their notices are in this folder.",
@@ -427,6 +431,11 @@ def main() -> int:
     out.mkdir()
 
     versions = check_versions()
+    sys.path.insert(0, str(ROOT))
+    from abfindung import legal  # the address shown in the program must be the one of the release page
+
+    if legal.SOURCE_URL != PROJECT_URL:
+        raise SystemExit(f"SOURCE_URL in abfindung/legal.py ({legal.SOURCE_URL}) differs from project_url ({PROJECT_URL})")
     groups = classify(bundle)
 
     files: list[tuple[Path, Path]] = [

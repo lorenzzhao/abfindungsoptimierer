@@ -15,14 +15,15 @@ licenses/VERSIONS.txt.
 (Kurzfassung auf Deutsch: Das Programm steht unter der GPL-3.0-or-later. Alle enthaltenen
 Fremdkomponenten stehen unter Lizenzen, die mit der GPL-3.0 vereinbar sind. Die
 eigenständigen Pakete enthalten im Ordner "licenses" alle Lizenztexte und Hinweise; der
-Quellcode des Programms und der LGPL-Komponenten wird mit jedem Paket weitergegeben.)
+Quellcode des Programms und der LGPL-Komponenten liegt auf derselben Release-Seite wie die
+Pakete zum Download: https://github.com/lorenzzhao/abfindungsoptimierer/releases)
 
 
 1. How the program is distributed
 ---------------------------------
 
-  - As source code (this repository and the source archive
-    abfindungsoptimierer-<version>-source.tar.gz). It does NOT contain the third-party
+  - As source code (https://github.com/lorenzzhao/abfindungsoptimierer and the source archive
+    abfindungsoptimierer-<version>-source.tar.gz on each release page). It does NOT contain the third-party
     components: pip installs them separately from PyPI, each with its own license files.
 
   - As standalone programs for Linux (AppImage, tar.gz) and, prepared, for Windows
@@ -149,8 +150,10 @@ GPL-3.0 (the program itself)
     --version show the copyright, the license, the warranty disclaimer and where the
     source code is; "Lizenzen …" in the About dialog shows every license text.
   - The complete corresponding source code, including the build scripts in packaging/, is
-    the archive abfindungsoptimierer-<version>-source.tar.gz. It is produced by the same
-    build as the packages and must be passed on together with them (GPL-3.0, section 6a).
+    the archive abfindungsoptimierer-<version>-source.tar.gz (the same state as the Git tag
+    v<version>). It is produced by the same build as the packages and offered for download
+    on the same release page as the packages (https://github.com/lorenzzhao/abfindungsoptimierer/releases), which is equivalent
+    access to the source code from the same place (GPL-3.0, section 6d).
 
 LGPL-3.0 (Qt and Qt for Python) and LGPL-2.1 (libfuse in the AppImage runtime)
   - licenses/ contains the LGPL-3.0 and the GPL-3.0 it builds on; the AppImage also
@@ -161,8 +164,9 @@ LGPL-3.0 (Qt and Qt for Python) and LGPL-2.1 (libfuse in the AppImage runtime)
     runtime can be rebuilt with a modified libfuse from its source code.
   - The unchanged source code of exactly the bundled versions of Qt (qtbase, qtsvg,
     qtwayland), Qt for Python (pyside-setup), the AppImage runtime and libfuse is
-    downloaded by the build into release/sources/ and passed on together with the
-    packages; licenses/SOURCES.txt lists the archives with their checksums. The versions
+    downloaded by the build into release/sources/ and attached to the same release page
+    as the packages (LGPL-3.0 section 4d / GPL-3.0 section 6d; LGPL-2.1 section 6);
+    licenses/SOURCES.txt lists the archives with their checksums. The versions
     are pinned in packaging/pins.json and packaging/release-constraints.txt.
 
 LGPL-2.1 (libiconv in lxml, libquadmath in NumPy) and the GCC runtime in NumPy
@@ -171,11 +175,11 @@ LGPL-2.1 (libiconv in lxml, libquadmath in NumPy) and the GCC runtime in NumPy
     licenses/packages/lxml/ (with a NOTE.txt each).
   - libquadmath and libgfortran are separate shared libraries in numpy.libs and can be
     replaced. libiconv is linked statically into lxml; lxml's complete source code
-    (buildlibxml.py builds it with its static libraries) is passed on with the packages,
+    (buildlibxml.py builds it with its static libraries) is offered with the packages,
     so lxml can be rebuilt with a modified libiconv and replace the lxml folder.
   - The source code of exactly these versions – lxml 6.1.3, GNU libiconv 1.18 and the
     AlmaLinux 8 source package gcc-8.5.0-28.el8_10.alma.1 – is downloaded by the build
-    into release/sources/ and passed on together with the packages (pinned with their
+    into release/sources/ and attached to the release page with the packages (pinned with their
     checksums in packaging/pins.json).
 
 Notices of permissive licenses (MIT, BSD, Apache-2.0, PSF, Matplotlib, HPND, Unicode,

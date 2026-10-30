@@ -19,8 +19,10 @@ COPYRIGHT = "Copyright (C) 2026 Lorenz Zhao"
 LICENSE_NAME = "GNU General Public License, Version 3 oder neuer"
 LICENSE_SPDX = "GPL-3.0-or-later"
 LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.html"
-SOURCE_NOTE = ("Der vollständige Quellcode (einschließlich der Build-Skripte) wird zusammen mit jeder Ausgabe "
-               "des Programms als Archiv abfindungsoptimierer-<Version>-source.tar.gz weitergegeben.")
+SOURCE_URL = "https://github.com/lorenzzhao/abfindungsoptimierer"
+SOURCE_NOTE = ("Quellcode: " + SOURCE_URL + " – auf der Release-Seite jeder Version liegen neben den Programmpaketen "
+               "der vollständige Quellcode (einschließlich der Build-Skripte) und der Quellcode der enthaltenen "
+               "LGPL-Komponenten zum Download.")
 
 QT_COPYRIGHT = "Qt und Qt for Python: Copyright (C) The Qt Company Ltd. und weitere Mitwirkende"
 LGPL_URL = "https://www.gnu.org/licenses/lgpl-3.0.html"

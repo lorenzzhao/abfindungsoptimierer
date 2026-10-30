@@ -127,6 +127,9 @@ tar -C "$ROOT" --exclude=./release --exclude=./.git --exclude=./.venv --exclude=
 tar -C "$WORK" -czf "$OUT/$APP_ID-$VERSION-source.tar.gz" "$APP_ID-$VERSION"
 "$WORK/venv/bin/python" packaging/fetch_sources.py "$OUT/sources"
 cp "$WORK/freeze.txt" "$OUT/$APP_ID-$VERSION-python-packages.txt"
-(cd "$OUT" && sha256sum *.AppImage *.tar.gz *.txt > SHA256SUMS.txt)
+# One flat list (the release page has no folders): packages, source archive and the LGPL/GPL sources.
+rm -f "$OUT/SHA256SUMS.txt"
+{ (cd "$OUT" && sha256sum *.AppImage *.tar.gz *.txt); (cd "$OUT/sources" && sha256sum *); } > "$WORK/SHA256SUMS.txt"
+mv "$WORK/SHA256SUMS.txt" "$OUT/SHA256SUMS.txt"
 
 ls -la "$OUT" "$OUT/sources"

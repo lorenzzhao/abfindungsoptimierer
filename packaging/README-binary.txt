@@ -27,10 +27,13 @@ Copyright (C) 2026 Lorenz Zhao
 
 Dieses Programm ist freie Software unter der GNU General Public License, Version 3 oder
 (nach Ihrer Wahl) jeder späteren Version, und wird OHNE JEDE GEWÄHRLEISTUNG bereitgestellt.
-Der vollständige Quellcode liegt als abfindungsoptimierer-<Version>-source.tar.gz bei.
+Quellcode: https://github.com/lorenzzhao/abfindungsoptimierer
+Auf der Release-Seite jeder Version liegen neben diesem Paket der vollständige Quellcode
+(abfindungsoptimierer-<Version>-source.tar.gz) und der Quellcode der enthaltenen
+LGPL-Komponenten zum Download.
 
 Das Programm enthält Komponenten Dritter, darunter Qt und Qt for Python (Copyright (C)
 The Qt Company Ltd. und weitere Mitwirkende) unter der GNU Lesser General Public License
 v3.0. Der Ordner "licenses" enthält die Lizenztexte und Hinweise aller Komponenten;
-licenses/README.txt erklärt, was wo liegt, und licenses/SOURCES.txt, wo der Quellcode
-des Programms und der LGPL-Komponenten zu finden ist.
+licenses/README.txt erklärt, was wo liegt, und licenses/SOURCES.txt nennt die Archive
+mit ihren Prüfsummen.
