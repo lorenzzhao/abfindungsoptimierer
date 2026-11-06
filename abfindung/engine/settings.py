@@ -22,7 +22,8 @@ from ..io.personal_model import (Auszahlungsfenster, Child, Massnahme, MParam, P
 @dataclass
 class PersonSettings:
     id: str = ""
-    label: str = ""
+    rolle_label: str = ""  # "Steuerpflichtige(r)" or "Ehepartner" (by position)
+    name: str = ""         # optional name chosen by the user; replaces the role in labels
     rolle: str = ""
     birth: date = date(1980, 1, 1)
     steuerklasse: str = "IV"
@@ -64,6 +65,16 @@ class PersonSettings:
     capital: dict = field(default_factory=dict)  # year -> Kapitalerträge
     geplantes_ende: date = date(2026, 12, 31)    # planned end from the XML (reference for alternatives)
     alternativen: list = field(default_factory=list)  # [(id, art, ende, freistellung_ab | None)]
+
+    @property
+    def label(self) -> str:
+        """Short display name: the name if one is given, else the role."""
+        return self.name or self.rolle_label
+
+    @property
+    def title(self) -> str:
+        """Name with role (tab and section titles)."""
+        return f"{self.name} ({self.rolle_label})" if self.name else self.rolle_label
 
     def salary_for(self, year: int) -> tuple[float, int | None]:
         """Entered gross for a year; missing years are carried forward (returns source year)."""
@@ -470,10 +481,11 @@ def from_personal(pd: PersonalData, legal) -> Settings:
     wk = pd.annahme("werbungskosten_je_person")
 
     for i, p in enumerate(pd.persons):
-        ps = PersonSettings(id=p.id, rolle=p.rolle, label=_label(i), birth=p.geburtsdatum,
-                            steuerklasse=p.steuerklasse)
+        ps = PersonSettings(id=p.id, rolle=p.rolle, rolle_label=_label(i), name=p.name,
+                            birth=p.geburtsdatum, steuerklasse=p.steuerklasse)
         base = f"persons.{i}"
         xp = f"Personen/Person[@id='{p.id}']"
+        s.xml_paths[f"{base}.name"] = f"{xp}/@name"
 
         def reg(fieldname, val: Val | None, xml: str, herkunft: str | None = None):
             s.origin[f"{base}.{fieldname}"] = herkunft or (val.herkunft if val else "annahme")
@@ -845,7 +857,7 @@ def _new_person(ps: PersonSettings) -> Person:
     """Person element for a spouse added in the tool (values are written from the settings afterwards)."""
     v = lambda x: Val(x, "angabe")  # noqa: E731
     return Person(id=ps.id, rolle=ps.rolle or "Partner", geburtsdatum=ps.birth, steuerklasse=ps.steuerklasse,
-                  bz_jahre=v(0.0), kfrist_monate=v(0.0), gehaelter=[], geplantes_ende=Val(ps.end_date, "planung"),
+                  name=ps.name, bz_jahre=v(0.0), kfrist_monate=v(0.0), gehaelter=[], geplantes_ende=Val(ps.end_date, "planung"),
                   alternativen=[], rv_pflichtig=v(True), abfindung=Val(0.0, "planung"), fuenftel_ok=v(True),
                   kv_status=v("pflichtversichert"), kv_beitrag_freiwillig=v(0.0), alg_monat=v(0.0), alg_satz=v(0.6),
                   sperrzeit_erwartet=v(False))
@@ -862,7 +874,7 @@ def set_familienstand(s: Settings, value: str) -> None:
         s.veranlagung = {y: "auto" for y in s.veranlagung}
         if len(s.persons) < 2:
             p0 = s.persons[0]
-            ps = PersonSettings(id="P_Ehepartner", label=_label(1), rolle="Partner", birth=p0.birth,
+            ps = PersonSettings(id="P_Ehepartner", rolle_label=_label(1), rolle="Partner", birth=p0.birth,
                                 end_date=p0.end_date, geplantes_ende=p0.end_date, pay_idx=p0.pay_idx,
                                 fenster_ab_idx=p0.exit_idx, meldung=p0.end_date + timedelta(days=1),
                                 arbeitsuchend_datum=p0.end_date, vertragsschluss=p0.vertragsschluss,
@@ -923,6 +935,7 @@ def to_personal(s: Settings, pd: PersonalData) -> PersonalData:
             d.persons.append(_new_person(ps))
         p = d.person(ps.id)
         b = f"persons.{i}"
+        p.name = ps.name.strip()
         p.geburtsdatum = ps.birth
         p.steuerklasse = ps.steuerklasse
         _set_val(p.bz_jahre, ps.bz_jahre, o(f"{b}.bz_jahre"))

@@ -12,7 +12,7 @@ from ..engine.settings import SECTIONS, Options, PersonSettings, gestaltungen
 from ..io.personal_model import HERKUNFT_LABEL
 
 PERSON_LABELS = {
-    "salary_mode": "Gehaltseingabe (jahr = ganzjährig, real = tatsächlich gezahlt)", "birth": "Geburtsdatum", "steuerklasse": "Steuerklasse", "bz_jahre": "Betriebszugehörigkeit (Jahre)",
+    "salary_mode": "Gehaltseingabe (jahr = ganzjährig, real = tatsächlich gezahlt)", "name": "Name", "birth": "Geburtsdatum", "steuerklasse": "Steuerklasse", "bz_jahre": "Betriebszugehörigkeit (Jahre)",
     "kfrist_monate": "Kündigungsfrist AG (Monate)",
     "vorbeschaeftigung_monate": "Versicherte Monate vor jetzigem AG", "end_date": "Austrittsdatum",
     "freistellung": "Freistellung", "freistellung_ab": "Freistellung ab", "vertragsschluss": "Kündigung/Aufhebungsvertrag am",
@@ -92,7 +92,7 @@ def rows(s) -> list[tuple[str, list[tuple[str, str, str, str]]]]:
     for i, ps in enumerate(s.persons):
         r = []
         for f in fields(PersonSettings):
-            if f.name in ("id", "label", "rolle", "geplantes_ende", "alternativen", "freistellung", "freistellung_ab",
+            if f.name in ("id", "rolle_label", "rolle", "geplantes_ende", "alternativen", "freistellung", "freistellung_ab",
                           "sperrzeit_ab_freistellung", "urlaub_tage", "bonus", "bonus_year"):
                 continue
             v = getattr(ps, f.name)
@@ -102,7 +102,8 @@ def rows(s) -> list[tuple[str, list[tuple[str, str, str, str]]]]:
                     r.append(row(f"persons.{i}.{f.name}.{y}", f"{lab} {y}", "severance", val))
                 continue
             r.append(row(f"persons.{i}.{f.name}", PERSON_LABELS.get(f.name, f.name), f.name, v))
-        title = ps.label + ("" if i == 0 or s.married else f" – nicht berücksichtigt (Familienstand {s.familienstand})")
+        r = [x for x in r if x[0] != "Name" or ps.name]  # no empty name row
+        title = ps.title + ("" if i == 0 or s.married else f" – nicht berücksichtigt (Familienstand {s.familienstand})")
         out.append((title, r))
     r = [(f"Bereich „{lab}“", "aktiv" if s.active(k) else "deaktiviert (nicht berücksichtigt)", "Planung", "")
          for k, lab in SECTIONS.items()]

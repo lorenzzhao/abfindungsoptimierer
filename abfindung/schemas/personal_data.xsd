@@ -273,6 +273,14 @@
       </xs:element>
     </xs:sequence>
     <xs:attribute name="id" type="IdTyp" use="required"/>
+    <!-- Optional: Name zur Anzeige im Programm (statt „Steuerpflichtige(r)“ / „Ehepartner“) -->
+    <xs:attribute name="name" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:maxLength value="60"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="rolle" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:string">

@@ -145,7 +145,7 @@ class InputsPanel(QWidget):
             self.tab_paths.append({c.path for c in self.controls[n:]} | ({f"sections.{section}"} if section else set()))
 
         for i, ps in enumerate(s.persons[:2 if s.married else 1]):  # the spouse only when married
-            add_tab(lambda i=i: self._person_tab(i), ps.label)
+            add_tab(lambda i=i: self._person_tab(i), ps.title)
         add_tab(self._household_tab, "Haushalt", "haushalt")
         add_tab(self._kv_tab, "KV", "kv")
         add_tab(self._measures_tab, "Gestaltungen", "gestaltungen")
@@ -441,6 +441,10 @@ class InputsPanel(QWidget):
             g.addWidget(fam)
             g.addWidget(self._hint("Abgeleitet aus dem Familienstand im Tab „Steuerpflichtige(r)“ und nur dort änderbar. "
                                    "Den Tab „Ehepartner“ gibt es nur bei „verheiratet“."))
+        self._add(g, TextEdit(f"{b}.name", "Name (optional)", placeholder=ps.rolle_label,
+                              tooltip="Wird in Ergebnissen, Diagrammen, Hinweisen und im Bericht statt "
+                                      f"„{ps.rolle_label}“ angezeigt. Leer lassen für die Rollenbezeichnung. "
+                                      "Wird als Attribut name der Person in der XML-Datei gespeichert."))
         self._add(g, DateEdit(f"{b}.birth", "Geburtsdatum", date(1940, 1, 1), date(s.stand.year - 14, 12, 31), slider=False,
                               tooltip=self._tt(["R_ALG_Dauer", "R_Ruhen158"], ["alg_ruhen158_anrechnung_alter_ab"],
                                                "Das Alter bestimmt die ALG-Anspruchsdauer und den anrechenbaren Anteil "
@@ -925,6 +929,11 @@ class InputsPanel(QWidget):
             gid = path.split(".")[2]
             if gid in getattr(self, "item_boxes", {}):
                 self.item_boxes[gid].setTitle(self.s.measures.items[gid].label)
+        if path.startswith("persons.") and path.endswith(".name"):
+            i = int(path.split(".")[1])
+            self.s.persons[i].name = (value or "").strip()
+            if i < len(self.tab_titles):
+                self.tab_titles[i] = self.s.persons[i].title
         if path == "children":
             self.wheel_guard.install(self.tabs)
         if path in ("options.horizon_start", "options.horizon_end"):

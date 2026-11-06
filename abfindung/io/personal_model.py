@@ -79,6 +79,7 @@ class Person:
     alg_satz: Val
     sperrzeit_erwartet: Val
     auszahlungsfenster: Auszahlungsfenster | None = None
+    name: str = ""  # optional display name
 
     def gehalt(self, year: int) -> Val | None:
         for g in self.gehaelter:
@@ -288,7 +289,7 @@ def parse_personal(root: etree._Element) -> PersonalData:
             alts.append(Alternative(al.get("id"), al.get("art"), date.fromisoformat(al.get("ende")),
                                     al.get("herkunft"), date.fromisoformat(fa) if fa else None))
         d.persons.append(Person(
-            id=pe.get("id"), rolle=pe.get("rolle"),
+            id=pe.get("id"), rolle=pe.get("rolle"), name=(pe.get("name") or "").strip(),
             geburtsdatum=date.fromisoformat(_t(pe, "p:Geburtsdatum")), steuerklasse=_t(pe, "p:Steuerklasse"),
             bz_jahre=_val(_f(b, "BetriebszugehoerigkeitJahre")),
             kfrist_monate=_val(_f(b, "KuendigungsfristArbeitgeberMonate")),
@@ -397,7 +398,7 @@ def to_xml(d: PersonalData) -> etree._ElementTree:
 
     pse = _sub(root, "Personen")
     for p in d.persons:
-        pe = _sub(pse, "Person", id=p.id, rolle=p.rolle)
+        pe = _sub(pse, "Person", id=p.id, rolle=p.rolle, name=p.name or None)
         _sub(pe, "Geburtsdatum", p.geburtsdatum)
         _sub(pe, "Steuerklasse", p.steuerklasse)
         b = _sub(pe, "Beschaeftigung")

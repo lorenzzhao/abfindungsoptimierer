@@ -602,3 +602,24 @@ def test_ctrl_c_closes_the_window_and_a_second_quits(app, monkeypatch):
         signal.signal(signal.SIGINT, old)
         w.dirty = False
         w.close()
+
+
+def test_person_name_updates_tab_title(app, tmp_path):
+    from abfindung.gui.main_window import MainWindow
+
+    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    try:
+        ctrl = next(c for c in w.inputs.controls if c.path == "persons.1.name")
+        assert w.inputs.tabs.tabText(1) == "Ehepartner" and ctrl.edit.placeholderText() == "Ehepartner"
+        ctrl.edit.setText("Max")
+        ctrl.edit.editingFinished.emit()
+        assert w.s.persons[1].name == "Max" and w.dirty
+        assert w.inputs.tabs.tabText(1) == "Max (Ehepartner)"
+        assert w._write(str(tmp_path / "p.xml"), backup=False)
+        assert 'name="Max"' in (tmp_path / "p.xml").read_text(encoding="utf-8")
+        ctrl.edit.setText("")
+        ctrl.edit.editingFinished.emit()
+        assert w.inputs.tabs.tabText(1) == "Ehepartner"
+    finally:
+        w.dirty = False
+        w.close()

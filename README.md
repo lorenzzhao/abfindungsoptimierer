@@ -35,6 +35,9 @@ Die Oberfläche hat drei Bereiche:
    „Steuerpflichtige(r)“) steuert den Tab „Ehepartner“: nur bei „verheiratet“ sichtbar und dann immer Teil der
    Berechnung; sonst Einzelveranlagung, die Daten des Ehepartners bleiben in der Datei. Kinder (Geburtsjahr,
    Kindergeld) werden im Tab „Haushalt“ gepflegt; Geburtsdatum und Steuerklasse je Person im Personen-Tab.
+   Optional bekommt jede Person einen **Namen**; er steht dann statt „Steuerpflichtige(r)“ bzw.
+   „Ehepartner“ in Ergebnissen, Hinweisen, Diagrammen und Bericht (Reiter: „Name (Rolle)“) und wird als
+   Attribut `name` der Person in der XML-Datei gespeichert.
 2. **Ergebnisse** (Mitte): alle berechneten Werte, gruppiert; ein Klick fokussiert genau einen Wert (▶, farbig
    hinterlegt). Schalter über der Liste blenden Bereiche aus, die nicht direkt in den Netto-Saldo eingehen
    (Steuer-Zwischenwerte, Liquidität, abgeleitete Termine, Hinweise) – nur Anzeige, gerechnet und optimiert wird
