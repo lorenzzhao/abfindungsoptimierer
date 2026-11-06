@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (QCheckBox, QHBoxLayout, QHeaderView, QLabel, QTre
                                QWidget)
 
 from ..dates import fmt_eur
-from ..explain import group_rank
+from ..explain import group_sort_key
 
 ROLE_ID = Qt.ItemDataRole.UserRole
 
@@ -147,7 +147,7 @@ class ResultsPanel(QWidget):
             groups.setdefault(t.group or "Übersicht", []).append(t)
         bold = QFont()
         bold.setBold(True)
-        for g in sorted(groups, key=group_rank):
+        for g in sorted(groups, key=group_sort_key(res.settings)):
             gi = QTreeWidgetItem([g, ""])
             gi.setFont(0, bold)
             gi.setFlags(Qt.ItemFlag.ItemIsEnabled)

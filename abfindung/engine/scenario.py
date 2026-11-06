@@ -273,7 +273,7 @@ def run(s, legal, explain: bool = True, extras: bool = True) -> Result:
 def _without_alg(ps, s, tracer, rs) -> None:
     """No ALG for the person (not claimed or no exit): the result list shows no ALG entries for the person. The
     timeline is still computed (employment, KV); a hint in the warnings says why there is no ALG."""
-    grp = f"ALG – {ps.label}"
+    grp = f"ALG – {ps.title}"
     for k in [k for k, t in rs.items() if t.group == grp]:
         del rs[k]
 

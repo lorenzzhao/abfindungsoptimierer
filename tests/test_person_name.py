@@ -27,7 +27,7 @@ def test_name_replaces_role_in_results(s, legal):
     assert s.persons[0].label == "Erika" and s.persons[0].title == "Erika (Steuerpflichtige(r))"
     r = run(s, legal)
     groups = {t.group for t in r.rs.values()}
-    assert any(g and g.endswith("– Erika") for g in groups)
+    assert "ALG – Erika (Steuerpflichtige(r))" in groups and "KV – Max (Ehepartner)" in groups
     assert not any("Steuerpflichtige(r)" in (t.label or "") for t in r.rs.values())
     from matplotlib.figure import Figure
     fig = Figure()
@@ -50,3 +50,24 @@ def test_report_lists_name_only_when_given(s):
     secs = dict(rows(s))
     assert ("Name", "Erika") == secs["Erika (Steuerpflichtige(r))"][0][:2]
     assert not any(row[0] == "Name" for row in secs["Ehepartner"])
+
+
+@pytest.mark.parametrize("names", [("", ""), ("Zora", "Anna")])
+def test_groups_taxpayer_before_spouse(s, legal, names):
+    """Per-person groups follow the order of the persons, not the alphabet."""
+    from abfindung.explain import group_sort_key
+    s.persons[0].name, s.persons[1].name = names
+    r = run(s, legal)
+    order = sorted({t.group or "Übersicht" for t in r.rs.values()}, key=group_sort_key(s))
+    t0, t1 = s.persons[0].title, s.persons[1].title
+    for head in ("ALG", "KV", "Abgeleitete Werte"):
+        assert order.index(f"{head} – {t0}") + 1 == order.index(f"{head} – {t1}")
+    assert order.index("Steuer 2026") < order.index(f"ALG – {t0}")
+
+
+def test_single_assessment_groups_in_person_order(legal):
+    from abfindung.explain import group_rank
+    titles = ["Zora (Steuerpflichtige(r))", "Anna (Ehepartner)"]
+    gs = ["Steuer 2027 – Anna (Ehepartner)", "Steuer 2027 – Zora (Steuerpflichtige(r))", "Steuer 2026", "Saldo"]
+    assert sorted(gs, key=lambda g: group_rank(g, titles)) == [
+        "Saldo", "Steuer 2026", "Steuer 2027 – Zora (Steuerpflichtige(r))", "Steuer 2027 – Anna (Ehepartner)"]

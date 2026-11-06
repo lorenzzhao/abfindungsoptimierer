@@ -37,7 +37,7 @@ def _set(s, tracer, path: str, value, tb) -> None:
 def derive_person(ps, idx: int, s, tracer, rs) -> None:
     base = f"persons.{idx}"
     lab = ps.label
-    grp = f"Abgeleitete Werte – {lab}"
+    grp = f"Abgeleitete Werte – {ps.title}"
 
     path = f"{base}.kfrist_monate"
     if derives(s, path):

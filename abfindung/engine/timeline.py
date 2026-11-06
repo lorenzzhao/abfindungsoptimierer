@@ -141,7 +141,7 @@ def anspruch_tabelle(vers_monate: int, alter: int, tb) -> int:
 
 def build_timeline(ps, idx: int, s, tracer, rs, rate_tag: float, sim_end: date) -> PersonTimeline:
     lab = ps.label
-    grp = f"ALG – {lab}"
+    grp = f"ALG – {ps.title}"
     base = f"persons.{idx}"
     E = ps.end_date
     F = ps.freistellung_ab if ps.freistellung and ps.freistellung_ab <= E else None
@@ -395,7 +395,7 @@ def build_timeline(ps, idx: int, s, tracer, rs, rate_tag: float, sim_end: date) 
 
 def alg_traces(tl: PersonTimeline, ps, s, tracer, rs) -> None:
     lab = ps.label
-    grp = f"ALG – {lab}"
+    grp = f"ALG – {ps.title}"
     years = s.years()
     for y in years:
         tb = tracer.new(f"alg_{ps.id}_{y}", f"ALG {y} {lab}", "EUR", grp)

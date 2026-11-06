@@ -154,7 +154,7 @@ def severance_extra(res: KvResult, alloc: dict) -> dict:
 
 
 def _severance_trace(ps, idx, s, tracer, rs, tl, ae_payments, res) -> None:
-    tb = tracer.new(f"kv_abf_{ps.id}", f"KV-Mehrbeitrag durch die Abfindung {ps.label}", "EUR", f"KV – {ps.label}")
+    tb = tracer.new(f"kv_abf_{ps.id}", f"KV-Mehrbeitrag durch die Abfindung {ps.label}", "EUR", f"KV – {ps.title}")
     tb.rule("R_KV_Freiwillig", "R_KV_AbfindungPflicht")
     mode_txt = {1: "nicht verbeitragt", 2: "dem Fristzeitraum zugeordnet", 3: "auf 12 Monate ab Zufluss verteilt"}
     tb.s("options.kv_abfindung_mode", "Abfindung bei freiwilliger Versicherung")
@@ -279,7 +279,7 @@ def build_kv(ps, idx: int, s, tracer, rs, tl, ae_payments: list[tuple[int, float
     for y in s.years():
         if rs is None:
             break
-        tb = tracer.new(f"kv_{ps.id}_{y}", f"Eigene KV/PV-Beiträge {y} {lab}", "EUR", f"KV – {lab}")
+        tb = tracer.new(f"kv_{ps.id}_{y}", f"Eigene KV/PV-Beiträge {y} {lab}", "EUR", f"KV – {ps.title}")
         tb.rule("R_KV_ALG", "R_KV_RuhenAbfindung", "R_KV_Freiwillig", "R_KV_AbfindungPflicht", "R_KV_Familie")
         tb.s(f"persons.{idx}.kv_status", "KV-Status vor dem Austritt")
         tb.p("kv_nachgehender_anspruch_monate")

@@ -237,7 +237,7 @@ def compute_unit_year(key: str, members: list, year: int, s, tracer, rs, ctx, jo
     """
     u = UnitYear(key, year, joint, [ps.id for _, ps in members])
     suf = f"{key}{year}"
-    grp = f"Steuer {year}" + (f" – {members[0][1].label}" if key else "")
+    grp = f"Steuer {year}" + (f" – {members[0][1].title}" if key else "")
     u.tariff = get_tariff(tracer.legal, year, s.options.tarif_index)
     u.divisor = int(tracer.p("est_fuenftel_divisor"))
     u.params = {"soli_fg": soli_freigrenze(joint, year, tracer), "soli_satz": tracer.p("soli_satz"),

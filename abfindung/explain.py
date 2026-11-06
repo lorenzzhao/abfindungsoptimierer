@@ -16,12 +16,25 @@ GROUP_ORDER = ["Übersicht", "Saldo", "Steuer", "Abfindung", "ALG", "KV", "Liqui
                "Hinweise und Warnungen"]
 
 
-def group_rank(g: str) -> tuple:
-    """Display order of result groups (GUI and PDF)."""
+def group_rank(g: str, persons: tuple | list = ()) -> tuple:
+    """Display order of result groups (GUI and PDF). ``persons``: the person titles in the order of the persons
+    (taxpayer first); groups of one person ("ALG – <title>") follow the common group and the persons' order,
+    not the alphabet."""
+    base, who = g, -1
+    for k, title in enumerate(persons):
+        if title and g.endswith(f" – {title}"):
+            base, who = g[: -len(title) - 3], k
+            break
     for i, prefix in enumerate(GROUP_ORDER):
-        if g.startswith(prefix):
-            return (i, g)
-    return (len(GROUP_ORDER), g)
+        if base.startswith(prefix):
+            return (i, base, who)
+    return (len(GROUP_ORDER), base, who)
+
+
+def group_sort_key(settings):
+    """Sort key for the result groups of a calculation with these settings."""
+    titles = [ps.title for ps in settings.persons]
+    return lambda g: group_rank(g, titles)
 
 
 FLAG_LABEL = {

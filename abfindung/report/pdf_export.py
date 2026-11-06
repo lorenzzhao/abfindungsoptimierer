@@ -232,7 +232,7 @@ def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top
     for t in res.rs.values():
         if not t.id.startswith(("warn_", "_")):
             groups.setdefault(t.group or "Übersicht", []).append(t)
-    for g in sorted(groups, key=explain.group_rank):
+    for g in sorted(groups, key=explain.group_sort_key(res.settings)):
         story.append(_h(g, st["h2"], 1))
         for t in groups[g]:
             e = explain.build(t, legal, res.rs)

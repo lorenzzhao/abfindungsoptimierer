@@ -37,7 +37,7 @@ def gross_last_months(ps, end, months: int, cap_month: float | None = None) -> f
 def alg_rate(ps, idx: int, s, tracer):
     """Returns (Traced monthly amount, daily rate)."""
     label = ps.label
-    tb = tracer.new(f"alg_{ps.id}_rate", f"ALG-Monatsbetrag {label}", "EUR2", f"ALG – {label}")
+    tb = tracer.new(f"alg_{ps.id}_rate", f"ALG-Monatsbetrag {label}", "EUR2", f"ALG – {ps.title}")
     tb.rule("R_ALG_Hoehe")
     if not (ps.austritt and ps.alg_aktiv):
         tb.step("Kein Arbeitslosengeld: " + ("kein Austritt." if not ps.austritt else "nicht beantragt (Schalter "

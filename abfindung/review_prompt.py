@@ -16,7 +16,7 @@ from datetime import date
 from pathlib import Path
 
 from .dates import fmt_num
-from .explain import HERKUNFT_LABEL, _fmt_input, build, group_rank
+from .explain import HERKUNFT_LABEL, _fmt_input, build, group_sort_key
 
 _TAG = re.compile(r"<[^>]+>")
 
@@ -56,7 +56,8 @@ def build_prompt(res, legal, inputs: list[dict], today: date | None = None) -> s
     o = s.options
     nr = {row["path"]: f"E{i}" for i, row in enumerate(inputs, 1)}
     rows = [t for t in res.rs.values() if not t.id.startswith("_")]
-    rows.sort(key=lambda t: group_rank(t.group or "Übersicht"))
+    key = group_sort_key(s)
+    rows.sort(key=lambda t: key(t.group or "Übersicht"))
 
     parts = [
         "# Aufgabe: Berechnung des Abfindungsoptimierers unabhängig prüfen",
