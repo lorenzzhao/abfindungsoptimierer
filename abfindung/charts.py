@@ -156,30 +156,63 @@ def _knick_table(ax, kn, th) -> None:
 
 
 # 4 -------------------------------------------------------------------------------
-# deadlines and planned dates in the timeline: (marker, filled, legend text)
+# important dates in the timeline: kind -> (marker, filled, colour (None: red for deadlines, "fg": text colour), side,
+# legend text). Deadlines and registrations above the bar, other events below it.
 EVENT_STYLE = {
-    "arbeitsuchend_frist": ("v", True, "spätestens arbeitsuchend melden (§ 38 SGB III)"),
-    "arbeitsuchend_plan": ("v", False, "Arbeitsuchendmeldung (geplant; rot: nach der Frist)"),
-    "arbeitslos_frist": ("D", True, "spätestens arbeitslos melden (ALG ab 1. Tag, § 141 SGB III)"),
-    "arbeitslos_plan": ("D", False, "Arbeitslosmeldung (geplant; rot: nach der Frist)"),
+    "arbeitsuchend_frist": ("v", True, None, "top", "spätestens arbeitsuchend melden"),
+    "arbeitsuchend_plan": ("v", False, None, "top", "Arbeitsuchendmeldung geplant (rot: zu spät)"),
+    "arbeitslos_frist": ("D", True, None, "top", "spätestens arbeitslos melden"),
+    "arbeitslos_plan": ("D", False, None, "top", "Arbeitslosmeldung geplant (rot: zu spät)"),
+    "abfindung": ("$€$", True, "fg", "bottom", "Abfindung gezahlt (Monat)"),
+    "freistellung": (">", True, STATUS_COLOR["freigestellt"], "bottom", "Beginn der Freistellung"),
+    "ende": ("|", True, STATUS_COLOR["beschaeftigt"], "bottom", "Ende Arbeitsverhältnis"),
+    "fristende": ("|", False, STATUS_COLOR["ruhen_158"], "bottom",
+                  "fiktives Ende Kündigungsfrist"),
+    "alg_start": ("^", True, STATUS_COLOR["alg_bezug"], "bottom", "ALG-Beginn"),
+    "alg_end": ("^", False, STATUS_COLOR["alg_bezug"], "bottom", "letzter ALG-Tag"),
+    "erloeschen": ("x", True, STATUS_COLOR["alg_bezug"], "bottom", "ALG-Anspruch erlischt"),
+    "newjob": ("s", True, STATUS_COLOR["neue_beschaeftigung"], "bottom", "neue Beschäftigung"),
 }
 
 
-def timeline_events(ps, tl) -> list[tuple]:
+def timeline_events(ps, tl, payments=()) -> list[tuple]:
     """Important dates of a person for the timeline: [(date, kind)] (kinds: keys of EVENT_STYLE).
-    Planned dates only when they differ from the deadline."""
-    if not (ps.austritt and ps.alg_aktiv):
-        return []
+    ``payments``: [(month index, amount)] of the severance. Planned registrations only when they differ from the
+    deadline; ALG dates only when ALG is claimed."""
     ev = []
-    if tl.meldefrist:
-        ev.append((tl.meldefrist, "arbeitsuchend_frist"))
-        if ps.arbeitsuchend_datum != tl.meldefrist:
-            ev.append((ps.arbeitsuchend_datum, "arbeitsuchend_plan"))
-    first_unemployed = tl.end + timedelta(days=1)
-    ev.append((first_unemployed, "arbeitslos_frist"))
-    if ps.meldung != first_unemployed:
-        ev.append((ps.meldung, "arbeitslos_plan"))
+    if not ps.austritt:
+        if ps.newjob:
+            ev.append((ps.newjob_start, "newjob"))
+        return ev
+    for mi, amount in payments:
+        if amount:
+            ev.append((date(mi // 12, mi % 12 + 1, 15), "abfindung"))
+    if tl.freistellung_ab:
+        ev.append((tl.freistellung_ab, "freistellung"))
+    ev.append((tl.end, "ende"))
+    if ps.alg_aktiv:
+        if tl.meldefrist:
+            ev.append((tl.meldefrist, "arbeitsuchend_frist"))
+            if ps.arbeitsuchend_datum != tl.meldefrist:
+                ev.append((ps.arbeitsuchend_datum, "arbeitsuchend_plan"))
+        first_unemployed = tl.end + timedelta(days=1)
+        ev.append((first_unemployed, "arbeitslos_frist"))
+        if ps.meldung != first_unemployed:
+            ev.append((ps.meldung, "arbeitslos_plan"))
+        if tl.ruhen158 and tl.fristende and tl.fristende > tl.end:
+            ev.append((tl.fristende, "fristende"))
+        if tl.alg_start:
+            ev.append((tl.alg_start, "alg_start"))
+            if tl.alg_end:
+                ev.append((tl.alg_end, "alg_end"))
+            if tl.erloeschen:
+                ev.append((tl.erloeschen, "erloeschen"))
+    if ps.newjob:
+        ev.append((ps.newjob_start, "newjob"))
     return ev
+
+
+ROW_GAP = 1.9  # distance of the person rows: dates above and below each bar
 
 
 def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None:
@@ -191,6 +224,10 @@ def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None
     persons = s.persons
     used = set()
     overlay_used = set()
+    # how many days a date label covers on this axis (about 8 characters at 6 pt plus a gap)
+    ax.set_xlim(date2num(start), date2num(end))
+    width_px = max(ax.get_window_extent().width, 1.0)
+    label_days = int((44 * fig.dpi / 72) / width_px * (end - start).days) + 1
     kv_used = False
     for row, ps in enumerate(persons):
         tl = res.ctx.timelines[ps.id]
@@ -205,7 +242,7 @@ def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None
                 seg_start, seg_status = d, day.status
         if seg_status is not None:
             segs.append((seg_start, end + timedelta(days=1), seg_status))
-        y = len(persons) - 1 - row
+        y = ROW_GAP * (len(persons) - 1 - row)
         focused = bool(focus_id and ps.id in focus_id)
         for a, b, st in segs:
             ax.barh(y, date2num(b) - date2num(a), left=date2num(a), height=0.5, color=STATUS_COLOR[st],
@@ -230,27 +267,37 @@ def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None
                     run_start = None
             if run_start is not None:
                 ax.barh(y + off, date2num(end) - date2num(run_start), left=date2num(run_start), height=0.06, color=col)
-        # deadlines and planned dates (markers above the bar, with the date)
-        events = sorted(timeline_events(ps, tl))
+        # important dates: deadlines above the bar, other events below it, each with its date
+        events = sorted(timeline_events(ps, tl, res.ctx.payments.get(ps.id, ())))
         deadline = {k: d for d, k in events if k.endswith("_frist")}
-        last_label: dict[bool, tuple] = {}  # side -> (date, level) of the previous date label
+        levels: dict[str, list] = {"top": [], "bottom": []}  # side -> date up to which each label level is taken
+        sim_last = max(tl.days) if tl.days else end
         for d, kind in events:
-            if not start <= d <= end:
+            if not start <= d <= end or (kind == "alg_end" and d >= sim_last):  # still running at the end
                 continue
-            marker, filled, label = EVENT_STYLE[kind]
-            late = not filled and d > deadline.get(kind.replace("_plan", "_frist"), d)  # planned after the deadline
-            col = "#d32f2f" if (filled or late) else th["fg"]
+            marker, filled, colour, side, label = EVENT_STYLE[kind]
+            late = colour is None and not filled and d > deadline.get(kind.replace("_plan", "_frist"), d)
+            if colour is None:
+                col = "#d32f2f" if (filled or late) else th["fg"]
+            else:
+                col = th["fg"] if colour == "fg" else colour
             x = date2num(d)
-            ax.plot([x, x], [y - 0.25, y + 0.44], color=col, lw=0.8, ls="-" if filled else ":")
-            ax.plot(x, y + 0.46, marker=marker, ms=6, color=col, mfc=col if filled else "none", ls="",
+            top = side == "top"
+            ym = y + 0.46 if top else y - 0.5
+            ax.plot([x, x], [y - 0.25 if top else y + 0.25, ym], color=col, lw=0.7, ls="-" if filled else ":",
+                    alpha=0.8)
+            ax.plot(x, ym, marker=marker, ms=7 if kind == "abfindung" else 6, color=col,
+                    mfc=col if filled else "none", mew=1.6 if marker == "|" else 1, ls="",
                     label=label if kind not in used else None)
             used.add(kind)
-            left = kind.startswith("arbeitsuchend")  # the two kinds are often close: dates on opposite sides
-            prev = last_label.get(left)
-            level = prev[1] + 1 if prev and abs((d - prev[0]).days) < 40 else 0  # stack close labels
-            last_label[left] = (d, level)
-            ax.annotate(d.strftime("%d.%m.%y"), (x, y + 0.46), xytext=(-5 if left else 5, 3 + 7 * level),
-                        textcoords="offset points", ha="right" if left else "left", fontsize=6, color=col)
+            free = [i for i, busy in enumerate(levels[side]) if d > busy]  # lowest label level that is free here
+            level = free[0] if free else min(len(levels[side]), 3)
+            if level == len(levels[side]):
+                levels[side].append(d)
+            levels[side][level] = d + timedelta(days=label_days)
+            text = d.strftime("%m/%y") if kind == "abfindung" else d.strftime("%d.%m.%y")
+            ax.annotate(text, (x, ym), xytext=(5, (3 + 7 * level) if top else -(9 + 7 * level)),
+                        textcoords="offset points", ha="left", fontsize=6, color=col)
         # KV own contributions (dots)
         kv = res.ctx.kv[ps.id]
         for (yy, mm), km in kv.months.items():
@@ -263,15 +310,18 @@ def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None
             ax.barh(0, 0, height=0.06, color=STATUS_COLOR[st], label=lab)
     if kv_used:
         ax.plot([], [], marker="s", ms=3, ls="", color=th["fg"], label="eigener KV-Beitrag im Monat")
-    ax.set_ylim(-0.6, len(persons) - 1 + 0.8)  # room for the markers above the top bar
-    ax.set_yticks(range(len(persons)))
+    ax.set_ylim(-1.1, ROW_GAP * (len(persons) - 1) + 0.85)  # room for the markers and dates above and below
+    ax.set_yticks([ROW_GAP * i for i in range(len(persons))])
     ax.set_yticklabels([p.label for p in reversed(persons)], fontsize=8)
-    ax.xaxis.set_major_locator(MonthLocator(bymonth=(1, 4, 7, 10)))
+    months = (end.year - start.year) * 12 + end.month - start.month + 1
+    step = next(m for m in (3, 6, 12) if months / m <= fig.get_figwidth() * 1.7)  # tick labels must not overlap
+    ax.xaxis.set_major_locator(MonthLocator(bymonth=range(1, 13, step)))
     ax.xaxis.set_major_formatter(DateFormatter("%m/%y"))
     ax.set_xlim(date2num(start), date2num(end))
-    ax.set_title("Zeitleiste (Status je Tag; Sperrzeit und Ruhen laufen parallel als dünne Linien)", fontsize=10)
+    ax.set_title("Zeitleiste (Status je Tag; Sperrzeit und Ruhen parallel als dünne Linien)", fontsize=10)
     _style(fig, [ax], th)
-    _legend(ax, th, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=4)
+    ncol = max(2, min(4, int(fig.get_figwidth() / 2.6)))  # legend columns that fit the width (about 2.6 in each)
+    _legend(ax, th, loc="upper center", bbox_to_anchor=(0.5, -0.1), ncol=ncol)
     fig.tight_layout()
 
 

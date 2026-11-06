@@ -208,7 +208,7 @@ def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top
         story.append(_p(f"Abfindungsjahr {cv.year}: zvE {fmt_eur(cv.zve_now)}, Steuer {fmt_eur(cv.tax_now)}; Nullgrenze "
                         f"(zusätzlicher Abzug bis v + PV = 0) {fmt_eur(cv.nullgrenze)}.", st["small"]))
     story.append(_h("3.2 Zeitleiste", st["h2"], 1))
-    story.append(_fig_image(lambda f: charts.chart_gantt(f, res, th), height_mm=85))
+    story.append(_fig_image(lambda f: charts.chart_gantt(f, res, th), height_mm=130))
     story.append(_h("3.3 Liquidität", st["h2"], 1))
     story.append(_fig_image(lambda f: charts.chart_liquidity(f, res, th), height_mm=85))
 

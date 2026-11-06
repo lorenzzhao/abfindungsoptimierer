@@ -37,8 +37,8 @@ class ChartPanel(QWidget):
             cv.mpl_connect("button_press_event", lambda ev, k=key: self._clicked(k, ev))
             if key == "kink":
                 cv.mpl_connect("motion_notify_event", self._knick_hover)
-            if key == "kink":  # three stacked parts (total tax, Ä8 chart, table): scrollable
-                cv.setMinimumHeight(820)
+            if key in ("kink", "gantt"):  # kink: three stacked parts; gantt: dates and a long legend – scrollable
+                cv.setMinimumHeight(820 if key == "kink" else 600)
                 sa = QScrollArea()
                 sa.setWidgetResizable(True)
                 sa.setWidget(cv)
@@ -105,7 +105,7 @@ class ChartPanel(QWidget):
             self.focusRequested.emit(f"est_{u.key}{u.year}" if ev.inaxes is self.figs[key].axes[0] else f"nullgrenze_{u.key}{u.year}")
         elif key == "gantt":
             persons = self.res.settings.persons
-            row = len(persons) - 1 - int(round(ev.ydata))
+            row = len(persons) - 1 - int(round(ev.ydata / charts.ROW_GAP))
             if 0 <= row < len(persons):
                 self.focusRequested.emit(f"alg_{persons[row].id}_total")
         elif key == "liq":
