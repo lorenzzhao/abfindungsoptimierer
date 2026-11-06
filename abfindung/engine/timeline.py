@@ -81,6 +81,7 @@ class PersonTimeline:
     alter_entstehung: int = 0
     erloeschen: date | None = None
     minderung_entfaellt: bool = False
+    meldefrist: date | None = None       # latest Arbeitsuchendmeldung without a Sperrzeit (§ 38 Abs. 1 SGB III)
     days: dict = field(default_factory=dict)       # date -> Day
     months: dict = field(default_factory=dict)     # (y, m) -> MonthAgg
     warnings: list = field(default_factory=list)   # (text, [rules])
@@ -324,6 +325,7 @@ def build_timeline(ps, idx: int, s, tracer, rs, rate_tag: float, sim_end: date) 
         alg_start=alg_start, anspruch_tabelle=tab, minderung=minderung, anspruch=anspruch, rate_tag=rate_tag,
         anwartschaft_monate=anw, anwartschaft_ok=anw_ok, vers_monate=vers, alter_entstehung=alter,
         erloeschen=add_years(entstehung, int(tracer.p("alg_erloeschen_jahre"))), minderung_entfaellt=entfaellt,
+        meldefrist=meldefrist,
     )
     if warn:
         tl.warnings.append(warn)

@@ -156,6 +156,32 @@ def _knick_table(ax, kn, th) -> None:
 
 
 # 4 -------------------------------------------------------------------------------
+# deadlines and planned dates in the timeline: (marker, filled, legend text)
+EVENT_STYLE = {
+    "arbeitsuchend_frist": ("v", True, "spätestens arbeitsuchend melden (§ 38 SGB III)"),
+    "arbeitsuchend_plan": ("v", False, "Arbeitsuchendmeldung (geplant; rot: nach der Frist)"),
+    "arbeitslos_frist": ("D", True, "spätestens arbeitslos melden (ALG ab 1. Tag, § 141 SGB III)"),
+    "arbeitslos_plan": ("D", False, "Arbeitslosmeldung (geplant; rot: nach der Frist)"),
+}
+
+
+def timeline_events(ps, tl) -> list[tuple]:
+    """Important dates of a person for the timeline: [(date, kind)] (kinds: keys of EVENT_STYLE).
+    Planned dates only when they differ from the deadline."""
+    if not (ps.austritt and ps.alg_aktiv):
+        return []
+    ev = []
+    if tl.meldefrist:
+        ev.append((tl.meldefrist, "arbeitsuchend_frist"))
+        if ps.arbeitsuchend_datum != tl.meldefrist:
+            ev.append((ps.arbeitsuchend_datum, "arbeitsuchend_plan"))
+    first_unemployed = tl.end + timedelta(days=1)
+    ev.append((first_unemployed, "arbeitslos_frist"))
+    if ps.meldung != first_unemployed:
+        ev.append((ps.meldung, "arbeitslos_plan"))
+    return ev
+
+
 def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None:
     fig.clear()
     ax = fig.add_subplot(111)
@@ -204,6 +230,27 @@ def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None
                     run_start = None
             if run_start is not None:
                 ax.barh(y + off, date2num(end) - date2num(run_start), left=date2num(run_start), height=0.06, color=col)
+        # deadlines and planned dates (markers above the bar, with the date)
+        events = sorted(timeline_events(ps, tl))
+        deadline = {k: d for d, k in events if k.endswith("_frist")}
+        last_label: dict[bool, tuple] = {}  # side -> (date, level) of the previous date label
+        for d, kind in events:
+            if not start <= d <= end:
+                continue
+            marker, filled, label = EVENT_STYLE[kind]
+            late = not filled and d > deadline.get(kind.replace("_plan", "_frist"), d)  # planned after the deadline
+            col = "#d32f2f" if (filled or late) else th["fg"]
+            x = date2num(d)
+            ax.plot([x, x], [y - 0.25, y + 0.44], color=col, lw=0.8, ls="-" if filled else ":")
+            ax.plot(x, y + 0.46, marker=marker, ms=6, color=col, mfc=col if filled else "none", ls="",
+                    label=label if kind not in used else None)
+            used.add(kind)
+            left = kind.startswith("arbeitsuchend")  # the two kinds are often close: dates on opposite sides
+            prev = last_label.get(left)
+            level = prev[1] + 1 if prev and abs((d - prev[0]).days) < 40 else 0  # stack close labels
+            last_label[left] = (d, level)
+            ax.annotate(d.strftime("%d.%m.%y"), (x, y + 0.46), xytext=(-5 if left else 5, 3 + 7 * level),
+                        textcoords="offset points", ha="right" if left else "left", fontsize=6, color=col)
         # KV own contributions (dots)
         kv = res.ctx.kv[ps.id]
         for (yy, mm), km in kv.months.items():
@@ -216,6 +263,7 @@ def chart_gantt(fig: Figure, res, th: dict, focus_id: str | None = None) -> None
             ax.barh(0, 0, height=0.06, color=STATUS_COLOR[st], label=lab)
     if kv_used:
         ax.plot([], [], marker="s", ms=3, ls="", color=th["fg"], label="eigener KV-Beitrag im Monat")
+    ax.set_ylim(-0.6, len(persons) - 1 + 0.8)  # room for the markers above the top bar
     ax.set_yticks(range(len(persons)))
     ax.set_yticklabels([p.label for p in reversed(persons)], fontsize=8)
     ax.xaxis.set_major_locator(MonthLocator(bymonth=(1, 4, 7, 10)))

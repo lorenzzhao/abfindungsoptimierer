@@ -39,7 +39,8 @@ Die Oberfläche hat drei Bereiche:
    hinterlegt). Schalter über der Liste blenden Bereiche aus, die nicht direkt in den Netto-Saldo eingehen
    (Steuer-Zwischenwerte, Liquidität, abgeleitete Termine, Hinweise) – nur Anzeige, gerechnet und optimiert wird
    immer mit allem; ein Verweis auf einen ausgeblendeten Wert blendet seinen Bereich wieder ein. Darunter drei Diagramme: Steuer & Knick (Gesamtsteuer über das zvE mit Nullgrenze und
-   Grenzwirkung eines Abzugs), Zeitleiste (Gantt), Liquidität. Verschiedene Planungen vergleicht man
+   Grenzwirkung eines Abzugs), Zeitleiste (Gantt; mit den Fristen für die Arbeitsuchend- und die Arbeitslosmeldung und den geplanten Meldedaten,
+   rot markiert, wenn sie nach der Frist liegen), Liquidität. Verschiedene Planungen vergleicht man
    durch Drehen an den Stellschrauben oder mit dem Optimierer. Ein Klick in ein Diagramm fokussiert den passenden Wert.
 3. **Erklärung** (rechts): Rechenweg des fokussierten Werts mit eingesetzten Zahlen, verwendete Eingangsdaten
    (mit Herkunft und Fundstelle in der XML), rechtliche Parameter (Jahr, „fortgeschrieben“, Prüfstatus), Regeln mit
