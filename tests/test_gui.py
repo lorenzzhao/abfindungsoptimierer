@@ -91,7 +91,16 @@ def test_real_salary_shows_annual_equivalent(app):
     mode.combo.setCurrentIndex(1)
     rows = {y: info for y, _, info in w.inputs.salary_rows[1]}
     assert "hochgerechnet" in rows[2027].text() and "§ 158" in rows[2027].toolTip()
-    assert "Steuer- oder Rechtsberatung" in w.disclaimer.text()
+    assert "Steuer- oder Rechtsberatung" in w.disclaimer.text() and "Haftungsausschluss" in w.disclaimer.text()
+    opened = []
+    from abfindung.gui import about_dialog
+    orig = about_dialog.AboutDialog.exec
+    about_dialog.AboutDialog.exec = lambda self: opened.append(self.findChild(type(w.disclaimer)).text())
+    try:
+        w.disclaimer.linkActivated.emit("haftung")
+    finally:
+        about_dialog.AboutDialog.exec = orig
+    assert opened and "Haftungsausschluss: Das Programm" in opened[0]
     w.dirty = False
     w.close()
 

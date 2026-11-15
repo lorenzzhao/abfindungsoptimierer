@@ -7,7 +7,7 @@ The calculation core lives in :mod:`abfindung.engine` and is UI-free.
 All legal figures are read from the legal XML file; none are hard-coded.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.9.0"
 
 DISCLAIMER = (
     "Dieses Tool ersetzt keine Steuer- oder Rechtsberatung. Alle Ergebnisse sind "

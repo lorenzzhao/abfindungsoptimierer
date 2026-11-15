@@ -66,8 +66,10 @@ class MainWindow(QMainWindow):
         central = QWidget()
         v = QVBoxLayout(central)
         v.setContentsMargins(4, 4, 4, 4)
-        self.disclaimer = QLabel(f"<b>Hinweis:</b> {DISCLAIMER}")
+        self.disclaimer = QLabel()
         self.disclaimer.setWordWrap(True)
+        self.disclaimer.setTextFormat(Qt.TextFormat.RichText)
+        self.disclaimer.linkActivated.connect(lambda _: self.about())
         self.disclaimer.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._style_disclaimer()
         v.addWidget(self.disclaimer)
@@ -494,6 +496,8 @@ class MainWindow(QMainWindow):
         fg, bg = ("#ff8a80", "#3a1414") if self.theme.dark else ("#b00020", "#fdecea")
         self.disclaimer.setStyleSheet(f"QLabel {{color:{fg}; background:{bg}; border:1px solid {fg}; "
                                       "border-radius:3px; padding:4px; font-size:10pt;}")
+        self.disclaimer.setText(f"<b>Hinweis:</b> {DISCLAIMER} "
+                                f"<a href='haftung' style='color:{fg};'>Haftungsausschluss …</a>")
 
     def toggle_dark(self, on: bool) -> None:
         self.theme = themes.apply(QApplication.instance(), on)
