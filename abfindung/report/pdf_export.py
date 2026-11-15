@@ -24,7 +24,7 @@ from reportlab.platypus import (Image, KeepTogether, PageBreak, Paragraph, Simpl
                                 TableStyle)
 from reportlab.platypus.tableofcontents import TableOfContents
 
-from .. import DISCLAIMER, __version__, charts, explain
+from .. import DISCLAIMER, HAFTUNG, __version__, charts, explain
 from ..dates import fmt_eur, fmt_month
 from ..engine.marginal import curves, knick
 from .inputs_table import rows as input_rows
@@ -143,6 +143,8 @@ def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top
                            "eingelesenen Datei der rechtlichen Vorgaben; Parameter mit dem Status „ungeprüft“ oder "
                            "„fortgeschrieben“ sowie persönliche Werte mit der Herkunft „Annahme“ sind "
                            "besonders zu prüfen.", st["warn"]))
+    story.append(Spacer(1, 2 * mm))
+    story.append(_p(escape(HAFTUNG), st["small"]))
     story.append(Spacer(1, 4 * mm))
     meta = [["Datei", "Inhalt"],
             ["Persönliche Daten", f"{Path(personal_path).name if personal_path else '–'} (gegen personal_data.xsd validiert)"],

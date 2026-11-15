@@ -12,7 +12,7 @@ import json
 import sys
 from datetime import date
 
-from . import DISCLAIMER
+from . import DISCLAIMER, HAFTUNG
 from . import legal as legal_info
 from .engine.optimizer import optimize
 from .engine.scenario import run
@@ -33,6 +33,7 @@ def build_report(pd, legal, do_opt: bool = False) -> dict:
     r = run(s, legal)
     out = {
         "hinweis": DISCLAIMER,
+        "haftungsausschluss": HAFTUNG,
         "horizont": [r.years[0], r.years[-1]],
         "saldo": round(r.saldo, 2),
         "jahre": {

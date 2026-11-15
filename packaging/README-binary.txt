@@ -5,6 +5,10 @@ Planung von Abfindung, Austritt, Arbeitslosengeld und Krankenversicherung (Deuts
 Dieses Programm ersetzt keine Steuer- oder Rechtsberatung. Alle Ergebnisse sind
 Modellrechnungen auf Basis der eingelesenen Daten und vereinfachender Annahmen.
 
+HAFTUNGSAUSSCHLUSS: siehe Hilfe -> Über ... bzw. README.md. Die Nutzung erfolgt auf eigene Verantwortung;
+für Schäden aus der Nutzung ist die Haftung ausgeschlossen, soweit gesetzlich zulässig (Vorsatz, grobe
+Fahrlässigkeit, Verletzung von Leben, Körper, Gesundheit und zwingende Vorschriften bleiben unberührt).
+
 Starten
 -------
 Linux:    ./abfindungsoptimierer          (AppImage: Datei ausführbar machen und starten)

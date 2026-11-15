@@ -5,6 +5,7 @@ Arbeitslosengeld (ALG I), Kranken-/Pflegeversicherung und steuerliche Gestaltung
 für ein zusammenveranlagtes Ehepaar oder eine Einzelperson.
 
 > **Dieses Tool ersetzt keine Steuer- oder Rechtsberatung.** Alle Ergebnisse sind Modellrechnungen.
+> Die Nutzung erfolgt auf eigene Verantwortung; siehe [Haftungsausschluss](#haftungsausschluss).
 
 ## Installation
 
@@ -122,6 +123,18 @@ Quellarchiven und Prüfsummen ändern; lxml und numpy sind an die Archive von li
 Copyright (C) 2026 Lorenz Zhao. Freie Software unter der GNU General Public License, Version 3 oder neuer
 (`LICENSE`), ohne jede Gewährleistung. Die verwendeten Komponenten Dritter und ihre Lizenzen beschreibt
 `THIRD_PARTY_NOTICES.txt`; im Programm zeigt *Hilfe → Über … → Lizenzen …* alle Lizenztexte.
+
+## Haftungsausschluss
+
+Das Programm wird unentgeltlich und ohne Gewähr für Richtigkeit, Vollständigkeit und Aktualität bereitgestellt.
+Es rechnet mit vereinfachten Modellen; die rechtlichen Werte (XML-Datei) und die Programmlogik können veraltet
+oder fehlerhaft sein. Entscheidungen über Abfindung, Aufhebungsvertrag, Austrittstermin, Meldungen,
+Steuererklärung und Versicherung sind vor ihrer Umsetzung mit einer Steuerberatung bzw. Rechtsanwaltschaft, der
+Agentur für Arbeit und der Krankenkasse zu prüfen. Die Haftung der Urheberin bzw. des Urhebers für Schäden aus
+der Nutzung des Programms und seiner Ergebnisse ist ausgeschlossen, soweit gesetzlich zulässig. Unberührt bleibt
+die Haftung für Vorsatz und grobe Fahrlässigkeit, für Schäden aus der Verletzung von Leben, Körper oder
+Gesundheit und nach zwingenden gesetzlichen Vorschriften. Es gelten zusätzlich die Haftungs- und
+Gewährleistungsausschlüsse der GPL (§§ 15, 16).
 
 ## Tests
 

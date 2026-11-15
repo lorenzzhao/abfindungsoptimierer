@@ -72,3 +72,8 @@ def test_dialog_warns_about_personal_data(window, tmp_path):
     target = tmp_path / "x.md"
     assert d.save(str(target)) and target.read_text(encoding="utf-8") == "Prompt-Text"
     assert d.default_path.endswith("ki_prompt_gesamtpruefung.md")
+
+
+def test_liability_disclaimer_is_shown():
+    from abfindung import HAFTUNG
+    assert "Haftung" in HAFTUNG and "soweit gesetzlich zulässig" in HAFTUNG and "grobe" in HAFTUNG

@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QHBoxLayout, QLabel, QListWidget, QPlainTextEdit, QVBoxLayout,
                                QWidget)
 
-from .. import DISCLAIMER, legal
+from .. import DISCLAIMER, HAFTUNG, legal
 
 
 class LicensesDialog(QDialog):
@@ -48,7 +48,7 @@ class AboutDialog(QDialog):
         text = QLabel(
             f"<h3>{legal.APP_NAME} {legal.version()}</h3>"
             "<p>Planung von Abfindung, Austritt, Arbeitslosengeld und Krankenversicherung.</p>"
-            f"<p>{DISCLAIMER}</p>"
+            f"<p>{DISCLAIMER}</p><p>{HAFTUNG}</p>"
             f"<p>{legal.COPYRIGHT}<br>Lizenz: <a href='{legal.LICENSE_URL}'>{legal.LICENSE_NAME}</a></p>"
             f"<p>{legal.NO_WARRANTY}</p><p>Quellcode: <a href='{legal.SOURCE_URL}'>{legal.SOURCE_URL}</a> – auf der "
             "Release-Seite jeder Version liegen neben den Programmpaketen der vollständige Quellcode und der Quellcode "
