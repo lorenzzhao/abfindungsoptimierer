@@ -26,8 +26,8 @@ Pakete zum Download: https://github.com/lorenzzhao/abfindungsoptimierer/releases
     abfindungsoptimierer-<version>-source.tar.gz on each release page). It does NOT contain the third-party
     components: pip installs them separately from PyPI, each with its own license files.
 
-  - As standalone programs for Linux (AppImage, tar.gz) and, prepared, for Windows
-    (installer, portable ZIP), built with PyInstaller. These DO contain the components of
+  - As standalone programs for Linux (AppImage, tar.gz) and for Windows (installer,
+    portable ZIP), built with PyInstaller. These DO contain the components of
     sections 2 and 3 and follow section 5. Every package has a "licenses" folder with all
     license texts and notices, an exact version list (VERSIONS.txt) and the source code
     locations (SOURCES.txt).
@@ -60,7 +60,12 @@ matplotlib
                       (BSD-3-Clause), LAPACK (BSD-3-Clause) and the GCC runtime libraries of
                       AlmaLinux 8 (GCC 8.5.0): libgfortran (GPL-3.0-or-later WITH
                       GCC-exception-3.1) and libquadmath (LGPL-2.1-or-later), as separate,
-                      replaceable shared libraries.
+                      replaceable shared libraries. The Windows wheel bundles OpenBLAS and
+                      LAPACK in one DLL (numpy.libs\libscipy_openblas64_*.dll) that
+                      statically contains the Fortran runtime libgfortran of GCC 10.3.0
+                      (GPL-3.0-or-later WITH GCC-exception-3.1), the mingw-w64 runtime
+                      (Zope Public License 2.1) and winpthreads (MIT and BSD-3-Clause parts;
+                      texts in licenses/mingw-w64/).
     contourpy         BSD-3-Clause
     cycler            BSD-3-Clause
     fonttools         MIT
@@ -122,7 +127,9 @@ Linux system libraries (Linux packages only)
 Microsoft Visual C++ runtime (Windows packages only)
   vcruntime140*.dll, msvcp140*.dll and concrt140.dll: Microsoft Distributable Code,
   redistributed together with the program under Microsoft's license terms; see
-  licenses/microsoft/.
+  licenses/microsoft/. They are the compiler runtime of the Microsoft C++ compiler that built
+  the Windows binaries of Python, Qt, NumPy and the other components and count as System
+  Libraries in the sense of the GPL-3.0 (section 1).
 
 AppImage runtime (Linux AppImage only)
   The AppImage file starts with the AppImage type 2 runtime (MIT,
@@ -169,18 +176,21 @@ LGPL-3.0 (Qt and Qt for Python) and LGPL-2.1 (libfuse in the AppImage runtime)
     licenses/SOURCES.txt lists the archives with their checksums. The versions
     are pinned in packaging/pins.json and packaging/release-constraints.txt.
 
-LGPL-2.1 (libiconv in lxml, libquadmath in NumPy) and the GCC runtime in NumPy
+LGPL-2.1 (libiconv in lxml, libquadmath in NumPy on Linux) and the GCC runtime in NumPy
 (libgfortran, GPL-3.0-or-later WITH GCC-exception-3.1)
   - licenses/LGPL-2.1.txt and the license texts in licenses/packages/numpy/ and
     licenses/packages/lxml/ (with a NOTE.txt each).
-  - libquadmath and libgfortran are separate shared libraries in numpy.libs and can be
-    replaced. libiconv is linked statically into lxml; lxml's complete source code
+  - On Linux, libquadmath and libgfortran are separate shared libraries in numpy.libs and can
+    be replaced. On Windows, libgfortran is part of numpy.libs\libscipy_openblas64_*.dll
+    (GCC 10.3.0); that DLL is a separate file and can be replaced by a modified build. The
+    GCC Runtime Library Exception allows the combination with this program. libiconv is linked statically into lxml; lxml's complete source code
     (buildlibxml.py builds it with its static libraries) is offered with the packages,
     so lxml can be rebuilt with a modified libiconv and replace the lxml folder.
   - The source code of exactly these versions – lxml 6.1.3, GNU libiconv 1.18 and the
-    AlmaLinux 8 source package gcc-8.5.0-28.el8_10.alma.1 – is downloaded by the build
-    into release/sources/ and attached to the release page with the packages (pinned with their
-    checksums in packaging/pins.json).
+    AlmaLinux 8 source package gcc-8.5.0-28.el8_10.alma.1 (Linux) and GCC 10.3.0
+    gcc-10.3.0.tar.xz (Windows) – is downloaded by the build into release/sources/ and
+    attached to the release page with the packages (pinned with their checksums in
+    packaging/pins.json).
 
 Notices of permissive licenses (MIT, BSD, Apache-2.0, PSF, Matplotlib, HPND, Unicode,
 zlib, FreeType and others)

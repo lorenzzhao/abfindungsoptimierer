@@ -56,10 +56,20 @@ PACKAGES = (
 )
 BUNDLED_DISTRIBUTIONS = (APP_DISTRIBUTION, "PySide6-Essentials", "shiboken6", *PACKAGES, "pyinstaller")
 # Licences of the bundled packages that are not permissive and why shipping them is fine.
-LICENSE_NOTES = {
-    "numpy": "numpy.libs contains the GCC runtime of AlmaLinux 8 (GCC 8.5.0): libgfortran under GPL-3.0-or-later "
+NUMPY_NOTE_LINUX = (
+    "numpy.libs contains the GCC runtime of AlmaLinux 8 (GCC 8.5.0): libgfortran under GPL-3.0-or-later "
     "WITH GCC-exception-3.1 and libquadmath under LGPL-2.1-or-later. Both are separate shared libraries that can "
-    "be replaced; their source code is offered for download with the package (see SOURCES.txt).",
+    "be replaced; their source code is offered for download with the package (see SOURCES.txt)."
+)
+NUMPY_NOTE_WINDOWS = (
+    "numpy.libs\\libscipy_openblas64_*.dll (OpenBLAS, BSD-3-Clause) statically contains the GCC 10.3.0 Fortran "
+    "runtime libgfortran (GPL-3.0-or-later WITH GCC-exception-3.1), the mingw-w64 runtime (Zope Public License 2.1) "
+    "and winpthreads (MIT and BSD-3-Clause parts); their notices are in ../../mingw-w64/ and in LICENSE.txt of this "
+    "folder. The DLL is a separate file that can be replaced by a modified build of the same OpenBLAS; the source "
+    "code of GCC 10.3.0 (which contains libgfortran) is offered for download with the package (see SOURCES.txt)."
+)
+LICENSE_NOTES = {
+    "numpy": NUMPY_NOTE_LINUX,
     "lxml": "The lxml module etree statically contains GNU libiconv 1.18 (LGPL-2.1, ../../LGPL-2.1.txt). The source "
     "code of lxml and of libiconv is offered for download with the package (see SOURCES.txt), so lxml can be rebuilt with a "
     "modified libiconv (lxml's buildlibxml.py) and replace the lxml folder of this package.",
@@ -356,9 +366,18 @@ def sources_text(version: str, versions: dict[str, str], appimage: bool) -> str:
         "  including the scripts in the packaging folder that built this package. The same",
         f"  state is the tag v{version} of {PROJECT_URL}.",
         "",
-        "This package contains libraries under the GNU LGPL (Qt, Qt for Python, libiconv in lxml,",
-        "libquadmath in NumPy) and the GCC runtime under the GPL with the GCC Runtime Library",
-        "Exception. Their complete source code, in exactly the version contained here, is offered",
+        *(
+            [
+                "This package contains libraries under the GNU LGPL (Qt, Qt for Python, libiconv in lxml)",
+                "and the Fortran runtime libgfortran in NumPy under the GPL with the GCC Runtime Library Exception.",
+            ]
+            if WINDOWS
+            else [
+                "This package contains libraries under the GNU LGPL (Qt, Qt for Python, libiconv in lxml,",
+                "libquadmath in NumPy) and the GCC runtime under the GPL with the GCC Runtime Library Exception.",
+            ]
+        ),
+        "Their complete source code, in exactly the version contained here, is offered",
         "for download on the same release page as this package:",
         f"  {release}",
         "",
@@ -470,7 +489,13 @@ def main() -> int:
         (out / "microsoft").mkdir()
         (out / "microsoft" / "MSVC-RUNTIME.txt").write_text(MSVC_NOTICE, encoding="utf-8")
 
+    if WINDOWS:
+        for file in sorted((PACKAGING / "licenses" / "mingw-w64").iterdir()):
+            (out / "mingw-w64").mkdir(exist_ok=True)
+            shutil.copy2(file, out / "mingw-w64" / file.name)
     for package, note in LICENSE_NOTES.items():
+        if package == "numpy" and WINDOWS:
+            note = NUMPY_NOTE_WINDOWS
         (out / "packages" / package / "NOTE.txt").write_text(note + "\n", encoding="utf-8")
 
     version = versions[APP_DISTRIBUTION]

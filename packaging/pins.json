@@ -115,6 +115,15 @@
       "packages": [
         "linux"
       ]
+    },
+    {
+      "name": "gcc-10.3.0.tar.xz",
+      "url": "https://ftp.gnu.org/gnu/gcc/gcc-10.3.0/gcc-10.3.0.tar.xz",
+      "sha256": "64f404c1a650f27fc33da242e1f2df54952e3963a49e06e73f6940f3223ac344",
+      "covers": "GCC 10.3.0: source of libgfortran (GPL-3.0 WITH GCC-exception-3.1), statically linked into numpy.libs/libscipy_openblas64_*.dll of the Windows packages",
+      "packages": [
+        "windows"
+      ]
     }
   ],
   "appimage": {
