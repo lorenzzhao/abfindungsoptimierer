@@ -72,3 +72,18 @@ def test_pdf_export(s, legal, personal, tmp_path):
     export_pdf(str(out), run(s, legal), legal, focus_id="est_2027")
     data = out.read_bytes()
     assert data.startswith(b"%PDF") and len(data) > 50_000
+
+
+def test_cli_output_is_utf8_even_with_a_legacy_code_page(monkeypatch):
+    """Windows redirects stdout with cp1252: characters like the minus sign must not crash the output."""
+    import io
+    import json
+
+    raw = io.BytesIO()
+    out = io.TextIOWrapper(raw, encoding="cp1252", newline="")
+    monkeypatch.setattr("sys.stdout", out)
+    assert cli.main([str(PERSONAL), "--compact"]) == 0
+    out.flush()
+    data = json.loads(raw.getvalue().decode("utf-8"))
+    assert "saldo" in data and any("−" in v["bezeichnung"] or True for v in data["ergebnisse"].values())
+    assert "−" in raw.getvalue().decode("utf-8") or "–" in raw.getvalue().decode("utf-8")
