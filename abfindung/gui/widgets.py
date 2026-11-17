@@ -8,6 +8,7 @@ and a tooltip with the legal references.
 
 from __future__ import annotations
 
+import time
 from datetime import date, timedelta
 
 from PySide6.QtCore import QDate, QEvent, QObject, Qt, Signal
@@ -33,15 +34,25 @@ class WheelGuard(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._forwarding = False
-        self.spin_held = False  # mouse button held on a spin box (see MainWindow._recalc_when_released)
+        self._held = False  # a mouse button was pressed on a spin box and not yet released
+        self._held_since = 0.0
+
+    @property
+    def spin_held(self) -> bool:
+        """A mouse button is held on a spin box (see MainWindow._recalc_when_released). A missed release event
+        (touch pad tap, focus or window change, a rebuilt panel) must never block the calculation for good: the
+        flag only counts while the system still reports a pressed button, and for at most two seconds."""
+        if self._held and (not QApplication.mouseButtons() or time.monotonic() - self._held_since > 2.0):
+            self._held = False
+        return self._held
 
     def eventFilter(self, obj, ev) -> bool:
         t = ev.type()
         if isinstance(obj, QAbstractSpinBox):
             if t == QEvent.Type.MouseButtonPress:
-                self.spin_held = True
+                self._held, self._held_since = True, time.monotonic()
             elif t == QEvent.Type.MouseButtonRelease:
-                self.spin_held = False
+                self._held = False
         if t != QEvent.Type.Wheel or self._forwarding:
             return False
         ctrl = bool(ev.modifiers() & Qt.KeyboardModifier.ControlModifier)

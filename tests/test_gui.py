@@ -632,3 +632,28 @@ def test_person_name_updates_tab_title(app, tmp_path):
     finally:
         w.dirty = False
         w.close()
+
+
+def test_missed_mouse_release_does_not_block_recalculation(app):
+    """A spin box press without a matching release (e.g. touch pad tap) must not postpone the calculation for good."""
+    from PySide6.QtCore import QEvent
+
+    from abfindung.gui.main_window import MainWindow
+
+    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    try:
+        g = w.inputs.wheel_guard
+        spin = next(c for c in w.inputs.controls if c.path == "persons.0.severance").spin
+        g._held = True  # press seen, release lost
+        g._held_since = __import__("time").monotonic()
+        assert not g.spin_held  # no mouse button is pressed in reality
+        spin.setValue(spin.value() + 1000)
+        for _ in range(30):
+            app.processEvents()
+            __import__("time").sleep(0.02)
+        assert w.res.settings.persons[0].severance == spin.value()
+        g._held, g._held_since = True, __import__("time").monotonic() - 5
+        assert not g.spin_held  # also expires by time
+    finally:
+        w.dirty = False
+        w.close()
