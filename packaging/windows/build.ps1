@@ -71,7 +71,7 @@ Write-Host "== Smoke tests"
 $Cli = "$Bundle\abfindungsoptimierer-cli.exe"
 Invoke-Checked $Cli @("--version")
 $Json = "$Work\smoke.json"
-& $Cli "tests\fixtures\beispiel_persoenlich.xml" "examples\gesetzliche_vorgaben_beispiel.xml" --compact --pdf "$Work\smoke.pdf" | Out-File -Encoding utf8 $Json
+& $Cli "tests\fixtures\beispiel_persoenlich.xml" --compact --pdf "$Work\smoke.pdf" | Out-File -Encoding utf8 $Json
 if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path $Json -Pattern '"saldo"' -Quiet)) { throw "The command-line program failed" }
 if (-not (Test-Path "$Work\smoke.pdf")) { throw "PDF report missing" }
 $env:QT_QPA_PLATFORM = "offscreen"

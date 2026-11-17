@@ -4,10 +4,15 @@
 unemployment benefit (ALG I) and health insurance under German law.
 
 The calculation core lives in :mod:`abfindung.engine` and is UI-free.
-All legal figures are read from the legal XML file; none are hard-coded.
+All legal figures are read from the bundled legal XML file; none are hard-coded.
 """
 
+from pathlib import Path
+
 __version__ = "0.9.0"
+
+# The legal rules (tax tariffs, ALG, KV/PV) ship with the program and cannot be replaced by the user.
+LEGAL_XML = Path(__file__).resolve().parent / "resources" / "gesetzliche_vorgaben.xml"
 
 DISCLAIMER = (
     "Dieses Tool ersetzt keine Steuer- oder Rechtsberatung. Alle Ergebnisse sind "

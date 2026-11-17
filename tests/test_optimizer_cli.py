@@ -53,7 +53,7 @@ def test_curves_show_kink(s, legal):
 
 
 def test_cli_json(capsys):
-    assert cli.main([str(PERSONAL), str(LEGAL), "--compact"]) == 0
+    assert cli.main([str(PERSONAL), "--compact"]) == 0
     out = json.loads(capsys.readouterr().out)
     assert "saldo" in out and "2027" in out["jahre"]
     assert out["ergebnisse"]["saldo"]["wert"] == pytest.approx(out["saldo"])
@@ -62,7 +62,7 @@ def test_cli_json(capsys):
 def test_cli_validation_error(tmp_path, capsys):
     bad = tmp_path / "x.xml"
     bad.write_text("<x/>", encoding="utf-8")
-    assert cli.main([str(bad), str(LEGAL)]) == 2
+    assert cli.main([str(bad)]) == 2
 
 
 def test_pdf_export(s, legal, personal, tmp_path):

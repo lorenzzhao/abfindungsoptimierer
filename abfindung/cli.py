@@ -12,7 +12,7 @@ import json
 import sys
 from datetime import date
 
-from . import DISCLAIMER, HAFTUNG
+from . import DISCLAIMER, HAFTUNG, LEGAL_XML
 from . import legal as legal_info
 from .engine.optimizer import optimize
 from .engine.scenario import run
@@ -70,13 +70,12 @@ def main(argv=None) -> int:
     ap.add_argument("--version", action="version", version=legal_info.version_text(ap.prog),
                     help="Version, Copyright und Lizenz anzeigen")
     ap.add_argument("persoenlich", help="persönliche Daten (XML)")
-    ap.add_argument("recht", help="rechtliche Vorgaben (XML)")
     ap.add_argument("--optimize", action="store_true", help="Optimierung (Top 5) ausführen")
     ap.add_argument("--compact", action="store_true", help="ohne Rechenwege ausgeben")
     ap.add_argument("--pdf", metavar="DATEI", help="zusätzlich einen PDF-Bericht schreiben")
     a = ap.parse_args(argv)
     try:
-        legal = load_legal(a.recht)
+        legal = load_legal(LEGAL_XML)
         pd = load_personal(a.persoenlich)
     except ValidationError as e:
         print(e.pretty(), file=sys.stderr)
@@ -87,7 +86,7 @@ def main(argv=None) -> int:
 
         s = from_personal(pd, legal)
         top = optimize(s, legal)[0] if a.optimize else None
-        export_pdf(a.pdf, run(s, legal), legal, optimizer_top=top, personal_path=a.persoenlich, legal_path=a.recht)
+        export_pdf(a.pdf, run(s, legal), legal, optimizer_top=top, personal_path=a.persoenlich)
         print(f"PDF geschrieben: {a.pdf}", file=sys.stderr)
     if a.compact:
         for v in rep["ergebnisse"].values():

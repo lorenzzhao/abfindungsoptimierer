@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <RechtlicheVorgaben xmlns="urn:abfindung:recht:v1" version="1.0">
   <Metadaten>
-    <Beschreibung>BEISPIELDATEI für Tests und Demonstration. Rechtliche Vorgaben (Steuer, ALG, KV/PV) – vor produktiver Nutzung prüfen. Keine persönlichen Daten.</Beschreibung>
+    <Beschreibung>Rechtliche Vorgaben (Steuer, ALG, KV/PV), mit dem Programm ausgeliefert. Teilweise ungeprüft – vor einer Verwendung prüfen. Keine persönlichen Daten.</Beschreibung>
     <Stand>2026-10-13</Stand>
     <Rechtsstand>Werte für 2026; Folgejahr wird mangels Kenntnis fortgeschrieben.</Rechtsstand>
-    <Hinweis>geprueft="true": im Erstellungsgespräch online nachgeprüft. geprueft="false": aus Fachwissen, vor produktiver Nutzung prüfen.</Hinweis>
+    <Hinweis>geprueft="true": im Erstellungsgespräch online nachgeprüft. geprueft="false": aus Fachwissen, vor einer Verwendung prüfen.</Hinweis>
     <Hinweis>Alle Beträge in Euro. Keine Steuer- oder Rechtsberatung.</Hinweis>
   </Metadaten>
   <Einkommensteuertarif jahr="2026" geprueft="false" fortschreibungFuerFolgejahr="true">

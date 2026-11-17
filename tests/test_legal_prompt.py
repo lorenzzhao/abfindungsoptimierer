@@ -43,7 +43,7 @@ def test_dialog_copy_and_save(tmp_path):
     from abfindung.gui.legal_prompt_dialog import LegalPromptDialog
 
     app = QApplication.instance() or QApplication([])
-    d = LegalPromptDialog("Prompt-Text", str(LEGAL))
+    d = LegalPromptDialog("Prompt-Text", str(tmp_path))
     d.copy()
     assert app.clipboard().text() == "Prompt-Text"
     target = tmp_path / "prompt.md"

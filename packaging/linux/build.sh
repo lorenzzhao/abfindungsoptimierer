@@ -61,7 +61,7 @@ cp packaging/README-binary.txt "$BUNDLE/README.txt"
 
 echo "== Smoke tests"
 "$BUNDLE/$APP_ID-cli" --version
-"$BUNDLE/$APP_ID-cli" tests/fixtures/beispiel_persoenlich.xml examples/gesetzliche_vorgaben_beispiel.xml \
+"$BUNDLE/$APP_ID-cli" tests/fixtures/beispiel_persoenlich.xml \
     --compact --pdf "$WORK/smoke.pdf" > "$WORK/smoke.json"
 "$WORK/venv/bin/python" -c "import json,sys; d=json.load(open(sys.argv[1])); assert 'saldo' in d, d.keys(); print('Saldo', d['saldo'])" "$WORK/smoke.json"
 head -c 5 "$WORK/smoke.pdf" | grep -q '%PDF' || { echo "PDF report missing"; exit 1; }
@@ -115,7 +115,7 @@ ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$TOOL" --no-appstream --runtime-file "$R
 echo "== Testing the AppImage"
 APPIMAGE_EXTRACT_AND_RUN=1 "$APPIMAGE" --cli --version | head -1
 APPIMAGE_EXTRACT_AND_RUN=1 "$APPIMAGE" --cli tests/fixtures/beispiel_persoenlich.xml \
-    examples/gesetzliche_vorgaben_beispiel.xml --compact > "$WORK/smoke2.json"
+    --compact > "$WORK/smoke2.json"
 "$WORK/venv/bin/python" -c "import json,sys; assert 'saldo' in json.load(open(sys.argv[1]))" "$WORK/smoke2.json"
 
 echo "== Source code"

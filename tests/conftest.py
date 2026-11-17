@@ -2,12 +2,12 @@ from pathlib import Path
 
 import pytest
 
+from abfindung import LEGAL_XML
 from abfindung.io import load_legal, load_personal
 
 ROOT = Path(__file__).resolve().parent.parent
-EXAMPLES = ROOT / "examples"
 PERSONAL = ROOT / "tests" / "fixtures" / "beispiel_persoenlich.xml"  # fictitious data
-LEGAL = EXAMPLES / "gesetzliche_vorgaben_beispiel.xml"
+LEGAL = LEGAL_XML  # shipped with the program
 
 
 @pytest.fixture(scope="session")

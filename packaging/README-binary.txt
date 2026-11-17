@@ -15,14 +15,15 @@ Linux:    ./abfindungsoptimierer          (AppImage: Datei ausführbar machen un
 Windows:  abfindungsoptimierer.exe
 
 Ohne Fenster (Ergebnis als JSON, optional PDF-Bericht):
-Linux:    ./abfindungsoptimierer-cli persoenlich.xml recht.xml [--optimize] [--pdf bericht.pdf]
+Linux:    ./abfindungsoptimierer-cli persoenlich.xml [--optimize] [--pdf bericht.pdf]
           (AppImage: ./Abfindungsoptimierer-<Version>-x86_64.AppImage --cli …)
-Windows:  abfindungsoptimierer-cli.exe persoenlich.xml recht.xml …
+Windows:  abfindungsoptimierer-cli.exe persoenlich.xml …
 Mit --help werden alle Optionen angezeigt, mit --version Version und Lizenz.
 
 Beim ersten Start beginnt das Programm mit einer leeren Vorlage für die persönlichen
-Daten und mit der Beispieldatei der rechtlichen Vorgaben (examples/ im Programmordner).
-Die rechtlichen Werte der Beispieldatei vor einer Verwendung prüfen.
+Daten. Die rechtlichen Vorgaben (Steuertarif, ALG, KV/PV) sind im Programm fest eingebaut
+(abfindung/resources/gesetzliche_vorgaben.xml im Programmordner) und nicht austauschbar;
+ihre Werte sind teilweise ungeprüft und vor einer Verwendung zu prüfen.
 Einstellungen (zuletzt geöffnete Dateien, Dunkelmodus) liegen im Benutzerprofil.
 
 Lizenz

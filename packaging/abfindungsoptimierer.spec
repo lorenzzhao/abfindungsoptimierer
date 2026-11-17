@@ -25,8 +25,6 @@ ICON = PACKAGING / "icons" / "app-icon.ico"
 datas = [
     (str(SRC / "abfindung" / "resources"), "abfindung/resources"),
     (str(SRC / "abfindung" / "schemas"), "abfindung/schemas"),
-    # Example of the legal rules (the program needs one to start); placed where the GUI looks for it.
-    (str(ROOT / "examples" / "gesetzliche_vorgaben_beispiel.xml"), "examples"),
 ]
 datas += copy_metadata("abfindungsoptimierer")  # version lookup at runtime
 

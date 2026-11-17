@@ -116,8 +116,7 @@ def _fig_image(draw, width_mm=175, height_mm=100) -> Image:
     return Image(buf, width=width_mm * mm, height=height_mm * mm)
 
 
-def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top=None, personal_path: str | None = None,
-               legal_path: str | None = None) -> str:
+def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top=None, personal_path: str | None = None) -> str:
     _register_fonts()
     st = _styles()
     s = res.settings
@@ -148,7 +147,7 @@ def export_pdf(path: str, res, legal, focus_id: str | None = None, optimizer_top
     story.append(Spacer(1, 4 * mm))
     meta = [["Datei", "Inhalt"],
             ["Persönliche Daten", f"{Path(personal_path).name if personal_path else '–'} (gegen personal_data.xsd validiert)"],
-            ["Rechtliche Vorgaben", f"{Path(legal_path).name if legal_path else '–'} – Stand {legal.stand}; "
+            ["Rechtliche Vorgaben", f"mit dem Programm ausgeliefert ({Path(legal.path).name}) – Stand {legal.stand}; "
                                     f"{legal.rechtsstand} (gegen regulatory_input.xsd validiert)"]]
     story.append(_table(meta, [45 * mm, W - 45 * mm], st))
     story.append(Spacer(1, 5 * mm))

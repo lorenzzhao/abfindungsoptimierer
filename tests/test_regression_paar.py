@@ -19,7 +19,7 @@ from .helpers import apply_scenario, apply_variant, set_basisrente
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURE = ROOT / "tests" / "fixtures" / "fiktiv_paar.xml"
-LEGAL = ROOT / "examples" / "gesetzliche_vorgaben_beispiel.xml"
+from abfindung import LEGAL_XML as LEGAL  # noqa: E402
 YEARS = (2027, 2028, 2029)
 TOL = 1.0
 

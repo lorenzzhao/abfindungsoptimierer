@@ -23,7 +23,7 @@ def window():
     from abfindung.gui.main_window import MainWindow
 
     app = QApplication.instance() or QApplication([])
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     app.processEvents()
     yield w
     w.dirty = False

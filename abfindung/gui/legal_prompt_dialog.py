@@ -56,15 +56,16 @@ class PromptDialog(QDialog):
 
 
 class LegalPromptDialog(PromptDialog):
-    def __init__(self, prompt: str, legal_path: str, parent: QWidget | None = None) -> None:
+    def __init__(self, prompt: str, folder: str, parent: QWidget | None = None) -> None:
         super().__init__(
             prompt, "KI-Prompt: rechtliche Vorgaben prüfen",
-            "Diesen Text in einen KI-Chat kopieren. Er enthält die geladenen rechtlichen Vorgaben vollständig, das "
-            "XML-Schema und die Jahre der Planung – <b>keine persönlichen Daten</b>. Die Antwort enthält eine geänderte "
-            "XML-Datei: als eigene Datei speichern (die bisherige Datei nicht überschreiben), Änderungen prüfen und "
-            "über <i>Datei → Rechtliche Vorgaben öffnen</i> laden – das Programm prüft sie dabei gegen das Schema. "
-            "KI-Antworten können falsch sein; Werte mit amtlichen Quellen vergleichen.",
-            str(Path(legal_path).with_name("ki_prompt_rechtliche_vorgaben.md")), parent)
+            "Diesen Text in einen KI-Chat kopieren. Er enthält die rechtlichen Vorgaben des Programms vollständig, das "
+            "XML-Schema und die Jahre der Planung – <b>keine persönlichen Daten</b>. Die rechtlichen Vorgaben "
+            "sind im Programm fest eingebaut und lassen sich dort nicht austauschen; Korrekturen aus der Antwort "
+            "müssen in der Programmdatei <i>abfindung/resources/gesetzliche_vorgaben.xml</i> vorgenommen werden "
+            "(z. B. als Hinweis an die Entwicklung). KI-Antworten können falsch sein; Werte mit amtlichen Quellen "
+            "vergleichen.",
+            str(Path(folder) / "ki_prompt_rechtliche_vorgaben.md"), parent)
 
 
 class ReviewPromptDialog(PromptDialog):

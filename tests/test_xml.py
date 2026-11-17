@@ -100,7 +100,7 @@ def test_source_address_matches_release_scripts():
 
     from abfindung import legal
 
-    pins = json.loads((Path(LEGAL).parent.parent / "packaging" / "pins.json").read_text(encoding="utf-8"))
+    pins = json.loads((Path(__file__).resolve().parent.parent / "packaging" / "pins.json").read_text(encoding="utf-8"))
     assert legal.SOURCE_URL == pins["project_url"] and legal.SOURCE_URL in legal.version_text("x")
 
 

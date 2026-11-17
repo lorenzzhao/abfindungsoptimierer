@@ -97,7 +97,7 @@ def build_prompt(res, legal, inputs: list[dict], today: date | None = None) -> s
         "- Ergebnisse haben eine **ID** (z. B. est_2027) und stehen unter „Ergebnisse › Bereich › Bezeichnung“; bei "
         "jedem Ergebnis steht, aus welchen Eingaben (E-Nummern) es berechnet wird.",
         "- Rechtliche Parameter haben eine Parameter-ID (z. B. est_grundfreibetrag); sie stehen in der Datei der "
-        "rechtlichen Vorgaben (unten) und werden über Datei → Rechtliche Vorgaben öffnen geladen.",
+        "rechtlichen Vorgaben (unten); sie sind im Programm fest eingebaut (abfindung/resources/gesetzliche_vorgaben.xml).",
         "- Ist ein Ergebnis falsch, weil eine Eingabe falsch ist, nenne die Eingabe (E-Nummer und Ort) als Ursache.",
         "",
         "## Gewünschte Antwort",
@@ -163,7 +163,7 @@ def build_prompt(res, legal, inputs: list[dict], today: date | None = None) -> s
         f"## D. Rechtliche Vorgaben ({Path(legal.path).name})",
         "",
         "Die Datei, mit der das Programm rechnet (Parameter mit Gültigkeitsjahren, Tabellen, Steuertarife, Regeln, "
-        "Quellen). Ort im Programm: Datei → Rechtliche Vorgaben öffnen.",
+        "Quellen). Sie ist im Programm fest eingebaut und nicht austauschbar.",
         "",
         "```xml",
         xml.rstrip(),

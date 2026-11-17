@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFileDialog, QLabel, QMain
                              QMenu, QSplitter, QTableWidget, QTableWidgetItem, QVBoxLayout,
                                QWidget)
 
-from .. import DISCLAIMER
+from .. import DISCLAIMER, LEGAL_XML
 from ..engine.scenario import run
 from ..engine.settings import from_personal, to_personal
 from ..io import ValidationError, load_legal, load_personal
@@ -26,12 +26,11 @@ from .inputs_panel import InputsPanel
 from .optimizer_dialog import OptimizerDialog
 from .results_panel import ResultsPanel
 
-EXAMPLES = Path(__file__).resolve().parent.parent.parent / "examples"
 TEMPLATE = Path(__file__).resolve().parent.parent / "resources" / "vorlage_persoenlich.xml"  # Datei → Neu
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, personal_path: str | None = None, legal_path: str | None = None, dark: bool | None = None):
+    def __init__(self, personal_path: str | None = None, dark: bool | None = None):
         super().__init__()
         self.qs = QSettings("abfindungsoptimierer", "gui")
         self.pd = None
@@ -39,7 +38,6 @@ class MainWindow(QMainWindow):
         self.s = None
         self.res = None
         self.personal_path = None
-        self.legal_path = None
         self.dirty = False
         self.migrated = False
         self.opt_top = None
@@ -99,7 +97,8 @@ class MainWindow(QMainWindow):
         self._actions()
         self.results.set_colors(self.theme.html)
         self.resize(1500, 900)
-        self._load_initial(personal_path, legal_path)
+        self.qs.remove("legal_path")  # older versions stored a chosen file; the rules are fixed now
+        self._load_initial(personal_path)
 
     # -- actions --------------------------------------------------------------------
     def _actions(self) -> None:
@@ -113,7 +112,6 @@ class MainWindow(QMainWindow):
 
         self.a_new = act("Neu (leere Vorlage)", self.new_personal, QKeySequence.StandardKey.New)
         self.a_open_p = act("Persönliche Daten öffnen …", self.open_personal, "Ctrl+O")
-        self.a_open_l = act("Rechtliche Vorgaben öffnen …", self.open_legal, "Ctrl+Shift+O")
         self.a_save = act("Speichern", self.save, QKeySequence.StandardKey.Save)
         self.a_save_as = act("Speichern unter …", self.save_as, QKeySequence.StandardKey.SaveAs)
         self.a_pdf = act("PDF exportieren …", self.export_pdf, "Ctrl+P")
@@ -131,7 +129,7 @@ class MainWindow(QMainWindow):
         m = self.menuBar().addMenu("&Datei")
         self.recent_menu = QMenu("Zuletzt verwendete persönliche Daten", self)
         self.recent_menu.aboutToShow.connect(self._fill_recent_menu)
-        for a in (self.a_new, self.a_open_p, self.recent_menu, self.a_open_l, None, self.a_save, self.a_save_as,
+        for a in (self.a_new, self.a_open_p, self.recent_menu, None, self.a_save, self.a_save_as,
                   self.a_changes, None, self.a_pdf, None, self.a_quit):
             if a is None:
                 m.addSeparator()
@@ -156,20 +154,16 @@ class MainWindow(QMainWindow):
         self._update_undo_actions()
 
     # -- loading -----------------------------------------------------------------------
-    def _load_initial(self, personal_path, legal_path) -> None:
-        lp = legal_path or self.qs.value("legal_path") or str(EXAMPLES / "gesetzliche_vorgaben_beispiel.xml")
+    def _load_initial(self, personal_path) -> None:
+        self.legal = load_legal(LEGAL_XML)  # shipped with the program
         pp = personal_path or self.qs.value("personal_path")
-        if not Path(lp).exists():
-            lp = str(EXAMPLES / "gesetzliche_vorgaben_beispiel.xml")
-        if pp and Path(pp).exists():
-            self._load(pp, lp)
-        else:  # first start or file moved: start with the empty template
-            self._load(None, lp)
-            self._load_template()
+        if pp and Path(pp).exists() and self._load(pp):
+            return
+        self._load_template()  # first start or file moved/invalid: start with the empty template
 
     def _load_template(self) -> bool:
         """New personal data from the template; the first save asks for a file name."""
-        if not self._load(str(TEMPLATE), None):
+        if not self._load(str(TEMPLATE)):
             return False
         self.personal_path = None
         self.qs.remove("personal_path")
@@ -180,35 +174,23 @@ class MainWindow(QMainWindow):
         if self._maybe_save():
             self._load_template()
 
-    def _load(self, personal_path: str | None, legal_path: str | None) -> bool:
+    def _load(self, personal_path: str) -> bool:
         try:
-            legal = load_legal(legal_path) if legal_path else self.legal
-            pd = load_personal(personal_path) if personal_path else self.pd
+            pd = load_personal(personal_path)
         except ValidationError as e:
             QMessageBox.critical(self, "Datei ungültig", e.pretty())
             return False
-        if legal is not None and pd is None:  # rules loaded first, personal data follows (template)
-            self.legal = legal
-            if legal_path:
-                self.legal_path = legal_path
-                self.qs.setValue("legal_path", legal_path)
-            return True
-        if legal is None or pd is None:
-            return False
+        legal = self.legal
         try:
             s = from_personal(pd, legal)
         except Exception as e:  # missing parameter etc.
             QMessageBox.critical(self, "Fehler beim Einlesen", f"{e}\n\n{traceback.format_exc(limit=3)}")
             return False
         self.legal, self.pd, self.s = legal, pd, s
-        if legal_path:
-            self.legal_path = legal_path
-            self.qs.setValue("legal_path", legal_path)
-        if personal_path:
-            self.personal_path = personal_path
-            self.qs.setValue("personal_path", personal_path)
-            if Path(personal_path).resolve() != TEMPLATE.resolve():
-                self._remember_recent(personal_path)
+        self.personal_path = personal_path
+        self.qs.setValue("personal_path", personal_path)
+        if Path(personal_path).resolve() != TEMPLATE.resolve():
+            self._remember_recent(personal_path)
         self.migrated = bool(pd.migration_notes)  # converted values should be saved
         self.dirty = self.migrated
         self.opt_top = None
@@ -253,7 +235,7 @@ class MainWindow(QMainWindow):
 
     def open_recent(self, path: str) -> None:
         if self._maybe_save():
-            self._load(path, None)
+            self._load(path)
 
     def open_personal(self) -> None:
         if not self._maybe_save():
@@ -261,13 +243,7 @@ class MainWindow(QMainWindow):
         f, _ = QFileDialog.getOpenFileName(self, "Persönliche Daten öffnen", str(Path(self.personal_path).parent if self.personal_path else Path.home()),
                                            "XML (*.xml)")
         if f:
-            self._load(f, None)
-
-    def open_legal(self) -> None:
-        f, _ = QFileDialog.getOpenFileName(self, "Rechtliche Vorgaben öffnen", str(Path(self.legal_path or EXAMPLES).parent),
-                                           "XML (*.xml)")
-        if f:
-            self._load(None, f)
+            self._load(f)
 
     # -- calculation ------------------------------------------------------------------
     def _changed(self) -> None:
@@ -360,8 +336,7 @@ class MainWindow(QMainWindow):
         if not self.legal.pick("rv_beitragssatz_gesamt", "rv_beitragssatz"):
             warn_legal = " · ⚠ rv_beitragssatz_gesamt fehlt in den rechtlichen Vorgaben"
         self.status.setText(f"Persönlich: {Path(self.personal_path).name if self.personal_path else '–'} · "
-                            f"Rechtlich: {Path(self.legal_path).name if self.legal_path else '–'} "
-                            f"(Stand {self.legal.stand}) · beide gegen XSD validiert · Berechnung {ms:.0f} ms{warn_legal}")
+                            f"Rechtlich: mitgelieferte Vorgaben (Stand {self.legal.stand}) · gegen XSD validiert · Berechnung {ms:.0f} ms{warn_legal}")
         self._update_title()
 
     def _focus_changed(self, fid: str) -> None:
@@ -378,7 +353,7 @@ class MainWindow(QMainWindow):
             return
         used = sorted({k.split("@")[0] for k in self.res.tracer.used_params}) if self.res and self.res.tracer else []
         years = self.res.years if self.res else []
-        LegalPromptDialog(build_prompt(self.legal, years, used), self.legal.path, self).exec()
+        LegalPromptDialog(build_prompt(self.legal, years, used), str(Path.home()), self).exec()
 
     def review_prompt(self) -> None:
         """Prompt for an independent check of inputs, results and legal rules in an AI chat (contains the
@@ -429,7 +404,7 @@ class MainWindow(QMainWindow):
         return True
 
     def save(self) -> bool:
-        if not self.personal_path or Path(self.personal_path).resolve().parent == EXAMPLES.resolve():  # template / example
+        if not self.personal_path:  # template
             return self.save_as()
         return self._write(self.personal_path, backup=True)
 
@@ -483,7 +458,7 @@ class MainWindow(QMainWindow):
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
             export_pdf(f, self.res, self.legal, focus_id=self.results.focus_id, optimizer_top=self.opt_top,
-                       personal_path=self.personal_path, legal_path=self.legal_path)
+                       personal_path=self.personal_path)
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, "PDF-Export fehlgeschlagen", f"{e}\n\n{traceback.format_exc(limit=4)}")

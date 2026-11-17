@@ -19,12 +19,14 @@ Benötigt Python ≥ 3.11 sowie PySide6, matplotlib, lxml und reportlab. Es gibt
 ## Start (grafische Oberfläche)
 
 ```bash
-.venv/bin/python -m abfindung --personal pfad/persoenliche_daten.xml --legal pfad/gesetzliche_vorgaben.xml
+.venv/bin/python -m abfindung --personal pfad/persoenliche_daten.xml
 ```
 
-Ohne Parameter werden die zuletzt geöffneten Dateien geladen. Beim ersten Start beginnt das Programm mit einer
-leeren Vorlage (*Datei → Neu*, `abfindung/resources/vorlage_persoenlich.xml`) und den rechtlichen Beispielwerten aus
-`examples/`. Fiktive Beispiel-Personendaten liegen nur noch als Testdaten in `tests/fixtures/`.
+Ohne Parameter wird die zuletzt geöffnete Datei geladen. Beim ersten Start beginnt das Programm mit einer
+leeren Vorlage (*Datei → Neu*, `abfindung/resources/vorlage_persoenlich.xml`). Die rechtlichen Vorgaben
+(Steuertarife, ALG, KV/PV) sind **fest eingebaut** (`abfindung/resources/gesetzliche_vorgaben.xml`) und lassen
+sich im Programm nicht laden oder austauschen; ihre Werte sind teilweise ungeprüft. Fiktive Beispiel-Personendaten
+liegen nur als Testdaten in `tests/fixtures/`.
 `--dark` bzw. `--light` erzwingen das Farbschema (umschaltbar unter *Ansicht*).
 
 Die Oberfläche hat drei Bereiche:
@@ -61,7 +63,7 @@ allen Werten, Rechenwegen, Parametern, Regeln, Gesetzesverweisen und Quellen-Lin
 ## Kommandozeile
 
 ```bash
-.venv/bin/python -m abfindung.cli persoenliche_daten.xml gesetzliche_vorgaben.xml [--optimize] [--compact] [--pdf bericht.pdf]
+.venv/bin/python -m abfindung.cli persoenliche_daten.xml [--optimize] [--compact] [--pdf bericht.pdf]
 ```
 
 Ausgabe als JSON: Saldo, Werte je Jahr, alle Ergebnisse mit Rechenweg, Warnungen, optional die Top 5 des
@@ -142,7 +144,7 @@ Gewährleistungsausschlüsse der GPL (§§ 15, 16).
 QT_QPA_PLATFORM=offscreen .venv/bin/python -m pytest
 ```
 
-Die Tests verwenden ausschließlich die synthetischen Beispieldateien in `examples/`.
+Die Tests verwenden ausschließlich die fiktiven Testdaten in `tests/fixtures/` und die eingebauten rechtlichen Vorgaben.
 
 ## Eingabedateien
 
@@ -156,7 +158,7 @@ Beide Dateien werden beim Laden gegen ihr Schema geprüft; Fehler werden mit Zei
 wird der letzte verfügbare Wert verwendet und als „fortgeschrieben“ markiert (gilt auch für den Tarif; optional mit
 Indexierung).
 
-Die echten Dateien gehören nicht ins Repository (`.gitignore`). `examples/` enthält erfundene Beispielwerte.
+Die echten Dateien gehören nicht ins Repository (`.gitignore`). `tests/fixtures/` enthält erfundene Beispieldaten.
 
 Einstellungen ohne eigenes Schema-Element (Sperrzeit, KV-Option, neue Beschäftigung, Horizont, Rechtsfragen …) werden
 beim Speichern als `Planung/Annahmen/Annahme id="ui_…"` abgelegt, ebenso Zahlungsmonat und Arbeitslosmeldung je Person.
@@ -165,7 +167,7 @@ Laden ohne sie übernommen (Hinweis), beim Speichern entfallen sie.
 
 ### Optionale zusätzliche Parameter
 
-Das Tool nutzt diese Parameter, wenn sie in den rechtlichen Vorgaben vorhanden sind (in der Beispieldatei enthalten):
+Das Tool nutzt diese Parameter, wenn sie in den rechtlichen Vorgaben vorhanden sind (in den eingebauten Vorgaben enthalten):
 
 - `rv_beitragssatz_gesamt` (Rentenversicherung, Anteil AN + AG; der ältere Name `rv_beitragssatz` wird weiter
   akzeptiert): nötig für die Kürzung des Basisrenten-Höchstbetrags um die gesetzlichen RV-Beiträge (R_Basisrente).
@@ -244,10 +246,11 @@ Dateien werden beim Laden auf die Herkunft „abgeleitet“ umgestellt.
   „Krankenversicherung“): keine eigenen KV/PV-Beiträge, keine Arbeitnehmeranteile, keine KV/PV-Vorsorgeaufwendungen,
   kein KV-Mehrbeitrag durch die Abfindung. Der Bereich „KV“ (Tab) schaltet dasselbe für beide Personen.
 - **KI-Prompt zur Prüfung der rechtlichen Vorgaben** (*Analyse → KI-Prompt …*): erzeugt einen Text für einen KI-Chat
-  mit der geladenen Datei der rechtlichen Vorgaben (vollständig), dem XML-Schema, den Jahren der Planung, den von der
+  mit der eingebauten Datei der rechtlichen Vorgaben (vollständig), dem XML-Schema, den Jahren der Planung, den von der
   Rechnung verwendeten und den ungeprüften Parametern sowie Regeln für eine schemakonforme Antwort (Änderungstabelle,
   vollständige geänderte XML-Datei). Enthält keine persönlichen Daten. Kopieren oder als Datei speichern; die
-  Antwort als neue Datei speichern und über *Datei → Rechtliche Vorgaben öffnen* laden (XSD-Prüfung beim Laden).
+  Korrekturen müssen in `abfindung/resources/gesetzliche_vorgaben.xml` eingearbeitet werden (die Datei ist im
+  Programm nicht austauschbar).
 - **KI-Prompt zur Prüfung der gesamten Berechnung** (*Analyse*): ein Text für eine unabhängige Prüfung durch eine KI
   mit allen Eingaben (je Feld der Ort im Programm „Reiter › Gruppe › Feld“, Einstellungs- und XML-Pfad, Herkunft,
   ob der Wert verwendet wird), allen Ergebnissen (Bedeutung, Rechenweg, verwendete Eingaben als E-Nummern,

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Lorenz Zhao
-"""Start the GUI: python -m abfindung [--personal X.xml] [--legal Y.xml] [--dark|--light]"""
+"""Start the GUI: python -m abfindung [--personal X.xml] [--dark|--light]"""
 
 from __future__ import annotations
 
@@ -70,7 +70,6 @@ def main(argv=None) -> int:
     ap.add_argument("--version", action="version", version=legal.version_text(ap.prog),
                     help="Version, Copyright und Lizenz anzeigen")
     ap.add_argument("--personal", "-p", help="persönliche Daten (XML)")
-    ap.add_argument("--legal", "-r", help="rechtliche Vorgaben (XML)")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--dark", action="store_true", help="Dunkelmodus")
     g.add_argument("--light", action="store_true", help="Hellmodus")
@@ -87,7 +86,7 @@ def main(argv=None) -> int:
     install_german_translation(app)
     app.setApplicationName("Abfindungsoptimierer")
     dark = True if a.dark else False if a.light else None
-    w = MainWindow(a.personal, a.legal, dark)
+    w = MainWindow(a.personal, dark)
     w.show()
     handle_ctrl_c(app, w)
     return app.exec()

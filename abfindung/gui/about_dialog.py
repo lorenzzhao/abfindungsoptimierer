@@ -57,7 +57,7 @@ class AboutDialog(QDialog):
             f"License v3.0</a>, die auf der <a href='{legal.GPL_URL}'>GNU General Public License v3.0</a> aufbaut.</p>"
             "<p>Weitere Komponenten: Python, Matplotlib, NumPy, Pillow, lxml, ReportLab und deren Abhängigkeiten. "
             "<i>Lizenzen …</i> zeigt alle Lizenztexte und Hinweise.</p>"
-            "<p>Alle rechtlichen Werte stammen aus der geladenen XML-Datei. Keine Netzwerkzugriffe.</p>", self)
+            "<p>Alle rechtlichen Werte stammen aus der mitgelieferten XML-Datei der rechtlichen Vorgaben. Keine Netzwerkzugriffe.</p>", self)
         text.setWordWrap(True)
         text.setTextFormat(Qt.TextFormat.RichText)
         text.setOpenExternalLinks(True)

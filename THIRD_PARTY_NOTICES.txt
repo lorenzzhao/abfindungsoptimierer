@@ -194,7 +194,7 @@ zlib, FreeType and others)
 ---------------------------
 
 All source code, the XML schemas, the icon and the documentation were written for this
-project and are under the project license. examples/gesetzliche_vorgaben_beispiel.xml and
+project and are under the project license. abfindung/resources/gesetzliche_vorgaben.xml and
 the test data in tests/fixtures contain invented or publicly available legal figures and
 fictitious personal data. The packaging scripts are adapted from PDF Multifile Searcher
 by the same author. The files in packaging/licenses/ are the unmodified license texts

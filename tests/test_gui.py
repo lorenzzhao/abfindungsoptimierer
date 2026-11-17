@@ -2,6 +2,7 @@
 
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -22,7 +23,7 @@ def app():
 def test_main_window(app, tmp_path):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     app.processEvents()
     assert w.res is not None and w.results.focus_id == "saldo"
     saldo0 = w.res.saldo
@@ -57,7 +58,7 @@ def test_main_window(app, tmp_path):
 def test_section_checkbox_greys_out(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     app.processEvents()
     assert w.inputs.tabs.tabText(0) == "Steuerpflichtige(r)"
     assert w.inputs.tabs.tabText(1) == "Ehepartner"
@@ -75,7 +76,7 @@ def test_section_checkbox_greys_out(app):
 def test_salary_years_after_exit_greyed(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     rows = {y: (ctrl, info) for y, ctrl, info in w.inputs.salary_rows[1]}
     assert not rows[2028][0].isEnabled() and "nicht relevant" in rows[2028][1].text()
     assert rows[2027][0].isEnabled() and "anteilig bis Austritt" in rows[2027][1].text()
@@ -86,7 +87,7 @@ def test_salary_years_after_exit_greyed(app):
 def test_real_salary_shows_annual_equivalent(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     mode = next(c for c in w.inputs.controls if c.path == "persons.1.salary_mode")
     mode.combo.setCurrentIndex(1)
     rows = {y: info for y, _, info in w.inputs.salary_rows[1]}
@@ -118,7 +119,7 @@ def _wheel(widget, ctrl: bool, down: bool = False):
 def test_wheel_needs_ctrl(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     ctrl = next(c for c in w.inputs.controls if c.path == "persons.0.severance")
     w.resize(1500, 900)
     w.show()
@@ -138,7 +139,7 @@ def test_wheel_needs_ctrl(app):
 def test_notice_period_derived_greys_out_manual_value(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     frist = next(c for c in w.inputs.controls if c.path == "persons.0.kfrist_monate")
     bz = next(c for c in w.inputs.controls if c.path == "persons.0.bz_jahre")
     assert frist.spin.isEnabled()
@@ -160,7 +161,7 @@ def test_recalc_waits_until_spin_arrow_released(app):
 
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     w.resize(1500, 900)
     w.show()
     app.processEvents()
@@ -191,7 +192,7 @@ def test_recalc_waits_until_spin_arrow_released(app):
 def test_origin_badge(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     ctrl = next(c for c in w.inputs.controls if c.path == "persons.0.pay_idx")
     w.inputs.set_origin("persons.0.pay_idx", "angabe")
     assert "Angabe" in ctrl.badge.text() and w.s.origin_of("persons.0.pay_idx") == "angabe"
@@ -205,7 +206,7 @@ def test_change_markers_reset_and_save(app, tmp_path):
 
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     ctrl = next(c for c in w.inputs.controls if c.path == "persons.0.severance")
     assert not ctrl.dot.text() and not w.inputs.has_changes() and not w.dirty
     v0 = ctrl.spin.value()
@@ -242,7 +243,7 @@ def test_change_markers_reset_and_save(app, tmp_path):
 def test_undo_redo(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     assert not w.a_undo.isEnabled() and not w.a_redo.isEnabled()
     ctrl = next(c for c in w.inputs.controls if c.path == "persons.0.severance")
     v0 = ctrl.spin.value()
@@ -279,7 +280,7 @@ def test_ctrl_click_on_origin_badge_resets_origin(app):
 
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     w.show()
     c = next(c for c in w.inputs.controls if c.path == "persons.0.severance")
     w.inputs.set_origin("persons.0.severance", "annahme")
@@ -292,7 +293,7 @@ def test_ctrl_click_on_origin_badge_resets_origin(app):
 def test_fifth_rule_derived_by_program(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     c = next(c for c in w.inputs.controls if c.path == "persons.0.fuenftel_ok")
     assert c.check.isEnabled()
     w.inputs.set_origin("persons.0.fuenftel_ok", "abgeleitet")
@@ -312,7 +313,7 @@ def test_children_list_edit_add_remove_and_save(app, tmp_path):
     from abfindung.gui.main_window import MainWindow
     from abfindung.io import load_legal, load_personal
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     c = next(c for c in w.inputs.controls if c.path == "children")
     assert w.inputs.s.children == [(2015, True), (2019, True)] and len(c.rows) == 2
     c.rows[1][1].setValue(2020)
@@ -344,7 +345,7 @@ def test_children_list_edit_add_remove_and_save(app, tmp_path):
 def test_marital_status_shows_or_hides_spouse_tab(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     titles = lambda: [w.inputs.tabs.tabText(i).lstrip("● ") for i in range(w.inputs.tabs.count())]  # noqa: E731
     assert "Ehepartner" in titles()
     fam = next(c for c in w.inputs.controls if c.path == "familienstand")
@@ -364,7 +365,7 @@ def test_gestaltungen_add_remove_undo_and_save(app, tmp_path):
     from abfindung.gui.main_window import MainWindow
     from abfindung.io import load_legal, load_personal
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     p = w.inputs
     p.add_typ.setCurrentIndex(p.add_typ.findData("sonstige"))
     p.add_year.setValue(2027)
@@ -397,7 +398,7 @@ def test_gestaltungen_add_remove_undo_and_save(app, tmp_path):
 def test_elstam_in_options_tab(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     tab = next(t for t, paths in zip(w.inputs.tab_titles, w.inputs.tab_paths) if "options.lst_freibetrag" in paths)
     assert tab == "Optionen"
     w.dirty = False
@@ -407,7 +408,7 @@ def test_elstam_in_options_tab(app):
 def test_no_exit_greys_out_exit_inputs(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     c = {x.path: x for x in w.inputs.controls}
     sw = c["persons.1.austritt"]
     assert sw.check.isChecked() and c["persons.1.end_date"].isEnabled()
@@ -425,7 +426,7 @@ def test_no_exit_greys_out_exit_inputs(app):
 def test_tabs_fit_a_narrow_panel(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     for typ in ("basisrente", "erhaltung", "spende", "kauf", "sonstige"):
         w.inputs.add_gestaltung(typ, 2027)
     tabs = w.inputs.tabs
@@ -439,7 +440,7 @@ def test_tabs_fit_a_narrow_panel(app):
 def test_alg_switch_greys_out_alg_inputs(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     c = {x.path: x for x in w.inputs.controls}
     assert c["persons.0.alg_aktiv"].parentWidget().title() == "Arbeitslosengeld"
     c["persons.0.alg_aktiv"].check.setChecked(False)
@@ -452,7 +453,7 @@ def test_alg_switch_greys_out_alg_inputs(app):
 def test_kv_switch_greys_out_kv_inputs(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     c = {x.path: x for x in w.inputs.controls}
     assert c["persons.0.kv_aktiv"].parentWidget().title() == "Krankenversicherung"
     c["persons.0.kv_aktiv"].check.setChecked(False)
@@ -467,9 +468,9 @@ def test_kv_switch_greys_out_kv_inputs(app):
 def test_first_start_uses_the_empty_template(app, tmp_path, monkeypatch):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(None, str(LEGAL), dark=False)
+    w = MainWindow(None, dark=False)
     w.qs.remove("personal_path")
-    w._load_initial(None, str(LEGAL))
+    w._load_initial(None)
     assert w.personal_path is None and w.s.persons[0].id == "P1" and not w.s.married
     assert "neu" in w.windowTitle()
     target = tmp_path / "neu.xml"
@@ -483,11 +484,11 @@ def test_recent_personal_files_and_no_toolbar(app, tmp_path):
 
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     w.qs.remove("recent_personal")
     copy = tmp_path / "kopie.xml"
     assert w._write(str(copy), backup=False)  # saving remembers the file
-    w._load(str(PERSONAL), None)
+    w._load(str(PERSONAL))
     assert w.recent_files()[:2] == [str(PERSONAL.resolve()), str(copy.resolve())]
     w._fill_recent_menu()
     texts = [a.text() for a in w.recent_menu.actions()]
@@ -513,7 +514,7 @@ def test_german_texts_for_qt_buttons(app):
 def test_result_area_switches(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     app.processEvents()
     r = w.results
     r.toggles["liquiditaet"].setChecked(False)
@@ -534,7 +535,7 @@ def test_result_area_switches(app):
 def test_no_alg_entries_without_claim(app):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     for ps in w.s.persons:
         ps.alg_aktiv = False
     w.recalc()
@@ -562,7 +563,7 @@ def test_no_unsaved_marker_after_loading_with_automatic_horizon(app):
     from abfindung.gui.main_window import MainWindow
 
     fixture = Path(__file__).parent / "fixtures" / "fiktiv_paar.xml"
-    w = MainWindow(str(fixture), str(LEGAL), dark=False)
+    w = MainWindow(str(fixture), dark=False)
     for _ in range(3):
         app.processEvents()
         w.recalc()
@@ -585,7 +586,7 @@ def test_ctrl_c_closes_the_window_and_a_second_quits(app, monkeypatch):
     from abfindung.gui.main_window import MainWindow
 
     old = signal.getsignal(signal.SIGINT)
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     w.show()
     asked = []
     monkeypatch.setattr(QMessageBox, "question",  # the save question, answered with "Abbrechen"
@@ -616,7 +617,7 @@ def test_ctrl_c_closes_the_window_and_a_second_quits(app, monkeypatch):
 def test_person_name_updates_tab_title(app, tmp_path):
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     try:
         ctrl = next(c for c in w.inputs.controls if c.path == "persons.1.name")
         assert w.inputs.tabs.tabText(1) == "Ehepartner" and ctrl.edit.placeholderText() == "Ehepartner"
@@ -640,7 +641,7 @@ def test_missed_mouse_release_does_not_block_recalculation(app):
 
     from abfindung.gui.main_window import MainWindow
 
-    w = MainWindow(str(PERSONAL), str(LEGAL), dark=False)
+    w = MainWindow(str(PERSONAL), dark=False)
     try:
         g = w.inputs.wheel_guard
         spin = next(c for c in w.inputs.controls if c.path == "persons.0.severance").spin
@@ -654,6 +655,26 @@ def test_missed_mouse_release_does_not_block_recalculation(app):
         assert w.res.settings.persons[0].severance == spin.value()
         g._held, g._held_since = True, __import__("time").monotonic() - 5
         assert not g.spin_held  # also expires by time
+    finally:
+        w.dirty = False
+        w.close()
+
+
+def test_legal_rules_cannot_be_loaded(app):
+    """The legal rules ship with the program: no menu entry, no start option, no stored path."""
+    import inspect
+
+    from abfindung import LEGAL_XML
+    from abfindung.gui.main_window import MainWindow
+
+    w = MainWindow(str(PERSONAL), dark=False)
+    try:
+        assert not hasattr(w, "open_legal") and not hasattr(w, "a_open_l")
+        texts = [a.text() for m in w.menuBar().actions() if m.menu() for a in m.menu().actions()]
+        assert texts and not any("Rechtliche Vorgaben öffnen" in t for t in texts)
+        assert Path(w.legal.path) == LEGAL_XML and LEGAL_XML.name == "gesetzliche_vorgaben.xml"
+        assert "legal" not in inspect.signature(MainWindow.__init__).parameters
+        assert w.qs.value("legal_path") is None
     finally:
         w.dirty = False
         w.close()
