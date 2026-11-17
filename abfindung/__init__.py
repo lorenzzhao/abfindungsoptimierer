@@ -9,7 +9,7 @@ All legal figures are read from the bundled legal XML file; none are hard-coded.
 
 from pathlib import Path
 
-__version__ = "0.9.0"
+__version__ = "0.9.1"
 
 # The legal rules (tax tariffs, ALG, KV/PV) ship with the program and cannot be replaced by the user.
 LEGAL_XML = Path(__file__).resolve().parent / "resources" / "gesetzliche_vorgaben.xml"

@@ -85,7 +85,8 @@ Paketversionen (`packaging/pins.json`, `packaging/release-constraints.txt`), fü
 `packaging/collect_licenses.py` alle Lizenztexte in den Ordner `licenses` des Programms und bricht ab, wenn eine
 Binärdatei keiner Komponente mit bekannter Lizenz zugeordnet werden kann.
 
-Windows: `pwsh packaging/windows/build.ps1` (Python ≥ 3.11 und Inno Setup 6 nötig) – vorbereitet, aber noch nicht
+Windows: `pwsh packaging/windows/build.ps1` (Python ≥ 3.11 und Inno Setup 6 nötig), automatisiert durch
+`.github/workflows/windows.yml` (GitHub Actions) – noch nicht
 getestet.
 
 Nach einer Änderung am Icon (`abfindung/resources/app-icon.svg`): `QT_QPA_PLATFORM=offscreen python packaging/render_icons.py`.
@@ -101,8 +102,8 @@ an derselben Stelle“). Die Adresse steht in `abfindung/legal.py` (`SOURCE_URL`
 1. Version in `pyproject.toml` und `abfindung/__init__.py` setzen, committen, Tag anlegen und pushen:
 
    ```bash
-   git tag -a v0.9.0 -m "Version 0.9.0"
-   git push origin master v0.9.0
+   git tag -a v0.9.1 -m "Version 0.9.1"
+   git push origin master v0.9.1
    ```
 
 2. Aus dem sauberen Stand des Tags bauen: `packaging/linux/build-in-docker.sh` (Ergebnis in `release/`).
@@ -110,7 +111,7 @@ an derselben Stelle“). Die Adresse steht in `abfindung/legal.py` (`SOURCE_URL`
    Versionsliste, `SHA256SUMS.txt` und jede Datei aus `release/sources/`:
 
    ```bash
-   gh release create v0.9.0 --title "Abfindungsoptimierer 0.9.0" release/*.AppImage release/*.tar.gz release/*.txt release/sources/*
+   gh release create v0.9.1 --title "Abfindungsoptimierer 0.9.1" release/*.AppImage release/*.tar.gz release/*.txt release/sources/*
    ```
 
 4. Die Quellarchive mindestens drei Jahre auf der Release-Seite lassen.
